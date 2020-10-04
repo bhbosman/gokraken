@@ -3,7 +3,7 @@ module github.com/bhbosman/gokraken
 go 1.15
 
 require (
-	github.com/bhbosman/goMessages v0.0.0-20200928211446-0778d5518cd9
+	github.com/bhbosman/goMessages v0.0.0-20201004192822-66d168b4b744
 	github.com/bhbosman/gocommon v0.0.0-20201004145117-eae02ab42c9a
 	github.com/bhbosman/gocomms v0.0.0-20201004142558-41c4e9c3302c
 	github.com/bhbosman/goerrors v0.0.0-20200918064252-e47717b09c4f
