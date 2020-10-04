@@ -1,5 +1,13 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/bhbosman/goMessages v0.0.0-20200922081308-8c8f88094624/go.mod h1:iBUstMHvgPQ3Aa06jh/jmC9fxYpJk8fPjM89qEorO/A=
+github.com/bhbosman/goMessages v0.0.0-20200928211446-0778d5518cd9 h1:bLkcGzsMFi4cRguo68Zo+aHCILJPry89piKcFO0m0+U=
+github.com/bhbosman/goMessages v0.0.0-20200928211446-0778d5518cd9/go.mod h1:iBUstMHvgPQ3Aa06jh/jmC9fxYpJk8fPjM89qEorO/A=
+github.com/bhbosman/gocommon v0.0.0-20200921215456-bfddd9bb050e/go.mod h1:bl0WcS0qhk3nzfVrnXxZj1c+JwHwpjw2iTIOU5CQZ+8=
+github.com/bhbosman/gocommon v0.0.0-20201004145117-eae02ab42c9a h1:2hLH141QiiBM27EFrCjeRx+GRuEApRAaZ0Uxar9Cct4=
+github.com/bhbosman/gocommon v0.0.0-20201004145117-eae02ab42c9a/go.mod h1:bl0WcS0qhk3nzfVrnXxZj1c+JwHwpjw2iTIOU5CQZ+8=
+github.com/bhbosman/gocomms v0.0.0-20201004142558-41c4e9c3302c h1:r8eOuYTRV8cakiXK8mfPTCn+hvA/MQepN8myYHMioio=
+github.com/bhbosman/gocomms v0.0.0-20201004142558-41c4e9c3302c/go.mod h1:Xj2clJ6T+zbkmbFC0+Zwm/FBfJ8DvKlsQrbvNcmNyKk=
 github.com/bhbosman/goerrors v0.0.0-20200918064252-e47717b09c4f h1:tn+HxggOxuewICKQ+p4mLoRyfE503xgIhWDo+2Z3dWk=
 github.com/bhbosman/goerrors v0.0.0-20200918064252-e47717b09c4f/go.mod h1:Otn1qS556wnQOL+lAkheIV/UxgKITTmY3KDYAXkQbfQ=
 github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc h1:W2SGlAixV5+dBq5da/dVJDYcUxEItIA5IdqdLTjnaLQ=
