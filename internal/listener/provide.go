@@ -23,13 +23,13 @@ func TextListener(maxConnections int, url string) fx.Option {
 				Target: func(params struct {
 					fx.In
 					ConsumerCounter *ConsumerCounter.ConsumerCounter
-					PubSub *pubsub.PubSub `name:"Application"`
+					PubSub          *pubsub.PubSub `name:"Application"`
 				}) (intf.IConnectionReactorFactory, error) {
 					return NewFactory(
 						TextListenerConnection,
 						params.PubSub,
 						func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
-							bytes, err := json.MarshalIndent(m, "", "\t")
+							bytes, err := json.Marshal(m)
 							if err != nil {
 								return nil, err
 							}
@@ -50,14 +50,6 @@ func TextListener(maxConnections int, url string) fx.Option {
 			}),
 	)
 }
-
-
-
-
-
-
-
-
 
 func CompressedListener(maxConnections int, url string) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
@@ -91,4 +83,3 @@ func CompressedListener(maxConnections int, url string) fx.Option {
 			}),
 	)
 }
-

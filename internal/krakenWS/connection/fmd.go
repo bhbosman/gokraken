@@ -172,7 +172,7 @@ func (self *FullMarketOrderBook) HouseKeeping() {
 
 func (self *FullMarketOrderBook) Publish(forcePublish bool) *marketDataStream.PublishTop5 {
 	thereWasAChange := forcePublish
-	maxDepth := 100
+	maxDepth := 10000
 	var bids []*marketDataStream.Point
 	if highBidNode := self.OrderSide[BuySide].Right(); highBidNode != nil {
 		count := 0

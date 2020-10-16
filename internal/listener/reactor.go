@@ -64,7 +64,9 @@ func (self *Reactor) Init(
 }
 
 func (self *Reactor) doNext(external bool, i interface{}) {
+	//println("start", reflect.TypeOf(i).String())
 	_, _ = self.messageRouter.Route(i)
+	//println("end", reflect.TypeOf(i).String())
 }
 
 func (self *Reactor) Open() error {
