@@ -9,6 +9,7 @@ import (
 	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gokraken/internal/ConsumerCounter"
 	"github.com/bhbosman/gologging"
+	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"github.com/reactivex/rxgo/v2"
@@ -26,7 +27,9 @@ type Reactor struct {
 	SerializeData        SerializeData
 	republishChannelName string
 	publishChannelName   string
+	dirtyMap             map[string]*marketDataStream.PublishTop5
 	PubSub               *pubsub.PubSub
+	messageOut           int
 }
 
 func (self *Reactor) Init(
@@ -53,7 +56,7 @@ func (self *Reactor) Init(
 	go func(ch chan interface{}, topics ...string) {
 		for v := range ch {
 			if self.CancelCtx.Err() == nil {
-				_ = self.ToReactor(false, v)
+				_ = self.ToReactor(true, v)
 			}
 		}
 	}(ch, self.publishChannelName)
@@ -64,9 +67,7 @@ func (self *Reactor) Init(
 }
 
 func (self *Reactor) doNext(external bool, i interface{}) {
-	//println("start", reflect.TypeOf(i).String())
 	_, _ = self.messageRouter.Route(i)
-	//println("end", reflect.TypeOf(i).String())
 }
 
 func (self *Reactor) Open() error {
@@ -79,6 +80,23 @@ func (self *Reactor) Close() error {
 	return self.BaseConnectionReactor.Close()
 }
 
+func (self *Reactor) HandleEmptyQueue(top5 *rxgo.EmptyQueue) error {
+	for _, v := range self.dirtyMap {
+		self.messageOut++
+		marshal, err := self.SerializeData(v)
+		if err != nil {
+			return err
+		}
+		_ = self.ToConnection(marshal)
+	}
+	s := fmt.Sprintf("\n\r-->%v<--\r\n", self.messageOut)
+	rws := gomessageblock.NewReaderWriter()
+	rws.Write([]byte(s))
+	_ = self.ToConnection(rws)
+	self.dirtyMap = make(map[string]*marketDataStream.PublishTop5)
+	return nil
+}
+
 func (self *Reactor) HandleTop5(top5 *marketDataStream.PublishTop5) error {
 	if self.CancelCtx.Err() != nil {
 		return self.CancelCtx.Err()
@@ -86,12 +104,8 @@ func (self *Reactor) HandleTop5(top5 *marketDataStream.PublishTop5) error {
 	top5.Source = "KrakenWS"
 	s := strings.Replace(fmt.Sprintf("%v.%v", top5.Source, top5.Instrument), "/", ".", -1)
 	top5.UniqueName = s
+	self.dirtyMap[s] = top5
 
-	marshal, err := self.SerializeData(top5)
-	if err != nil {
-		return err
-	}
-	_ = self.ToConnection(marshal)
 	return nil
 }
 
@@ -109,8 +123,10 @@ func NewReactor(
 		ConsumerCounter:       ConsumerCounter,
 		messageRouter:         messageRouter.NewMessageRouter(),
 		SerializeData:         SerializeData,
+		dirtyMap:              make(map[string]*marketDataStream.PublishTop5),
 		PubSub:                PubSub,
 	}
 	result.messageRouter.Add(result.HandleTop5)
+	result.messageRouter.Add(result.HandleEmptyQueue)
 	return result
 }
