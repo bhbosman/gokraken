@@ -31,7 +31,7 @@ func TextListener(maxConnections int, url string) fx.Option {
 						TextListenerConnection,
 						params.PubSub,
 						func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
-							bytes, err := json.MarshalIndent(m, "", "\t")
+							bytes, err := json.Marshal(m)
 							if err != nil {
 								return nil, err
 							}
