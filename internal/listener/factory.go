@@ -3,7 +3,7 @@ package listener
 import (
 	"context"
 	"github.com/bhbosman/gocomms/intf"
-	"github.com/bhbosman/gokraken/internal/ConsumerCounter"
+	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gologging"
 	"github.com/cskr/pubsub"
 )
@@ -12,7 +12,7 @@ type Factory struct {
 	name            string
 	pubSub          *pubsub.PubSub
 	SerializeData   SerializeData
-	ConsumerCounter *ConsumerCounter.ConsumerCounter
+	ConsumerCounter *netDial.CanDialDefaultImpl
 }
 
 func (self *Factory) Name() string {
@@ -31,7 +31,7 @@ func NewFactory(
 	name string,
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
-	ConsumerCounter *ConsumerCounter.ConsumerCounter) *Factory {
+	ConsumerCounter *netDial.CanDialDefaultImpl) *Factory {
 	return &Factory{
 		name:            name,
 		pubSub:          pubSub,

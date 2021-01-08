@@ -5,8 +5,10 @@ import (
 	"github.com/bhbosman/gocommon/stream"
 	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gocomms/intf"
+	"github.com/bhbosman/gocomms/netDial"
+
+	//"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gocomms/netListener"
-	"github.com/bhbosman/gokraken/internal/ConsumerCounter"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
@@ -22,8 +24,8 @@ func TextListener(maxConnections int, url string) fx.Option {
 				Group: impl.ConnectionReactorFactoryConst,
 				Target: func(params struct {
 					fx.In
-					ConsumerCounter *ConsumerCounter.ConsumerCounter
-					PubSub *pubsub.PubSub `name:"Application"`
+					ConsumerCounter *netDial.CanDialDefaultImpl
+					PubSub          *pubsub.PubSub `name:"Application"`
 				}) (intf.IConnectionReactorFactory, error) {
 					return NewFactory(
 						TextListenerConnection,
@@ -51,14 +53,6 @@ func TextListener(maxConnections int, url string) fx.Option {
 	)
 }
 
-
-
-
-
-
-
-
-
 func CompressedListener(maxConnections int, url string) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
 	return fx.Options(
@@ -68,7 +62,7 @@ func CompressedListener(maxConnections int, url string) fx.Option {
 				Target: func(params struct {
 					fx.In
 					PubSub          *pubsub.PubSub `name:"Application"`
-					ConsumerCounter *ConsumerCounter.ConsumerCounter
+					ConsumerCounter *netDial.CanDialDefaultImpl
 				}) (intf.IConnectionReactorFactory, error) {
 					return NewFactory(
 						CompressedListenerConnection,
@@ -91,4 +85,3 @@ func CompressedListener(maxConnections int, url string) fx.Option {
 			}),
 	)
 }
-

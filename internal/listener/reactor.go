@@ -7,7 +7,7 @@ import (
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/impl"
-	"github.com/bhbosman/gokraken/internal/ConsumerCounter"
+	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gologging"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
@@ -21,7 +21,7 @@ import (
 type SerializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
 type Reactor struct {
 	impl.BaseConnectionReactor
-	ConsumerCounter      *ConsumerCounter.ConsumerCounter
+	ConsumerCounter      *netDial.CanDialDefaultImpl
 	messageRouter        *messageRouter.MessageRouter
 	SerializeData        SerializeData
 	republishChannelName string
@@ -99,7 +99,7 @@ func NewReactor(
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	userContext interface{},
-	ConsumerCounter *ConsumerCounter.ConsumerCounter,
+	ConsumerCounter *netDial.CanDialDefaultImpl,
 	SerializeData SerializeData,
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{

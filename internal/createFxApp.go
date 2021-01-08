@@ -7,8 +7,8 @@ import (
 	"github.com/bhbosman/gocomms/connectionManager/endpoints"
 	"github.com/bhbosman/gocomms/connectionManager/view"
 	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gocomms/provide"
-	"github.com/bhbosman/gokraken/internal/ConsumerCounter"
 	"github.com/bhbosman/gokraken/internal/krakenWS/connection"
 	"github.com/bhbosman/gokraken/internal/listener"
 	"github.com/bhbosman/gologging"
@@ -24,7 +24,7 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 		compressedListenerUrl: "tcp4://127.0.0.1:3011",
 		HttpListenerUrl:       "http://127.0.0.1:8081",
 	}
-	ConsumerCounter := &ConsumerCounter.ConsumerCounter{}
+	ConsumerCounter := netDial.NewCanDialDefaultImpl()
 	var shutDowner fx.Shutdowner
 	fxApp := fx.New(
 		fx.Supply(settings, ConsumerCounter),
