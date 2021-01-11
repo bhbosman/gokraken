@@ -24,7 +24,7 @@ func (self *Factory) Create(
 	cancelFunc context.CancelFunc,
 	logger *gologging.SubSystemLogger,
 	userContext interface{}) intf.IConnectionReactor {
-	return NewReactor(logger, name, cancelCtx, cancelFunc, userContext ,self. ConsumerCounter, self.SerializeData, self.pubSub)
+	return NewReactor(logger, name, cancelCtx, cancelFunc, userContext, self.ConsumerCounter, self.SerializeData, self.pubSub)
 }
 
 func NewFactory(

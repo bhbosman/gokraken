@@ -44,4 +44,3 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 	)
 	return fxApp, shutDowner
 }
-

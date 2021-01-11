@@ -41,4 +41,3 @@ func SendTextOpMessage(message proto.Message, ToConnection goprotoextra.ToConnec
 
 	return ToConnection(readWriterSize)
 }
-

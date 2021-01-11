@@ -11,7 +11,7 @@ func main() {
 	svcFlag := flag.String("service", "", "Control the system service.")
 	flag.Parse()
 
-	program :=  &internal.ServiceInterfaceImpl{}
+	program := &internal.ServiceInterfaceImpl{}
 
 	svcConfig := &service.Config{
 		Name:        "bhbosman.Kraken.Stream.Service",
@@ -41,4 +41,5 @@ func main() {
 	err = s.Run()
 	if err != nil {
 		return
-	}}
+	}
+}

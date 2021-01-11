@@ -12,7 +12,7 @@ const FactoryName = "KrakenWSS"
 
 func ProvideKrakenDialer(canDial netDial.ICanDial) fx.Option {
 	var canDials []netDial.ICanDial
-	if canDial != nil{
+	if canDial != nil {
 		canDials = append(canDials, canDial)
 	}
 
@@ -24,9 +24,9 @@ func ProvideKrakenDialer(canDial netDial.ICanDial) fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						PubSub      *pubsub.PubSub `name:"Application"`
+						PubSub *pubsub.PubSub `name:"Application"`
 					}) (intf.IConnectionReactorFactory, error) {
-					return NewFactory(KrakenDialerConst,  params.PubSub), nil
+					return NewFactory(KrakenDialerConst, params.PubSub), nil
 				},
 			}),
 		fx.Provide(

@@ -8,8 +8,8 @@ import (
 )
 
 type Factory struct {
-	name        string
-	PubSub      *pubsub.PubSub
+	name   string
+	PubSub *pubsub.PubSub
 }
 
 func (self Factory) Name() string {
@@ -34,7 +34,7 @@ func (self Factory) Create(
 func NewFactory(name string,
 	PubSub *pubsub.PubSub) *Factory {
 	return &Factory{
-		name:        name,
-		PubSub:      PubSub,
+		name:   name,
+		PubSub: PubSub,
 	}
 }

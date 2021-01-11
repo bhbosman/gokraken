@@ -36,7 +36,7 @@ func TestDff(t *testing.T) {
 	var data interface{}
 	err := json.Unmarshal([]byte(ss), &data)
 	assert.NoError(t, err)
-	book := connection.NewFullMarketOrderBook("","book-10")
+	book := connection.NewFullMarketOrderBook("", "book-10")
 	_ = book.HandleBook(data.(map[string]interface{}))
 	c := book.CalculateCheckSum()
 	assert.Equal(t, uint32(974947235), c)

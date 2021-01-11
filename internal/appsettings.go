@@ -10,4 +10,3 @@ type AppSettings struct {
 	compressedListenerUrl string
 	HttpListenerUrl       string
 }
-
