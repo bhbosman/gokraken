@@ -19,6 +19,16 @@ import (
 	"strings"
 )
 
+type DirtyMapData struct {
+	data *marketDataStream.PublishTop5
+}
+
+func NewDirtyMapData(data *marketDataStream.PublishTop5) *DirtyMapData {
+	return &DirtyMapData{
+		data: data,
+	}
+}
+
 type SerializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
 type Reactor struct {
 	impl.BaseConnectionReactor
@@ -27,7 +37,7 @@ type Reactor struct {
 	SerializeData        SerializeData
 	republishChannelName string
 	publishChannelName   string
-	dirtyMap             map[string]*marketDataStream.PublishTop5
+	dirtyMap             map[string]*DirtyMapData
 	PubSub               *pubsub.PubSub
 	messageOut           int
 }
@@ -81,31 +91,39 @@ func (self *Reactor) Close() error {
 }
 
 func (self *Reactor) HandleEmptyQueue(top5 *rxgo.EmptyQueue) error {
-	for _, v := range self.dirtyMap {
+	var deleteKeys []string
+	for k, v := range self.dirtyMap {
 		self.messageOut++
-		marshal, err := self.SerializeData(v)
+		marshal, err := self.SerializeData(v.data)
 		if err != nil {
 			return err
 		}
 		_ = self.ToConnection(marshal)
+		deleteKeys = append(deleteKeys, k)
 	}
+	for _, s := range deleteKeys {
+		delete(self.dirtyMap, s)
+	}
+
 	s := fmt.Sprintf("\n\r-->%v<--\r\n", self.messageOut)
 	rws := gomessageblock.NewReaderWriter()
 	rws.Write([]byte(s))
 	_ = self.ToConnection(rws)
-	self.dirtyMap = make(map[string]*marketDataStream.PublishTop5)
 	return nil
 }
 
-func (self *Reactor) HandleTop5(top5 *marketDataStream.PublishTop5) error {
+func (self *Reactor) HandlePublishTop5(top5 *marketDataStream.PublishTop5) error {
 	if self.CancelCtx.Err() != nil {
 		return self.CancelCtx.Err()
 	}
 	top5.Source = "KrakenWS"
 	s := strings.Replace(fmt.Sprintf("%v.%v", top5.Source, top5.Instrument), "/", ".", -1)
 	top5.UniqueName = s
-	self.dirtyMap[s] = top5
-
+	if dirtyData, ok := self.dirtyMap[s]; ok {
+		dirtyData.data = top5
+	} else {
+		self.dirtyMap[s] = NewDirtyMapData(top5)
+	}
 	return nil
 }
 
@@ -123,10 +141,10 @@ func NewReactor(
 		ConsumerCounter:       ConsumerCounter,
 		messageRouter:         messageRouter.NewMessageRouter(),
 		SerializeData:         SerializeData,
-		dirtyMap:              make(map[string]*marketDataStream.PublishTop5),
+		dirtyMap:              make(map[string]*DirtyMapData),
 		PubSub:                PubSub,
 	}
-	result.messageRouter.Add(result.HandleTop5)
+	result.messageRouter.Add(result.HandlePublishTop5)
 	result.messageRouter.Add(result.HandleEmptyQueue)
 	return result
 }
