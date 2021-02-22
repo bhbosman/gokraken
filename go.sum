@@ -22,6 +22,7 @@ github.com/bhbosman/goprotoextra v0.0.1 h1:CoIa6MSq9A3CMqrpStgpgh/Q731HSDyGoa0bz
 github.com/bhbosman/goprotoextra v0.0.1/go.mod h1:8KtYuUDuRrZU4VOpB9r2YKWJtuThaB2ep3OtJdsF+zU=
 github.com/bhbosman/gorxextra v0.0.0-20200918070301-48dbd8b934dc h1:NMbD4FomqA6P9U2AM2+2hU7J4abIadK5mGgD3I5sijI=
 github.com/bhbosman/gorxextra v0.0.0-20200918070301-48dbd8b934dc/go.mod h1:tEwpbgFFydqczSq55t29rLrK9dz4+9ShWsBdKk3WTnU=
+github.com/bhbosman/govalr v0.0.0-20210111144927-560a53368b93/go.mod h1:5xeMr4L3RNvn8saVh7DQa7qyvr18YecfxNH49gFOcEo=
 github.com/bhbosman/rxgo/v2 v2.1.1-0.20200922152528-6aef42e76e00 h1:QJDRQLoBtUCe+NUKX5UT3H88tBMNXnnVT6J8L0JjjIg=
 github.com/bhbosman/rxgo/v2 v2.1.1-0.20200922152528-6aef42e76e00/go.mod h1:jzCqxCtjqmZLvMdKneicaw4aKB+1iRtvd9etRY4gDNI=
 github.com/cenkalti/backoff/v4 v4.0.2 h1:JIufpQLbh4DkbQoii76ItQIUFzevQSqOLZca4eamEDs=

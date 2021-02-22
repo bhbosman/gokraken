@@ -12,6 +12,11 @@ type Factory struct {
 	PubSub *pubsub.PubSub
 }
 
+func (self Factory) Values(inputValues map[string]interface{}) (map[string]interface{}, error) {
+	result := make(map[string]interface{})
+	return result, nil
+}
+
 func (self Factory) Name() string {
 	return self.name
 }

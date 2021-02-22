@@ -35,7 +35,7 @@ func ProvideKrakenDialer(canDial netDial.ICanDial) fx.Option {
 				Target: netDial.NewNetDialApp(
 					"Kraken",
 					"wss://ws.kraken.com:443",
-					impl.WebSocketName,
+					impl.CreateWebSocketStack,
 					KrakenDialerConst,
 					netDial.MaxConnectionsSetting(1),
 					netDial.CanDial(canDials...)),
