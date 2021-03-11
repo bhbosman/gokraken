@@ -10,13 +10,16 @@ import (
 
 const FactoryName = "KrakenWSS"
 
-func ProvideKrakenDialer(canDial netDial.ICanDial) fx.Option {
+func ProvideKrakenDialer(
+	pubSub *pubsub.PubSub,
+	canDial netDial.ICanDial) fx.Option {
 	var canDials []netDial.ICanDial
 	if canDial != nil {
 		canDials = append(canDials, canDial)
 	}
 
 	const KrakenDialerConst = "KrakenDialer"
+	cfr := NewFactory(KrakenDialerConst, pubSub)
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -26,7 +29,7 @@ func ProvideKrakenDialer(canDial netDial.ICanDial) fx.Option {
 						fx.In
 						PubSub *pubsub.PubSub `name:"Application"`
 					}) (intf.IConnectionReactorFactory, error) {
-					return NewFactory(KrakenDialerConst, params.PubSub), nil
+					return cfr, nil
 				},
 			}),
 		fx.Provide(
@@ -37,6 +40,7 @@ func ProvideKrakenDialer(canDial netDial.ICanDial) fx.Option {
 					"wss://ws.kraken.com:443",
 					impl.CreateWebSocketStack,
 					KrakenDialerConst,
+					cfr,
 					netDial.MaxConnectionsSetting(1),
 					netDial.CanDial(canDials...)),
 			}))

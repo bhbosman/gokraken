@@ -36,7 +36,7 @@ func NewFactory(
 	name string,
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
-	ConsumerCounter *netDial.CanDialDefaultImpl) *Factory {
+	ConsumerCounter *netDial.CanDialDefaultImpl) intf.IConnectionReactorFactory {
 	return &Factory{
 		name:            name,
 		pubSub:          pubSub,

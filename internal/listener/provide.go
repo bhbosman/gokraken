@@ -16,8 +16,23 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func TextListener(maxConnections int, url string) fx.Option {
+func TextListener(
+	pubSub *pubsub.PubSub,
+	ConsumerCounter *netDial.CanDialDefaultImpl,
+	maxConnections int,
+	url string) fx.Option {
 	const TextListenerConnection = "TextListenerConnection"
+	cfr := NewFactory(
+		TextListenerConnection,
+		pubSub,
+		func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
+			bytes, err := json.Marshal(m)
+			if err != nil {
+				return nil, err
+			}
+			return gomessageblock.NewReaderWriterBlock(bytes), nil
+		},
+		ConsumerCounter)
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -27,17 +42,7 @@ func TextListener(maxConnections int, url string) fx.Option {
 					ConsumerCounter *netDial.CanDialDefaultImpl
 					PubSub          *pubsub.PubSub `name:"Application"`
 				}) (intf.IConnectionReactorFactory, error) {
-					return NewFactory(
-						TextListenerConnection,
-						params.PubSub,
-						func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
-							bytes, err := json.Marshal(m)
-							if err != nil {
-								return nil, err
-							}
-							return gomessageblock.NewReaderWriterBlock(bytes), nil
-						},
-						params.ConsumerCounter), nil
+					return cfr, nil
 				},
 			}),
 		fx.Provide(
@@ -48,13 +53,24 @@ func TextListener(maxConnections int, url string) fx.Option {
 					url,
 					impl.CreateEmptyStack,
 					TextListenerConnection,
+					cfr,
 					netListener.MaxConnectionsSetting(maxConnections)),
 			}),
 	)
 }
 
-func CompressedListener(maxConnections int, url string) fx.Option {
+func CompressedListener(
+	pubSub *pubsub.PubSub,
+	ConsumerCounter *netDial.CanDialDefaultImpl,
+	maxConnections int, url string) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
+	cfr := NewFactory(
+		CompressedListenerConnection,
+		pubSub,
+		func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
+			return stream.Marshall(data)
+		},
+		ConsumerCounter)
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -64,13 +80,7 @@ func CompressedListener(maxConnections int, url string) fx.Option {
 					PubSub          *pubsub.PubSub `name:"Application"`
 					ConsumerCounter *netDial.CanDialDefaultImpl
 				}) (intf.IConnectionReactorFactory, error) {
-					return NewFactory(
-						CompressedListenerConnection,
-						params.PubSub,
-						func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
-							return stream.Marshall(data)
-						},
-						params.ConsumerCounter), nil
+					return cfr, nil
 				},
 			}),
 		fx.Provide(
@@ -81,6 +91,7 @@ func CompressedListener(maxConnections int, url string) fx.Option {
 					url,
 					impl.CreateCompressedStack,
 					CompressedListenerConnection,
+					cfr,
 					netListener.MaxConnectionsSetting(maxConnections)),
 			}),
 	)

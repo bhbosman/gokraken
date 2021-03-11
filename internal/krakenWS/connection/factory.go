@@ -37,7 +37,7 @@ func (self Factory) Create(
 }
 
 func NewFactory(name string,
-	PubSub *pubsub.PubSub) *Factory {
+	PubSub *pubsub.PubSub) intf.IConnectionReactorFactory {
 	return &Factory{
 		name:   name,
 		PubSub: PubSub,
