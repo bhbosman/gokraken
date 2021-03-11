@@ -6,7 +6,6 @@ import (
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/connectionManager/endpoints"
 	"github.com/bhbosman/gocomms/connectionManager/view"
-	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gocomms/provide"
 	"github.com/bhbosman/gokraken/internal/krakenWS/connection"
@@ -39,7 +38,6 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 		provide.RegisterHttpHandler(settings.HttpListenerUrl),
 		endpoints.RegisterConnectionManagerEndpoint(),
 		view.RegisterConnectionsHtmlTemplate(),
-		impl.RegisterAllConnectionRelatedServices(),
 		connection.ProvideKrakenDialer(pubSub, ConsumerCounter),
 		listener.TextListener(pubSub, ConsumerCounter, 1024, settings.textListenerUrl),
 		listener.CompressedListener(pubSub, ConsumerCounter, 1024, settings.compressedListenerUrl),

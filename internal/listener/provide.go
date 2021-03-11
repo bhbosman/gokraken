@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"github.com/bhbosman/gocommon/stream"
 	"github.com/bhbosman/gocomms/impl"
-	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
 
-	//"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gocomms/netListener"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
@@ -36,17 +34,6 @@ func TextListener(
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
-				Group: impl.ConnectionReactorFactoryConst,
-				Target: func(params struct {
-					fx.In
-					ConsumerCounter *netDial.CanDialDefaultImpl
-					PubSub          *pubsub.PubSub `name:"Application"`
-				}) (intf.IConnectionReactorFactory, error) {
-					return cfr, nil
-				},
-			}),
-		fx.Provide(
-			fx.Annotated{
 				Group: "Apps",
 				Target: netListener.NewNetListenApp(
 					TextListenerConnection,
@@ -72,17 +59,6 @@ func CompressedListener(
 		},
 		ConsumerCounter)
 	return fx.Options(
-		fx.Provide(
-			fx.Annotated{
-				Group: impl.ConnectionReactorFactoryConst,
-				Target: func(params struct {
-					fx.In
-					PubSub          *pubsub.PubSub `name:"Application"`
-					ConsumerCounter *netDial.CanDialDefaultImpl
-				}) (intf.IConnectionReactorFactory, error) {
-					return cfr, nil
-				},
-			}),
 		fx.Provide(
 			fx.Annotated{
 				Group: "Apps",
