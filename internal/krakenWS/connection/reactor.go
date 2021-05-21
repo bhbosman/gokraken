@@ -270,13 +270,7 @@ func (self *Reactor) Close() error {
 	for _, v := range self.FullMarketOrderBook {
 		v.Clear()
 		v.Publish(true)
-
-		//top5 := &marketDataStream.PublishTop5{
-		//	Instrument: k,
-		//}
-		//_ = self.KrakenState.OnData(top5)
 	}
-	//err := self.KrakenState.OnDisConnect()
 	return self.BaseConnectionReactor.Close()
 }
 func (self *Reactor) Open() error {
