@@ -5,14 +5,15 @@ import (
 	"fmt"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
 	"github.com/bhbosman/gocommon/messageRouter"
+	"github.com/bhbosman/gocomms/RxHandlers"
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gologging"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
-	"github.com/reactivex/rxgo/v2"
 	"google.golang.org/protobuf/proto"
 	"net"
 	"net/url"
@@ -46,9 +47,9 @@ func (self *Reactor) Init(
 	conn net.Conn,
 	url *url.URL,
 	connectionId string,
-	connectionManager connectionManager.IConnectionManager,
+	connectionManager connectionManager.IConnectionManager__,
 	toConnectionFunc goprotoextra.ToConnectionFunc,
-	toConnectionReactor goprotoextra.ToReactorFunc) (rxgo.NextExternalFunc, error) {
+	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(conn, url, connectionId, connectionManager, toConnectionFunc, toConnectionReactor)
 	if err != nil {
 		return nil, err
@@ -90,7 +91,7 @@ func (self *Reactor) Close() error {
 	return self.BaseConnectionReactor.Close()
 }
 
-func (self *Reactor) HandleEmptyQueue(top5 *rxgo.EmptyQueue) error {
+func (self *Reactor) HandleEmptyQueue(top5 *RxHandlers.EmptyQueue) error {
 	var deleteKeys []string
 	for k, v := range self.dirtyMap {
 		self.messageOut++

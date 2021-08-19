@@ -14,13 +14,11 @@ require (
 	github.com/emirpasic/gods v1.12.0
 	github.com/golang/protobuf v1.4.2
 	github.com/kardianos/service v1.1.0
-	github.com/reactivex/rxgo/v2 v2.1.0
+	github.com/reactivex/rxgo/v2 v2.5.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	go.uber.org/fx v1.13.1
 	google.golang.org/protobuf v1.25.0
 )
-
-replace github.com/reactivex/rxgo/v2 => github.com/bhbosman/rxgo/v2 v2.1.1-0.20210414130730-4bd8cc2b429e
 
 replace github.com/bhbosman/gocomms => ../gocomms
 

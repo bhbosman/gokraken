@@ -8,16 +8,17 @@ import (
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/stream"
-	"github.com/bhbosman/gocomms/StacksFixed/websocket/wsmsg"
+	"github.com/bhbosman/gocomms/RxHandlers"
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocomms/intf"
+	"github.com/bhbosman/gocomms/stacks/websocket/wsmsg"
 	krakenWsStream "github.com/bhbosman/gokraken/internal/krakenWS/internal/stream"
 	"github.com/bhbosman/gologging"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"github.com/golang/protobuf/jsonpb"
-	"github.com/reactivex/rxgo/v2"
 	"log"
 	"strconv"
 
@@ -232,9 +233,9 @@ func (self *Reactor) Init(
 	conn net.Conn,
 	url *url.URL,
 	connectionId string,
-	connectionManager connectionManager.IConnectionManager,
+	connectionManager connectionManager.IConnectionManager__,
 	onSend goprotoextra.ToConnectionFunc,
-	toConnectionReactor goprotoextra.ToReactorFunc) (rxgo.NextExternalFunc, error) {
+	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(
 		conn,
 		url,
@@ -386,7 +387,7 @@ func (self *Reactor) HandlePublishMessage(msg *RePublishMessage) error {
 	return self.publishData(true)
 }
 
-func (self *Reactor) HandleEmptyQueue(msg *rxgo.EmptyQueue) error {
+func (self *Reactor) HandleEmptyQueue(msg *RxHandlers.EmptyQueue) error {
 	return self.publishData(false)
 }
 

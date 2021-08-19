@@ -2,7 +2,7 @@ package connection
 
 import (
 	"github.com/bhbosman/gocommon/stream"
-	"github.com/bhbosman/gocomms/StacksFixed/websocket/wsmsg"
+	"github.com/bhbosman/gocomms/stacks/websocket/wsmsg"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/golang/protobuf/jsonpb"
