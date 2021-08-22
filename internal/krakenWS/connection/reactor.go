@@ -22,7 +22,6 @@ import (
 	"log"
 	"strconv"
 
-	"net"
 	"net/url"
 )
 
@@ -230,14 +229,12 @@ func (self Reactor) handleMessageBlockReaderWriter(inData *gomessageblock.Reader
 }
 
 func (self *Reactor) Init(
-	conn net.Conn,
 	url *url.URL,
 	connectionId string,
 	connectionManager connectionManager.IConnectionManager__,
 	onSend goprotoextra.ToConnectionFunc,
 	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(
-		conn,
 		url,
 		connectionId,
 		connectionManager,
