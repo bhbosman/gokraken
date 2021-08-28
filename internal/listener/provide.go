@@ -38,6 +38,7 @@ func TextListener(
 				Target: netListener.NewNetListenApp(
 					TextListenerConnection,
 					url,
+					impl.TransportFactoryEmptyName,
 					impl.CreateEmptyStack,
 					cfr,
 					netListener.MaxConnectionsSetting(maxConnections)),
@@ -64,6 +65,7 @@ func CompressedListener(
 				Target: netListener.NewNetListenApp(
 					CompressedListenerConnection,
 					url,
+					impl.TransportFactoryCompressedName,
 					impl.CreateCompressedStack,
 					cfr,
 					netListener.MaxConnectionsSetting(maxConnections)),
