@@ -27,7 +27,6 @@ func ProvideKrakenDialer(
 					"Kraken",
 					"wss://ws.kraken.com:443",
 					impl.WebSocketName,
-					impl.GetNamedStack(impl.WebSocketName),
 					cfr,
 					netDial.MaxConnectionsSetting(1),
 					netDial.CanDial(canDials...)),
