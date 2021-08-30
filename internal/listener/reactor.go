@@ -6,6 +6,7 @@ import (
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocomms/RxHandlers"
+	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gocomms/intf"
@@ -131,12 +132,13 @@ func NewReactor(
 	name string,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
+	connectionCancelFunc common.ConnectionCancelFunc,
 	userContext interface{},
 	ConsumerCounter *netDial.CanDialDefaultImpl,
 	SerializeData SerializeData,
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{
-		BaseConnectionReactor: impl.NewBaseConnectionReactor(logger, name, cancelCtx, cancelFunc, userContext),
+		BaseConnectionReactor: impl.NewBaseConnectionReactor(logger, name, cancelCtx, cancelFunc, connectionCancelFunc, userContext),
 		ConsumerCounter:       ConsumerCounter,
 		messageRouter:         messageRouter.NewMessageRouter(),
 		SerializeData:         SerializeData,

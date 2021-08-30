@@ -9,6 +9,7 @@ import (
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/stream"
 	"github.com/bhbosman/gocomms/RxHandlers"
+	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gocomms/intf"
@@ -413,6 +414,7 @@ func NewReactor(
 	name string,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
+	connectionCancelFunc common.ConnectionCancelFunc,
 	userContext interface{},
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{
@@ -421,6 +423,7 @@ func NewReactor(
 			name,
 			cancelCtx,
 			cancelFunc,
+			connectionCancelFunc,
 			userContext),
 		messageRouter:            messageRouter.NewMessageRouter(),
 		connectionID:             0,

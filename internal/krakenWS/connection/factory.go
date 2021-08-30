@@ -2,6 +2,7 @@ package connection
 
 import (
 	"context"
+	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gologging"
 	"github.com/cskr/pubsub"
@@ -25,6 +26,7 @@ func (self Factory) Create(
 	name string,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
+	connectionCancelFunc common.ConnectionCancelFunc,
 	logger *gologging.SubSystemLogger,
 	userContext interface{}) intf.IConnectionReactor {
 	return NewReactor(
@@ -32,6 +34,7 @@ func (self Factory) Create(
 		name,
 		cancelCtx,
 		cancelFunc,
+		connectionCancelFunc,
 		userContext,
 		self.PubSub)
 }
