@@ -16,7 +16,7 @@ require (
 	github.com/kardianos/service v1.1.0
 	github.com/reactivex/rxgo/v2 v2.5.0 // indirect
 	github.com/stretchr/testify v1.6.1
-	go.uber.org/fx v1.13.1
+	go.uber.org/fx v1.14.2
 	google.golang.org/protobuf v1.25.0
 )
 
