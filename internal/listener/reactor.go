@@ -11,10 +11,10 @@ import (
 	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
-	"github.com/bhbosman/gologging"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 	"net/url"
 	"strings"
@@ -128,7 +128,7 @@ func (self *Reactor) HandlePublishTop5(top5 *marketDataStream.PublishTop5) error
 }
 
 func NewReactor(
-	logger *gologging.SubSystemLogger,
+	logger *zap.Logger,
 	name string,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,

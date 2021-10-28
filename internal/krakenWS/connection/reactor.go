@@ -15,12 +15,11 @@ import (
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/stacks/websocket/wsmsg"
 	krakenWsStream "github.com/bhbosman/gokraken/internal/krakenWS/internal/stream"
-	"github.com/bhbosman/gologging"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"github.com/golang/protobuf/jsonpb"
-	"log"
+	"go.uber.org/zap"
 	"strconv"
 
 	"net/url"
@@ -118,9 +117,9 @@ func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.Kraken
 	case "subscriptionStatus":
 		return self.handleSubscriptionStatus(inData)
 	default:
-		self.Logger.LogWithLevel(0, func(logger *log.Logger) {
-			logger.Printf("Unhandled message: %v\nData: %v", inData.Event, inData.String())
-		})
+		self.Logger.Info(fmt.Sprintf("Unhandled message: %v\nData: %v",
+			zap.String("event", inData.Event),
+			zap.String("data", inData.String())))
 		return nil
 	}
 }
@@ -319,7 +318,9 @@ func (self Reactor) handleHeartbeat(data interface{}) error {
 func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptionStatus) error {
 	if data, ok := self.outstandingSubscriptions[inData.GetReqid()]; ok {
 		if inData.GetStatus() == "error" {
-			return self.Logger.ErrorWithDescription("subscription failed", fmt.Errorf(inData.GetErrorMessage()))
+			err := fmt.Errorf(inData.GetErrorMessage())
+			self.Logger.Error("subscription failed", zap.Error(err))
+			return err
 		}
 		delete(self.outstandingSubscriptions, data.Reqid)
 
@@ -410,7 +411,7 @@ func (self *Reactor) Register(pair string, name string) error {
 }
 
 func NewReactor(
-	logger *gologging.SubSystemLogger,
+	logger *zap.Logger,
 	name string,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,

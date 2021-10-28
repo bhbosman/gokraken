@@ -5,8 +5,8 @@ import (
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
-	"github.com/bhbosman/gologging"
 	"github.com/cskr/pubsub"
+	"go.uber.org/zap"
 )
 
 type Factory struct {
@@ -29,7 +29,7 @@ func (self *Factory) Create(
 	name string, cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc common.ConnectionCancelFunc,
-	logger *gologging.SubSystemLogger,
+	logger *zap.Logger,
 	userContext interface{}) intf.IConnectionReactor {
 	return NewReactor(logger, name, cancelCtx, cancelFunc, connectionCancelFunc, userContext, self.ConsumerCounter, self.SerializeData, self.pubSub)
 }

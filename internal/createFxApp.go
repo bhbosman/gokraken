@@ -11,8 +11,9 @@ import (
 	"github.com/bhbosman/gokraken/internal/krakenWS/connection"
 	"github.com/bhbosman/gokraken/internal/listener"
 	"github.com/bhbosman/gologging"
-	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
+	"go.uber.org/zap"
 	"log"
 	"os"
 )
@@ -24,23 +25,27 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 		compressedListenerUrl: "tcp4://127.0.0.1:3011",
 		HttpListenerUrl:       "http://127.0.0.1:8081",
 	}
-	pubSub := pubsub.New(32)
 
 	ConsumerCounter := netDial.NewCanDialDefaultImpl()
 	var shutDowner fx.Shutdowner
 	fxApp := fx.New(
 		fx.Supply(settings, ConsumerCounter),
-		fx.Logger(settings.Logger),
+		fx.Provide(func() *zap.Logger {
+			return zap.NewExample()
+		}),
+		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
+			return &fxevent.ZapLogger{Logger: logger}
+		}),
 		gologging.ProvideLogFactory(settings.Logger, nil),
 		fx.Populate(&shutDowner),
-		app2.RegisterRootContext(pubSub),
+		app2.RegisterRootContext(),
 		connectionManager.RegisterDefaultConnectionManager(),
 		provide.RegisterHttpHandler(settings.HttpListenerUrl),
 		endpoints.RegisterConnectionManagerEndpoint(),
 		view.RegisterConnectionsHtmlTemplate(),
-		connection.ProvideKrakenDialer(pubSub, ConsumerCounter),
-		listener.TextListener(pubSub, ConsumerCounter, 1024, settings.textListenerUrl),
-		listener.CompressedListener(pubSub, ConsumerCounter, 1024, settings.compressedListenerUrl),
+		connection.ProvideKrakenDialer(ConsumerCounter),
+		listener.TextListener(ConsumerCounter, 1024, settings.textListenerUrl),
+		listener.CompressedListener(ConsumerCounter, 1024, settings.compressedListenerUrl),
 		fxHelper.InvokeApps(),
 	)
 	return fxApp, shutDowner

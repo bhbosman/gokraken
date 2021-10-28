@@ -2,6 +2,7 @@ package connection
 
 import (
 	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
@@ -10,7 +11,6 @@ import (
 const FactoryName = "KrakenWSS"
 
 func ProvideKrakenDialer(
-	pubSub *pubsub.PubSub,
 	canDial netDial.ICanDial) fx.Option {
 	var canDials []netDial.ICanDial
 	if canDial != nil {
@@ -18,7 +18,6 @@ func ProvideKrakenDialer(
 	}
 
 	const KrakenDialerConst = "KrakenDialer"
-	cfr := NewFactory(KrakenDialerConst, pubSub)
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -27,8 +26,15 @@ func ProvideKrakenDialer(
 					"Kraken",
 					"wss://ws.kraken.com:443",
 					impl.WebSocketName,
-					cfr,
 					netDial.MaxConnectionsSetting(1),
-					netDial.CanDial(canDials...)),
+					netDial.CanDial(canDials...),
+					netDial.FxOption(
+						fx.Provide(
+							fx.Annotated{
+								Target: func(pubSub *pubsub.PubSub) (intf.IConnectionReactorFactory, error) {
+									cfr := NewFactory(KrakenDialerConst, pubSub)
+									return cfr, nil
+								},
+							}))),
 			}))
 }
