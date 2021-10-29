@@ -10,9 +10,14 @@ import (
 )
 
 type Factory struct {
+	crfName         string
 	pubSub          *pubsub.PubSub
 	SerializeData   SerializeData
 	ConsumerCounter *netDial.CanDialDefaultImpl
+}
+
+func (self *Factory) Name() string {
+	return self.crfName
 }
 
 func (self *Factory) Values(inputValues map[string]interface{}) (map[string]interface{}, error) {
@@ -30,10 +35,12 @@ func (self *Factory) Create(
 }
 
 func NewFactory(
+	crfName string,
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
 	ConsumerCounter *netDial.CanDialDefaultImpl) intf.IConnectionReactorFactory {
 	return &Factory{
+		crfName:         crfName,
 		pubSub:          pubSub,
 		SerializeData:   SerializeData,
 		ConsumerCounter: ConsumerCounter,

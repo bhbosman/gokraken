@@ -12,6 +12,7 @@ require (
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
 	github.com/cskr/pubsub v1.0.2
 	github.com/emirpasic/gods v1.12.0
+	github.com/gobwas/ws v1.1.0 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/kardianos/service v1.1.0
 	github.com/stretchr/testify v1.6.1

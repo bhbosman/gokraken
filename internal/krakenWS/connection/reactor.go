@@ -124,7 +124,7 @@ func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.Kraken
 	}
 }
 
-func (self *Reactor) handleWebsocketDataResponse(inData WebsocketDataResponse) error {
+func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) error {
 	if channelId, ok := inData[0].(float64); ok {
 		if data, ok := self.registeredSubscriptions[uint32(channelId)]; ok {
 			switch data.Name {
@@ -176,13 +176,13 @@ func (self *Reactor) handleWebsocketDataResponse(inData WebsocketDataResponse) e
 	return nil
 }
 
-type WebsocketDataResponse []interface{}
+type websocketDataResponse []interface{}
 
 func (self *Reactor) handleWebSocketMessageWrapper(inData *wsmsg.WebSocketMessageWrapper) error {
 	switch inData.Data.OpCode {
 	case wsmsg.WebSocketMessage_OpText:
 		if len(inData.Data.Message) > 0 && inData.Data.Message[0] == '[' { //type WebsocketDataResponse []interface{}
-			var dataResponse WebsocketDataResponse
+			var dataResponse websocketDataResponse
 			err := json.Unmarshal(inData.Data.Message, &dataResponse)
 			if err != nil {
 				return err

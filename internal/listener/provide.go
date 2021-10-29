@@ -20,7 +20,29 @@ func TextListener(
 	maxConnections int,
 	url string) fx.Option {
 	const TextListenerConnection = "TextListenerConnection"
+	crfName := "TextListenerConnection.CRF"
 	return fx.Options(
+		fx.Provide(
+			fx.Annotated{
+				Group: "CFR",
+				Target: func(params struct {
+					fx.In
+					PubSub *pubsub.PubSub `name:"Application"`
+				}) (intf.IConnectionReactorFactory, error) {
+					cfr := NewFactory(
+						crfName,
+						params.PubSub,
+						func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
+							bytes, err := json.Marshal(m)
+							if err != nil {
+								return nil, err
+							}
+							return gomessageblock.NewReaderWriterBlock(bytes), nil
+						},
+						ConsumerCounter)
+					return cfr, nil
+				},
+			}),
 		fx.Provide(
 			fx.Annotated{
 				Group: "Apps",
@@ -28,24 +50,8 @@ func TextListener(
 					TextListenerConnection,
 					url,
 					impl.TransportFactoryEmptyName,
-					netListener.MaxConnectionsSetting(maxConnections),
-					netListener.FxOption(
-						fx.Provide(
-							fx.Annotated{
-								Target: func(pubSub *pubsub.PubSub) (intf.IConnectionReactorFactory, error) {
-									cfr := NewFactory(
-										pubSub,
-										func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
-											bytes, err := json.Marshal(m)
-											if err != nil {
-												return nil, err
-											}
-											return gomessageblock.NewReaderWriterBlock(bytes), nil
-										},
-										ConsumerCounter)
-									return cfr, nil
-								},
-							}))),
+					crfName,
+					netListener.MaxConnectionsSetting(maxConnections)),
 			}),
 	)
 }
@@ -54,7 +60,25 @@ func CompressedListener(
 	ConsumerCounter *netDial.CanDialDefaultImpl,
 	maxConnections int, url string) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
+	crfName := "CompressedListenerConnection.CRF"
 	return fx.Options(
+		fx.Provide(
+			fx.Annotated{
+				Group: "CFR",
+				Target: func(params struct {
+					fx.In
+					PubSub *pubsub.PubSub `name:"Application"`
+				}) (intf.IConnectionReactorFactory, error) {
+					cfr := NewFactory(
+						crfName,
+						params.PubSub,
+						func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
+							return stream.Marshall(data)
+						},
+						ConsumerCounter)
+					return cfr, nil
+				},
+			}),
 		fx.Provide(
 			fx.Annotated{
 				Group: "Apps",
@@ -62,20 +86,8 @@ func CompressedListener(
 					CompressedListenerConnection,
 					url,
 					impl.TransportFactoryCompressedName,
-					netListener.MaxConnectionsSetting(maxConnections),
-					netListener.FxOption(
-						fx.Provide(
-							fx.Annotated{
-								Target: func(pubSub *pubsub.PubSub) (intf.IConnectionReactorFactory, error) {
-									cfr := NewFactory(
-										pubSub,
-										func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
-											return stream.Marshall(data)
-										},
-										ConsumerCounter)
-									return cfr, nil
-								},
-							}))),
+					crfName,
+					netListener.MaxConnectionsSetting(maxConnections)),
 			}),
 	)
 }

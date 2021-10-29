@@ -18,7 +18,19 @@ func ProvideKrakenDialer(
 	}
 
 	const KrakenDialerConst = "KrakenDialer"
+	crfName := "KrakenDialer.CRF"
 	return fx.Options(
+		fx.Provide(
+			fx.Annotated{
+				Group: "CFR",
+				Target: func(params struct {
+					fx.In
+					PubSub *pubsub.PubSub `name:"Application"`
+				}) (intf.IConnectionReactorFactory, error) {
+					cfr := NewFactory(crfName, params.PubSub)
+					return cfr, nil
+				},
+			}),
 		fx.Provide(
 			fx.Annotated{
 				Group: "Apps",
@@ -26,15 +38,8 @@ func ProvideKrakenDialer(
 					"Kraken",
 					"wss://ws.kraken.com:443",
 					impl.WebSocketName,
+					crfName,
 					netDial.MaxConnectionsSetting(1),
-					netDial.CanDial(canDials...),
-					netDial.FxOption(
-						fx.Provide(
-							fx.Annotated{
-								Target: func(pubSub *pubsub.PubSub) (intf.IConnectionReactorFactory, error) {
-									cfr := NewFactory(pubSub)
-									return cfr, nil
-								},
-							}))),
+					netDial.CanDial(canDials...)),
 			}))
 }
