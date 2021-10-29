@@ -10,7 +10,6 @@ import (
 )
 
 type Factory struct {
-	name            string
 	pubSub          *pubsub.PubSub
 	SerializeData   SerializeData
 	ConsumerCounter *netDial.CanDialDefaultImpl
@@ -21,26 +20,20 @@ func (self *Factory) Values(inputValues map[string]interface{}) (map[string]inte
 	return result, nil
 }
 
-func (self *Factory) Name() string {
-	return self.name
-}
-
 func (self *Factory) Create(
-	name string, cancelCtx context.Context,
+	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc common.ConnectionCancelFunc,
 	logger *zap.Logger,
 	userContext interface{}) intf.IConnectionReactor {
-	return NewReactor(logger, name, cancelCtx, cancelFunc, connectionCancelFunc, userContext, self.ConsumerCounter, self.SerializeData, self.pubSub)
+	return NewReactor(logger, cancelCtx, cancelFunc, connectionCancelFunc, userContext, self.ConsumerCounter, self.SerializeData, self.pubSub)
 }
 
 func NewFactory(
-	name string,
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
 	ConsumerCounter *netDial.CanDialDefaultImpl) intf.IConnectionReactorFactory {
 	return &Factory{
-		name:            name,
 		pubSub:          pubSub,
 		SerializeData:   SerializeData,
 		ConsumerCounter: ConsumerCounter,

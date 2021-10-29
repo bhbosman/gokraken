@@ -129,7 +129,6 @@ func (self *Reactor) HandlePublishTop5(top5 *marketDataStream.PublishTop5) error
 
 func NewReactor(
 	logger *zap.Logger,
-	name string,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc common.ConnectionCancelFunc,
@@ -138,7 +137,7 @@ func NewReactor(
 	SerializeData SerializeData,
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{
-		BaseConnectionReactor: impl.NewBaseConnectionReactor(logger, name, cancelCtx, cancelFunc, connectionCancelFunc, userContext),
+		BaseConnectionReactor: impl.NewBaseConnectionReactor(logger, cancelCtx, cancelFunc, connectionCancelFunc, userContext),
 		ConsumerCounter:       ConsumerCounter,
 		messageRouter:         messageRouter.NewMessageRouter(),
 		SerializeData:         SerializeData,

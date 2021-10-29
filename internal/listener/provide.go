@@ -34,7 +34,6 @@ func TextListener(
 							fx.Annotated{
 								Target: func(pubSub *pubsub.PubSub) (intf.IConnectionReactorFactory, error) {
 									cfr := NewFactory(
-										TextListenerConnection,
 										pubSub,
 										func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
 											bytes, err := json.Marshal(m)
@@ -69,7 +68,6 @@ func CompressedListener(
 							fx.Annotated{
 								Target: func(pubSub *pubsub.PubSub) (intf.IConnectionReactorFactory, error) {
 									cfr := NewFactory(
-										CompressedListenerConnection,
 										pubSub,
 										func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
 											return stream.Marshall(data)

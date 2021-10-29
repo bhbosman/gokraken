@@ -32,7 +32,7 @@ func ProvideKrakenDialer(
 						fx.Provide(
 							fx.Annotated{
 								Target: func(pubSub *pubsub.PubSub) (intf.IConnectionReactorFactory, error) {
-									cfr := NewFactory(KrakenDialerConst, pubSub)
+									cfr := NewFactory(pubSub)
 									return cfr, nil
 								},
 							}))),

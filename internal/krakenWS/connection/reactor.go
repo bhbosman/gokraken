@@ -412,7 +412,6 @@ func (self *Reactor) Register(pair string, name string) error {
 
 func NewReactor(
 	logger *zap.Logger,
-	name string,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc common.ConnectionCancelFunc,
@@ -421,7 +420,6 @@ func NewReactor(
 	result := &Reactor{
 		BaseConnectionReactor: impl.NewBaseConnectionReactor(
 			logger,
-			name,
 			cancelCtx,
 			cancelFunc,
 			connectionCancelFunc,
