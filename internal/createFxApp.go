@@ -3,6 +3,7 @@ package internal
 import (
 	app2 "github.com/bhbosman/gocommon/app"
 	"github.com/bhbosman/gocommon/fxHelper"
+	"github.com/bhbosman/gocommon/logSettings"
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/connectionManager/endpoints"
 	"github.com/bhbosman/gocomms/connectionManager/view"
@@ -12,8 +13,6 @@ import (
 	"github.com/bhbosman/gokraken/internal/listener"
 	"github.com/bhbosman/gologging"
 	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
-	"go.uber.org/zap"
 	"log"
 	"os"
 )
@@ -30,12 +29,8 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 	var shutDowner fx.Shutdowner
 	fxApp := fx.New(
 		fx.Supply(settings, ConsumerCounter),
-		fx.Provide(func() *zap.Logger {
-			return zap.NewExample()
-		}),
-		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
-			return &fxevent.ZapLogger{Logger: logger}
-		}),
+		logSettings.ProvideZapConfig(),
+
 		gologging.ProvideLogFactory(settings.Logger, nil),
 		fx.Populate(&shutDowner),
 		app2.RegisterRootContext(),
