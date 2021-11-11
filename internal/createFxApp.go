@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/bhbosman/gocommon/Services/implementations"
 	app2 "github.com/bhbosman/gocommon/app"
 	"github.com/bhbosman/gocommon/fxHelper"
 	"github.com/bhbosman/gocommon/logSettings"
@@ -30,7 +31,8 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 	fxApp := fx.New(
 		fx.Supply(settings, ConsumerCounter),
 		logSettings.ProvideZapConfig(),
-
+		implementations.ProvideNewUniqueReferenceService(),
+		implementations.ProvideUniqueSessionNumber(),
 		gologging.ProvideLogFactory(settings.Logger, nil),
 		fx.Populate(&shutDowner),
 		app2.RegisterRootContext(),
