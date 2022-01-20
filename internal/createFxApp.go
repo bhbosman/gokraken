@@ -3,8 +3,6 @@ package internal
 import (
 	"github.com/bhbosman/gocommon/Services/implementations"
 	app2 "github.com/bhbosman/gocommon/app"
-	"github.com/bhbosman/gocommon/fxHelper"
-	"github.com/bhbosman/gocommon/logSettings"
 	"github.com/bhbosman/gocomms/connectionManager"
 	"github.com/bhbosman/gocomms/connectionManager/endpoints"
 	"github.com/bhbosman/gocomms/connectionManager/view"
@@ -30,12 +28,19 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 	var shutDowner fx.Shutdowner
 	fxApp := fx.New(
 		fx.Supply(settings, ConsumerCounter),
-		logSettings.ProvideZapConfig(),
 		implementations.ProvideNewUniqueReferenceService(),
 		implementations.ProvideUniqueSessionNumber(),
 		gologging.ProvideLogFactory(settings.Logger, nil),
 		fx.Populate(&shutDowner),
-		app2.RegisterRootContext(),
+		app2.ProvideZapCoreEncoderConfigForDev(),
+		app2.ProvideZapCoreEncoderConfigForProd(),
+		app2.ProvideZapConfigForDev(),
+		app2.ProvideZapConfigForProd(),
+		app2.ProvideZapLogger(),
+		app2.ProvideFxWithLogger(),
+		app2.RegisterRunTimeManager(),
+		app2.RegisterApplicationContext(),
+		app2.ProvidePubSub("Application"),
 		connectionManager.RegisterDefaultConnectionManager(),
 		provide.RegisterHttpHandler(settings.HttpListenerUrl),
 		endpoints.RegisterConnectionManagerEndpoint(),
@@ -43,7 +48,7 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 		connection.ProvideKrakenDialer(ConsumerCounter),
 		listener.TextListener(ConsumerCounter, 1024, settings.textListenerUrl),
 		listener.CompressedListener(ConsumerCounter, 1024, settings.compressedListenerUrl),
-		fxHelper.InvokeApps(),
+		app2.InvokeApps(),
 	)
 	return fxApp, shutDowner
 }
