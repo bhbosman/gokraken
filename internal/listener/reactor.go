@@ -5,9 +5,10 @@ import (
 	"fmt"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
 	"github.com/bhbosman/gocommon/messageRouter"
-	"github.com/bhbosman/gocomms/RxHandlers"
 	"github.com/bhbosman/gocomms/common"
-	"github.com/bhbosman/gocomms/connectionManager"
+	"github.com/bhbosman/gocomms/connectionManager/CMIntf"
+
+	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
@@ -46,7 +47,7 @@ type Reactor struct {
 func (self *Reactor) Init(
 	url *url.URL,
 	connectionId string,
-	connectionManager connectionManager.IConnectionManager__,
+	connectionManager CMIntf.IConnectionManagerService,
 	toConnectionFunc goprotoextra.ToConnectionFunc,
 	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(url, connectionId, connectionManager, toConnectionFunc, toConnectionReactor)
@@ -90,7 +91,7 @@ func (self *Reactor) Close() error {
 	return self.BaseConnectionReactor.Close()
 }
 
-func (self *Reactor) HandleEmptyQueue(top5 *RxHandlers.EmptyQueue) error {
+func (self *Reactor) HandleEmptyQueue(top5 *messages.EmptyQueue) error {
 	var deleteKeys []string
 	for k, v := range self.dirtyMap {
 		self.messageOut++

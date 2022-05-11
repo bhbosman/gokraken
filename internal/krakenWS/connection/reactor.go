@@ -8,9 +8,10 @@ import (
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/stream"
-	"github.com/bhbosman/gocomms/RxHandlers"
 	"github.com/bhbosman/gocomms/common"
-	"github.com/bhbosman/gocomms/connectionManager"
+	"github.com/bhbosman/gocomms/connectionManager/CMIntf"
+
+	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocomms/impl"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/stacks/websocket/wsmsg"
@@ -231,7 +232,7 @@ func (self Reactor) handleMessageBlockReaderWriter(inData *gomessageblock.Reader
 func (self *Reactor) Init(
 	url *url.URL,
 	connectionId string,
-	connectionManager connectionManager.IConnectionManager__,
+	connectionManager CMIntf.IConnectionManagerService,
 	onSend goprotoextra.ToConnectionFunc,
 	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(
@@ -386,7 +387,7 @@ func (self *Reactor) HandlePublishMessage(msg *RePublishMessage) error {
 	return self.publishData(true)
 }
 
-func (self *Reactor) HandleEmptyQueue(msg *RxHandlers.EmptyQueue) error {
+func (self *Reactor) HandleEmptyQueue(msg *messages.EmptyQueue) error {
 	return self.publishData(false)
 }
 
