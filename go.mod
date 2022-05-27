@@ -16,7 +16,7 @@ require (
 	github.com/golang/protobuf v1.4.2
 	github.com/kardianos/service v1.1.0
 	github.com/stretchr/testify v1.7.0
-	go.uber.org/fx v1.14.2
+	go.uber.org/fx v1.17.1
 	go.uber.org/zap v1.21.0 // indirect
 	google.golang.org/protobuf v1.25.0
 )
