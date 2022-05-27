@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/bhbosman/goMessages v0.0.0-20210414134625-4d7166d206a6
 	github.com/bhbosman/gocommon v0.0.0-20220120133819-681d385f0463
-	github.com/bhbosman/gocomms v0.0.0-20211124080017-8ffe6f0e804c
+	github.com/bhbosman/gocomms v0.0.0-20220527203916-c87f0e084175
 	github.com/bhbosman/goerrors v0.0.0-20210201065523-bb3e832fa9ab
 	github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
 	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303
