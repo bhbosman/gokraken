@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/bhbosman/gocommon/FxWrappers"
 	app2 "github.com/bhbosman/gocommon/Providers"
 	"github.com/bhbosman/gocomms/connectionManager/CMImpl"
 	"github.com/bhbosman/gocomms/connectionManager/endpoints"
@@ -25,7 +26,7 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 
 	ConsumerCounter := netDial.NewCanDialDefaultImpl()
 	var shutDowner fx.Shutdowner
-	fxApp := app2.NewFxMainApplicationServices(
+	fxApp := FxWrappers.NewFxMainApplicationServices(
 		"KrakenStream",
 		false,
 		fx.Supply(settings, ConsumerCounter),
