@@ -25,7 +25,7 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 
 	ConsumerCounter := netDial.NewCanDialDefaultImpl()
 	var shutDowner fx.Shutdowner
-	fxApp := app2.NewFxAppWithServices(
+	fxApp := app2.NewFxMainApplicationServices(
 		"KrakenStream",
 		false,
 		fx.Supply(settings, ConsumerCounter),
