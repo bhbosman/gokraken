@@ -5,7 +5,7 @@ import (
 	"fmt"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
 	"github.com/bhbosman/gocommon/messageRouter"
-	"github.com/bhbosman/gocomms/common"
+	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/connectionManager/CMIntf"
 
 	"github.com/bhbosman/gocommon/messages"
@@ -132,7 +132,7 @@ func NewReactor(
 	logger *zap.Logger,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
-	connectionCancelFunc common.ConnectionCancelFunc,
+	connectionCancelFunc model.ConnectionCancelFunc,
 	userContext interface{},
 	ConsumerCounter *netDial.CanDialDefaultImpl,
 	SerializeData SerializeData,

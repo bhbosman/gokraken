@@ -7,8 +7,8 @@ import (
 	"fmt"
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
 	"github.com/bhbosman/gocommon/messageRouter"
+	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
-	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/connectionManager/CMIntf"
 
 	"github.com/bhbosman/gocommon/messages"
@@ -415,7 +415,7 @@ func NewReactor(
 	logger *zap.Logger,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
-	connectionCancelFunc common.ConnectionCancelFunc,
+	connectionCancelFunc model.ConnectionCancelFunc,
 	userContext interface{},
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{
@@ -435,13 +435,13 @@ func NewReactor(
 		FullMarketOrderBook:      make(map[string]*FullMarketOrderBook),
 		pairs:                    make(map[registrationKey]*registrationValue),
 	}
-	result.messageRouter.Add(result.handleMessageBlockReaderWriter)
-	result.messageRouter.Add(result.handleWebSocketMessageWrapper)
-	result.messageRouter.Add(result.handleKrakenStreamSubscribe)
-	result.messageRouter.Add(result.handleKrakenWsMessageIncoming)
-	result.messageRouter.Add(result.handleWebsocketDataResponse)
-	result.messageRouter.Add(result.HandleEmptyQueue)
-	result.messageRouter.Add(result.HandlePublishMessage)
+	_ = result.messageRouter.Add(result.handleMessageBlockReaderWriter)
+	_ = result.messageRouter.Add(result.handleWebSocketMessageWrapper)
+	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
+	_ = result.messageRouter.Add(result.handleKrakenWsMessageIncoming)
+	_ = result.messageRouter.Add(result.handleWebsocketDataResponse)
+	_ = result.messageRouter.Add(result.HandleEmptyQueue)
+	_ = result.messageRouter.Add(result.HandlePublishMessage)
 
 	_ = result.Register("XBT/USD", "book")
 	_ = result.Register("XBT/EUR", "book")
