@@ -27,6 +27,7 @@ func CreateFxApp() (*fx.App, fx.Shutdowner) {
 	var shutDowner fx.Shutdowner
 	fxApp := app2.NewFxAppWithServices(
 		"KrakenStream",
+		false,
 		fx.Supply(settings, ConsumerCounter),
 		gologging.ProvideLogFactory(settings.Logger, nil),
 		fx.Populate(&shutDowner),
