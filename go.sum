@@ -73,6 +73,7 @@ github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/icza/gox v0.0.0-20200702115100-7dc3510ae515 h1:0M95ImIfyqsVml89tVxg4DXQ+qv0WPHphNK/nAukgbM=
 github.com/icza/gox v0.0.0-20200702115100-7dc3510ae515/go.mod h1:VbcN86fRkkUMPX2ufM85Um8zFndLZswoIW1eYtpAcVk=
+github.com/icza/gox v0.0.0-20220321141217-e2d488ab2fbc h1:/vPVDa098f2SM/Ef3NtrWiyo4UBWL+QkD4hodlNpha8=
 github.com/icza/gox v0.0.0-20220321141217-e2d488ab2fbc/go.mod h1:VbcN86fRkkUMPX2ufM85Um8zFndLZswoIW1eYtpAcVk=
 github.com/kardianos/service v1.1.0 h1:QV2SiEeWK42P0aEmGcsAgjApw/lRxkwopvT+Gu6t1/0=
 github.com/kardianos/service v1.1.0/go.mod h1:RrJI2xn5vve/r32U5suTbeaSGoMU6GbNPoj36CVYcHc=
