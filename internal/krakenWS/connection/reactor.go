@@ -6,15 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
+	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/messageRouter"
+	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
-	"github.com/bhbosman/gocomms/connectionManager/CMIntf"
-
-	"github.com/bhbosman/gocommon/messages"
-	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocomms/common"
+	"github.com/bhbosman/gocomms/common/webSocketMessages/wsmsg"
 	"github.com/bhbosman/gocomms/intf"
-	"github.com/bhbosman/gocomms/stacks/websocket/wsmsg"
 	krakenWsStream "github.com/bhbosman/gokraken/internal/krakenWS/internal/stream"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
@@ -67,7 +66,7 @@ type registeredSubscription struct {
 }
 
 type Reactor struct {
-	impl.BaseConnectionReactor
+	common.BaseConnectionReactor
 	messageRouter            *messageRouter.MessageRouter
 	connectionID             uint64
 	status                   string
@@ -232,7 +231,7 @@ func (self Reactor) handleMessageBlockReaderWriter(inData *gomessageblock.Reader
 func (self *Reactor) Init(
 	url *url.URL,
 	connectionId string,
-	connectionManager CMIntf.IConnectionManagerService,
+	connectionManager IConnectionManager.IService,
 	onSend goprotoextra.ToConnectionFunc,
 	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(
@@ -289,11 +288,11 @@ func (self *Reactor) sendAllRegistration() {
 			Pair:  value.pair,
 			Name:  value.name,
 		}
-		self.ToReactor(true, message)
+		_ = self.ToReactor(true, message)
 	}
 }
 
-func (self *Reactor) doNext(b bool, i interface{}) {
+func (self *Reactor) doNext(_ bool, i interface{}) {
 	_, _ = self.messageRouter.Route(i)
 }
 
@@ -312,7 +311,7 @@ func (self Reactor) handlePing(data krakenWsStream.IPing) error {
 	return SendTextOpMessage(outgoing, self.ToConnection)
 }
 
-func (self Reactor) handleHeartbeat(data interface{}) error {
+func (self Reactor) handleHeartbeat(_ interface{}) error {
 	return nil
 }
 
@@ -383,11 +382,11 @@ func (self *Reactor) handleTicker(channelData registeredSubscription, data map[s
 	return nil
 }
 
-func (self *Reactor) HandlePublishMessage(msg *RePublishMessage) error {
+func (self *Reactor) HandlePublishMessage(_ *RePublishMessage) error {
 	return self.publishData(true)
 }
 
-func (self *Reactor) HandleEmptyQueue(msg *messages.EmptyQueue) error {
+func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
 	return self.publishData(false)
 }
 
@@ -419,7 +418,7 @@ func NewReactor(
 	userContext interface{},
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{
-		BaseConnectionReactor: impl.NewBaseConnectionReactor(
+		BaseConnectionReactor: common.NewBaseConnectionReactor(
 			logger,
 			cancelCtx,
 			cancelFunc,

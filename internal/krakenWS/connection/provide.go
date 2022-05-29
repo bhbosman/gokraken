@@ -1,8 +1,10 @@
 package connection
 
 import (
+	"fmt"
 	"github.com/bhbosman/gocommon/messages"
-	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocommon/model"
+	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
 	"github.com/cskr/pubsub"
@@ -12,6 +14,8 @@ import (
 const FactoryName = "KrakenWSS"
 
 func ProvideKrakenDialer(
+	serviceIdentifier model.ServiceIdentifier_,
+	serviceDependentOn model.ServiceIdentifier_,
 	canDial netDial.ICanDial) fx.Option {
 	var canDials []netDial.ICanDial
 	if canDial != nil {
@@ -27,7 +31,7 @@ func ProvideKrakenDialer(
 				Target: func(params struct {
 					fx.In
 					PubSub             *pubsub.PubSub `name:"Application"`
-					NetAppFuncInParams impl.NetAppFuncInParams
+					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
 					fxOptions := fx.Options(
 						fx.Provide(fx.Annotated{Name: "Application", Target: func() *pubsub.PubSub { return params.PubSub }}),
@@ -44,14 +48,21 @@ func ProvideKrakenDialer(
 								},
 							}),
 					)
-					return netDial.NewNetDialAppNoCrfName(
+					f := netDial.NewNetDialApp(
+						"Kraken",
+						serviceIdentifier,
+						serviceDependentOn,
 						fxOptions,
 						"Kraken",
 						"wss://ws.kraken.com:443",
-						impl.WebSocketName,
-						//crfName,
+						common.WebSocketName,
+						func() (intf.IConnectionReactorFactory, error) {
+							return nil, fmt.Errorf("asdffdf")
+						},
 						netDial.MaxConnectionsSetting(1),
-						netDial.CanDial(canDials...))(params.NetAppFuncInParams)
+						netDial.CanDial(canDials...))
+					return f(
+						params.NetAppFuncInParams)
 				},
 			}))
 }

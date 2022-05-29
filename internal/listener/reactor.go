@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
+	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/messageRouter"
-	"github.com/bhbosman/gocommon/model"
-	"github.com/bhbosman/gocomms/connectionManager/CMIntf"
-
 	"github.com/bhbosman/gocommon/messages"
-	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocommon/model"
+	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gomessageblock"
@@ -33,7 +32,7 @@ func NewDirtyMapData(data *marketDataStream.PublishTop5) *DirtyMapData {
 
 type SerializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
 type Reactor struct {
-	impl.BaseConnectionReactor
+	common.BaseConnectionReactor
 	ConsumerCounter      *netDial.CanDialDefaultImpl
 	messageRouter        *messageRouter.MessageRouter
 	SerializeData        SerializeData
@@ -47,7 +46,7 @@ type Reactor struct {
 func (self *Reactor) Init(
 	url *url.URL,
 	connectionId string,
-	connectionManager CMIntf.IConnectionManagerService,
+	connectionManager IConnectionManager.IService,
 	toConnectionFunc goprotoextra.ToConnectionFunc,
 	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(url, connectionId, connectionManager, toConnectionFunc, toConnectionReactor)
@@ -77,7 +76,7 @@ func (self *Reactor) Init(
 	return self.doNext, nil
 }
 
-func (self *Reactor) doNext(external bool, i interface{}) {
+func (self *Reactor) doNext(_ bool, i interface{}) {
 	_, _ = self.messageRouter.Route(i)
 }
 
@@ -91,7 +90,7 @@ func (self *Reactor) Close() error {
 	return self.BaseConnectionReactor.Close()
 }
 
-func (self *Reactor) HandleEmptyQueue(top5 *messages.EmptyQueue) error {
+func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
 	var deleteKeys []string
 	for k, v := range self.dirtyMap {
 		self.messageOut++
@@ -108,7 +107,7 @@ func (self *Reactor) HandleEmptyQueue(top5 *messages.EmptyQueue) error {
 
 	s := fmt.Sprintf("\n\r-->%v<--\r\n", self.messageOut)
 	rws := gomessageblock.NewReaderWriter()
-	rws.Write([]byte(s))
+	_, _ = rws.Write([]byte(s))
 	_ = self.ToConnection(rws)
 	return nil
 }
@@ -138,7 +137,7 @@ func NewReactor(
 	SerializeData SerializeData,
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{
-		BaseConnectionReactor: impl.NewBaseConnectionReactor(logger, cancelCtx, cancelFunc, connectionCancelFunc, userContext),
+		BaseConnectionReactor: common.NewBaseConnectionReactor(logger, cancelCtx, cancelFunc, connectionCancelFunc, userContext),
 		ConsumerCounter:       ConsumerCounter,
 		messageRouter:         messageRouter.NewMessageRouter(),
 		SerializeData:         SerializeData,

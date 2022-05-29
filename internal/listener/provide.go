@@ -2,9 +2,11 @@ package listener
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/bhbosman/gocommon/messages"
+	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
-	"github.com/bhbosman/gocomms/impl"
+	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gomessageblock"
@@ -17,6 +19,8 @@ import (
 )
 
 func TextListener(
+	serviceIdentifier model.ServiceIdentifier_,
+	serviceDependentOn model.ServiceIdentifier_,
 	ConsumerCounter *netDial.CanDialDefaultImpl,
 	maxConnections int,
 	url string) fx.Option {
@@ -29,7 +33,7 @@ func TextListener(
 				Target: func(params struct {
 					fx.In
 					PubSub             *pubsub.PubSub `name:"Application"`
-					NetAppFuncInParams impl.NetAppFuncInParams
+					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
 					fxOptions := fx.Options(
 						fx.Provide(fx.Annotated{Name: "Application", Target: func() *pubsub.PubSub { return params.PubSub }}),
@@ -56,19 +60,27 @@ func TextListener(
 								},
 							}),
 					)
-					return netListener.NewNetListenApp(
-						fxOptions,
+					f := netListener.NewNetListenApp(
+						TextListenerConnection,
+						serviceIdentifier,
+						serviceDependentOn, fxOptions,
 						TextListenerConnection,
 						url,
-						impl.TransportFactoryEmptyName,
-						crfName,
-						netListener.MaxConnectionsSetting(maxConnections))(params.NetAppFuncInParams)
+						common.TransportFactoryEmptyName,
+						func() (intf.IConnectionReactorFactory, error) {
+							return nil, fmt.Errorf("fdsfsdfd")
+						},
+						netListener.MaxConnectionsSetting(maxConnections))
+					return f(
+						params.NetAppFuncInParams)
 				},
 			}),
 	)
 }
 
 func CompressedListener(
+	serviceIdentifier model.ServiceIdentifier_,
+	serviceDependentOn model.ServiceIdentifier_,
 	ConsumerCounter *netDial.CanDialDefaultImpl,
 	maxConnections int, url string) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
@@ -80,7 +92,7 @@ func CompressedListener(
 				Target: func(params struct {
 					fx.In
 					PubSub             *pubsub.PubSub `name:"Application"`
-					NetAppFuncInParams impl.NetAppFuncInParams
+					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
 					fxOptions := fx.Options(
 						fx.Provide(fx.Annotated{Name: "Application", Target: func() *pubsub.PubSub { return params.PubSub }}),
@@ -104,13 +116,20 @@ func CompressedListener(
 								},
 							}),
 					)
-					return netListener.NewNetListenApp(
+					f := netListener.NewNetListenApp(
+						CompressedListenerConnection,
+						serviceIdentifier,
+						serviceDependentOn,
 						fxOptions,
 						CompressedListenerConnection,
 						url,
-						impl.TransportFactoryCompressedName,
-						crfName,
-						netListener.MaxConnectionsSetting(maxConnections))(params.NetAppFuncInParams)
+						common.TransportFactoryCompressedName,
+						func() (intf.IConnectionReactorFactory, error) {
+							return nil, fmt.Errorf("asdffdf")
+						},
+						netListener.MaxConnectionsSetting(maxConnections))
+					return f(
+						params.NetAppFuncInParams)
 				},
 			}),
 	)
