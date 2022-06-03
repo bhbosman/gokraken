@@ -2,7 +2,6 @@ package listener
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
@@ -35,40 +34,26 @@ func TextListener(
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
-					fxOptions := fx.Options(
-						fx.Provide(fx.Annotated{Name: "Application", Target: func() *pubsub.PubSub { return params.PubSub }}),
-						fx.Provide(
-							fx.Annotated{
-								Target: func(params struct {
-									fx.In
-									PubSub *pubsub.PubSub `name:"Application"`
-								}) intf.ConnectionReactorFactoryCallback {
-									return func() (intf.IConnectionReactorFactory, error) {
-										cfr := NewFactory(
-											crfName,
-											params.PubSub,
-											func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
-												bytes, err := json.Marshal(m)
-												if err != nil {
-													return nil, err
-												}
-												return gomessageblock.NewReaderWriterBlock(bytes), nil
-											},
-											ConsumerCounter)
-										return cfr, nil
-									}
-								},
-							}),
-					)
 					f := netListener.NewNetListenApp(
 						TextListenerConnection,
 						serviceIdentifier,
-						serviceDependentOn, fxOptions,
+						serviceDependentOn,
 						TextListenerConnection,
 						url,
 						common.TransportFactoryEmptyName,
 						func() (intf.IConnectionReactorFactory, error) {
-							return nil, fmt.Errorf("fdsfsdfd")
+							cfr := NewFactory(
+								crfName,
+								params.PubSub,
+								func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
+									bytes, err := json.Marshal(m)
+									if err != nil {
+										return nil, err
+									}
+									return gomessageblock.NewReaderWriterBlock(bytes), nil
+								},
+								ConsumerCounter)
+							return cfr, nil
 						},
 						netListener.MaxConnectionsSetting(maxConnections))
 					return f(
@@ -94,38 +79,22 @@ func CompressedListener(
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
-					fxOptions := fx.Options(
-						fx.Provide(fx.Annotated{Name: "Application", Target: func() *pubsub.PubSub { return params.PubSub }}),
-						fx.Provide(
-							fx.Annotated{
-								Target: func(params struct {
-									fx.In
-									PubSub *pubsub.PubSub `name:"Application"`
-								}) intf.ConnectionReactorFactoryCallback {
-									return func() (intf.IConnectionReactorFactory, error) {
-
-										cfr := NewFactory(
-											crfName,
-											params.PubSub,
-											func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
-												return stream.Marshall(data)
-											},
-											ConsumerCounter)
-										return cfr, nil
-									}
-								},
-							}),
-					)
 					f := netListener.NewNetListenApp(
 						CompressedListenerConnection,
 						serviceIdentifier,
 						serviceDependentOn,
-						fxOptions,
 						CompressedListenerConnection,
 						url,
 						common.TransportFactoryCompressedName,
 						func() (intf.IConnectionReactorFactory, error) {
-							return nil, fmt.Errorf("asdffdf")
+							cfr := NewFactory(
+								crfName,
+								params.PubSub,
+								func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
+									return stream.Marshall(data)
+								},
+								ConsumerCounter)
+							return cfr, nil
 						},
 						netListener.MaxConnectionsSetting(maxConnections))
 					return f(
