@@ -18,8 +18,8 @@ import (
 )
 
 func TextListener(
-	serviceIdentifier model.ServiceIdentifier_,
-	serviceDependentOn model.ServiceIdentifier_,
+	serviceIdentifier model.ServiceIdentifier,
+	serviceDependentOn model.ServiceIdentifier,
 	ConsumerCounter *netDial.CanDialDefaultImpl,
 	maxConnections int,
 	url string) fx.Option {
@@ -64,8 +64,8 @@ func TextListener(
 }
 
 func CompressedListener(
-	serviceIdentifier model.ServiceIdentifier_,
-	serviceDependentOn model.ServiceIdentifier_,
+	serviceIdentifier model.ServiceIdentifier,
+	serviceDependentOn model.ServiceIdentifier,
 	ConsumerCounter *netDial.CanDialDefaultImpl,
 	maxConnections int, url string) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"

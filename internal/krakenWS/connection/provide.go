@@ -13,8 +13,8 @@ import (
 const FactoryName = "KrakenWSS"
 
 func ProvideKrakenDialer(
-	serviceIdentifier model.ServiceIdentifier_,
-	serviceDependentOn model.ServiceIdentifier_,
+	serviceIdentifier model.ServiceIdentifier,
+	serviceDependentOn model.ServiceIdentifier,
 	canDial netDial.ICanDial) fx.Option {
 	var canDials []netDial.ICanDial
 	if canDial != nil {
