@@ -8,6 +8,12 @@ import (
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
+	"github.com/bhbosman/gocomms/stacks/bottom"
+	"github.com/bhbosman/gocomms/stacks/bvisMessageBreaker"
+	"github.com/bhbosman/gocomms/stacks/messageCompressor"
+	"github.com/bhbosman/gocomms/stacks/messageNumber"
+	"github.com/bhbosman/gocomms/stacks/pingPong"
+	"github.com/bhbosman/gocomms/stacks/top"
 	"github.com/bhbosman/gomessageblock"
 
 	"github.com/bhbosman/gocomms/netListener"
@@ -55,7 +61,10 @@ func TextListener(
 								ConsumerCounter)
 							return cfr, nil
 						},
-						common.MaxConnectionsSetting(maxConnections))
+						common.MaxConnectionsSetting(maxConnections),
+						common.NewConnectionInstanceOptions(
+							bottom.ProvideBottomStack(),
+							top.ProvideTopStack()))
 					return f(
 						params.NetAppFuncInParams)
 				},
@@ -96,7 +105,14 @@ func CompressedListener(
 								ConsumerCounter)
 							return cfr, nil
 						},
-						common.MaxConnectionsSetting(maxConnections))
+						common.MaxConnectionsSetting(maxConnections),
+						common.NewConnectionInstanceOptions(
+							top.ProvideTopStack(),
+							pingPong.ProvidePingPongStacks(),
+							messageNumber.ProvideMessageNumberStack(),
+							messageCompressor.ProvideMessageCompressorStack(),
+							bvisMessageBreaker.ProvideBvisMessageBreakerStack(),
+							bottom.ProvideBottomStack()))
 					return f(
 						params.NetAppFuncInParams)
 				},
