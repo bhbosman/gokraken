@@ -3,6 +3,7 @@ package listener
 import (
 	"context"
 	"fmt"
+	"github.com/bhbosman/goCommsNetDialer"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
 	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/messageRouter"
@@ -10,7 +11,6 @@ import (
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
-	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
@@ -33,7 +33,7 @@ func NewDirtyMapData(data *marketDataStream.PublishTop5) *DirtyMapData {
 type SerializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
 type Reactor struct {
 	common.BaseConnectionReactor
-	ConsumerCounter      *netDial.CanDialDefaultImpl
+	ConsumerCounter      *goCommsNetDialer.CanDialDefaultImpl
 	messageRouter        *messageRouter.MessageRouter
 	SerializeData        SerializeData
 	republishChannelName string
@@ -133,7 +133,7 @@ func NewReactor(
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc model.ConnectionCancelFunc,
 	userContext interface{},
-	ConsumerCounter *netDial.CanDialDefaultImpl,
+	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
 	SerializeData SerializeData,
 	PubSub *pubsub.PubSub) *Reactor {
 	result := &Reactor{

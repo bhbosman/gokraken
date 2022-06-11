@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
@@ -9,7 +10,6 @@ import (
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
-	"github.com/bhbosman/gocomms/netDial"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
 )
@@ -19,8 +19,8 @@ const FactoryName = "KrakenWSS"
 func ProvideKrakenDialer(
 	serviceIdentifier model.ServiceIdentifier,
 	serviceDependentOn model.ServiceIdentifier,
-	canDial netDial.ICanDial) fx.Option {
-	var canDials []netDial.ICanDial
+	canDial goCommsNetDialer.ICanDial) fx.Option {
+	var canDials []goCommsNetDialer.ICanDial
 	if canDial != nil {
 		canDials = append(canDials, canDial)
 	}
@@ -36,7 +36,7 @@ func ProvideKrakenDialer(
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
-					f := netDial.NewNetDialApp(
+					f := goCommsNetDialer.NewNetDialApp(
 						"Kraken",
 						serviceIdentifier,
 						serviceDependentOn,
@@ -48,7 +48,7 @@ func ProvideKrakenDialer(
 							return cfr, nil
 						},
 						common.MaxConnectionsSetting(1),
-						netDial.CanDial(canDials...),
+						goCommsNetDialer.CanDial(canDials...),
 						common.NewConnectionInstanceOptions(
 							goCommsStacks.ProvideDefinedStackNames(),
 							bottom.ProvideBottomStack(),

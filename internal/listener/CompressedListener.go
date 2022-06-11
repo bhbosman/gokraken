@@ -2,6 +2,8 @@ package listener
 
 import (
 	"encoding/json"
+	"github.com/bhbosman/goCommsNetDialer"
+	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
@@ -9,8 +11,6 @@ import (
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
-	"github.com/bhbosman/gocomms/netDial"
-	"github.com/bhbosman/gocomms/netListener"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
@@ -21,7 +21,7 @@ import (
 func TextListener(
 	serviceIdentifier model.ServiceIdentifier,
 	serviceDependentOn model.ServiceIdentifier,
-	ConsumerCounter *netDial.CanDialDefaultImpl,
+	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
 	maxConnections int,
 	url string) fx.Option {
 	const TextListenerConnection = "TextListenerConnection"
@@ -35,7 +35,7 @@ func TextListener(
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
-					f := netListener.NewNetListenApp(
+					f := goCommsNetListener.NewNetListenApp(
 						TextListenerConnection,
 						serviceIdentifier,
 						serviceDependentOn,

@@ -2,9 +2,9 @@ package listener
 
 import (
 	"context"
+	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/intf"
-	"github.com/bhbosman/gocomms/netDial"
 	"github.com/cskr/pubsub"
 	"go.uber.org/zap"
 )
@@ -13,7 +13,7 @@ type Factory struct {
 	crfName         string
 	pubSub          *pubsub.PubSub
 	SerializeData   SerializeData
-	ConsumerCounter *netDial.CanDialDefaultImpl
+	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl
 }
 
 func (self *Factory) Name() string {
@@ -38,7 +38,7 @@ func NewFactory(
 	crfName string,
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
-	ConsumerCounter *netDial.CanDialDefaultImpl) intf.IConnectionReactorFactory {
+	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl) intf.IConnectionReactorFactory {
 	return &Factory{
 		crfName:         crfName,
 		pubSub:          pubSub,

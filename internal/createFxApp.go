@@ -1,11 +1,11 @@
 package internal
 
 import (
+	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/gocommon/FxWrappers"
 	app2 "github.com/bhbosman/gocommon/Providers"
 	"github.com/bhbosman/gocomms/connectionManager/endpoints"
 	"github.com/bhbosman/gocomms/connectionManager/view"
-	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gocomms/provide"
 	"github.com/bhbosman/gokraken/internal/krakenWS/connection"
 	"github.com/bhbosman/gokraken/internal/listener"
@@ -23,7 +23,7 @@ func CreateFxApp() *FxWrappers.TerminalAppUsingFxApp {
 		HttpListenerUrl:       "http://127.0.0.1:8081",
 	}
 
-	ConsumerCounter := netDial.NewCanDialDefaultImpl()
+	ConsumerCounter := goCommsNetDialer.NewCanDialDefaultImpl()
 	var shutDowner fx.Shutdowner
 	return FxWrappers.NewFxMainApplicationServices(
 		"KrakenStream",

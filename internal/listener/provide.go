@@ -1,6 +1,8 @@
 package listener
 
 import (
+	"github.com/bhbosman/goCommsNetDialer"
+	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/bvisMessageBreaker"
@@ -13,8 +15,6 @@ import (
 	"github.com/bhbosman/gocommon/stream"
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
-	"github.com/bhbosman/gocomms/netDial"
-	"github.com/bhbosman/gocomms/netListener"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
@@ -24,7 +24,7 @@ import (
 func CompressedListener(
 	serviceIdentifier model.ServiceIdentifier,
 	serviceDependentOn model.ServiceIdentifier,
-	ConsumerCounter *netDial.CanDialDefaultImpl,
+	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
 	maxConnections int, url string) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
 	crfName := "CompressedListenerConnection.CRF"
@@ -37,7 +37,7 @@ func CompressedListener(
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
 				}) messages.CreateAppCallback {
-					f := netListener.NewNetListenApp(
+					f := goCommsNetListener.NewNetListenApp(
 						CompressedListenerConnection,
 						serviceIdentifier,
 						serviceDependentOn,
