@@ -6,6 +6,9 @@ import (
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
+	"github.com/bhbosman/gocomms/stacks/bottom"
+	"github.com/bhbosman/gocomms/stacks/top"
+	"github.com/bhbosman/gocomms/stacks/websocket"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
 )
@@ -44,7 +47,11 @@ func ProvideKrakenDialer(
 							return cfr, nil
 						},
 						common.MaxConnectionsSetting(1),
-						netDial.CanDial(canDials...))
+						netDial.CanDial(canDials...),
+						common.NewConnectionInstanceOptions(
+							bottom.ProvideBottomStack(),
+							top.ProvideTopStack(),
+							websocket.ProvideWebsocketStacks()))
 					return f(
 						params.NetAppFuncInParams)
 				},
