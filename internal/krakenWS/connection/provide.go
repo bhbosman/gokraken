@@ -43,7 +43,7 @@ func ProvideKrakenDialer(
 							cfr := NewFactory(crfName, params.PubSub)
 							return cfr, nil
 						},
-						netDial.MaxConnectionsSetting(1),
+						common.MaxConnectionsSetting(1),
 						netDial.CanDial(canDials...))
 					return f(
 						params.NetAppFuncInParams)

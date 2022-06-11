@@ -55,7 +55,7 @@ func TextListener(
 								ConsumerCounter)
 							return cfr, nil
 						},
-						netListener.MaxConnectionsSetting(maxConnections))
+						common.MaxConnectionsSetting(maxConnections))
 					return f(
 						params.NetAppFuncInParams)
 				},
@@ -96,7 +96,7 @@ func CompressedListener(
 								ConsumerCounter)
 							return cfr, nil
 						},
-						netListener.MaxConnectionsSetting(maxConnections))
+						common.MaxConnectionsSetting(maxConnections))
 					return f(
 						params.NetAppFuncInParams)
 				},
