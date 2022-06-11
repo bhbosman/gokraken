@@ -3,6 +3,7 @@ module github.com/bhbosman/gokraken
 go 1.15
 
 require (
+	github.com/bhbosman/goCommsStacks v0.0.0-20220611100605-a342f0b42054 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20210414134625-4d7166d206a6
 	github.com/bhbosman/gocommon v0.0.0-20220602200451-0996b073614b
 	github.com/bhbosman/gocomms v0.0.0-20220527203916-c87f0e084175
@@ -27,3 +28,4 @@ replace (
 	github.com/bhbosman/gocommon => ../gocommon
 	github.com/bhbosman/gocomms => ../gocomms
 )
+replace github.com/bhbosman/goCommsStacks => ../goCommsStacks

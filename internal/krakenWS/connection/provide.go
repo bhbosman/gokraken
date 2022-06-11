@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -49,6 +50,7 @@ func ProvideKrakenDialer(
 						common.MaxConnectionsSetting(1),
 						netDial.CanDial(canDials...),
 						common.NewConnectionInstanceOptions(
+							goCommsStacks.ProvideDefinedStackNames(),
 							bottom.ProvideBottomStack(),
 							top.ProvideTopStack(),
 							websocket.ProvideWebsocketStacks()))

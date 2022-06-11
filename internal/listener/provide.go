@@ -1,6 +1,7 @@
 package listener
 
 import (
+	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
@@ -55,6 +56,7 @@ func CompressedListener(
 						},
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
+							goCommsStacks.ProvideDefinedStackNames(),
 							top.ProvideTopStack(),
 							pingPong.ProvidePingPongStacks(),
 							messageNumber.ProvideMessageNumberStack(),

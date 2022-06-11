@@ -2,6 +2,7 @@ package listener
 
 import (
 	"encoding/json"
+	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -57,6 +58,7 @@ func TextListener(
 						},
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
+							goCommsStacks.ProvideDefinedStackNames(),
 							bottom.ProvideBottomStack(),
 							top.ProvideTopStack()))
 					return f(
