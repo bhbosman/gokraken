@@ -3,6 +3,9 @@ module github.com/bhbosman/gokraken
 go 1.15
 
 require (
+	github.com/bhbosman/goCommsNetListener v0.0.0-20220611182354-46d10d89b8e1 // indirect
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20220612125316-9a91bacb2b7c // indirect
+
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20220611181910-f23644b1b31a // indirect
 	github.com/bhbosman/goCommsStacks v0.0.0-20220611100605-a342f0b42054
 	github.com/bhbosman/goMessages v0.0.0-20210414134625-4d7166d206a6
@@ -30,3 +33,5 @@ replace (
 
 replace github.com/bhbosman/goCommsStacks => ../goCommsStacks
 replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
+replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
+replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions

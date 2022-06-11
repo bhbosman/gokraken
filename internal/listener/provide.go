@@ -1,15 +1,16 @@
 package listener
 
 import (
+	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/goCommsNetListener"
-	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/bvisMessageBreaker"
 	"github.com/bhbosman/goCommsStacks/messageCompressor"
 	"github.com/bhbosman/goCommsStacks/messageNumber"
 	"github.com/bhbosman/goCommsStacks/pingPong"
 	"github.com/bhbosman/goCommsStacks/top"
+	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
@@ -43,7 +44,7 @@ func CompressedListener(
 						serviceDependentOn,
 						CompressedListenerConnection,
 						url,
-						common.TransportFactoryCompressedName,
+						gocommon.TransportFactoryCompressedName,
 						func() (intf.IConnectionReactorFactory, error) {
 							cfr := NewFactory(
 								crfName,
@@ -56,13 +57,16 @@ func CompressedListener(
 						},
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
-							goCommsStacks.ProvideDefinedStackNames(),
-							top.ProvideTopStack(),
-							pingPong.ProvidePingPongStacks(),
-							messageNumber.ProvideMessageNumberStack(),
-							messageCompressor.ProvideMessageCompressorStack(),
-							bvisMessageBreaker.ProvideBvisMessageBreakerStack(),
-							bottom.ProvideBottomStack()))
+							goCommsDefinitions.ProvideTransportFactoryForCompressedName(
+								top.ProvideTopStack(),
+								pingPong.ProvidePingPongStacks(),
+								messageCompressor.ProvideMessageCompressorStack(),
+								messageNumber.ProvideMessageNumberStack(),
+								bvisMessageBreaker.ProvideBvisMessageBreakerStack(),
+								bottom.ProvideBottomStack(),
+							),
+						),
+					)
 					return f(
 						params.NetAppFuncInParams)
 				},

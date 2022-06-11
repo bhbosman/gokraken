@@ -1,11 +1,12 @@
 package connection
 
 import (
+	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goCommsNetDialer"
-	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
 	"github.com/bhbosman/goCommsStacks/websocket"
+	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -42,7 +43,7 @@ func ProvideKrakenDialer(
 						serviceDependentOn,
 						"Kraken",
 						"wss://ws.kraken.com:443",
-						common.WebSocketName,
+						gocommon.WebSocketName,
 						func() (intf.IConnectionReactorFactory, error) {
 							cfr := NewFactory(crfName, params.PubSub)
 							return cfr, nil
@@ -50,10 +51,13 @@ func ProvideKrakenDialer(
 						common.MaxConnectionsSetting(1),
 						goCommsNetDialer.CanDial(canDials...),
 						common.NewConnectionInstanceOptions(
-							goCommsStacks.ProvideDefinedStackNames(),
-							bottom.ProvideBottomStack(),
-							top.ProvideTopStack(),
-							websocket.ProvideWebsocketStacks()))
+							goCommsDefinitions.ProvideTransportFactoryForWebSocketName(
+								top.ProvideTopStack(),
+								websocket.ProvideWebsocketStacks(),
+								bottom.ProvideBottomStack(),
+							),
+						),
+					)
 					return f(
 						params.NetAppFuncInParams)
 				},

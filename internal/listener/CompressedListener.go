@@ -2,11 +2,12 @@ package listener
 
 import (
 	"encoding/json"
+	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/goCommsNetListener"
-	"github.com/bhbosman/goCommsStacks"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
+	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -41,7 +42,7 @@ func TextListener(
 						serviceDependentOn,
 						TextListenerConnection,
 						url,
-						common.TransportFactoryEmptyName,
+						gocommon.TransportFactoryEmptyName,
 						func() (intf.IConnectionReactorFactory, error) {
 							cfr := NewFactory(
 								crfName,
@@ -58,9 +59,12 @@ func TextListener(
 						},
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
-							goCommsStacks.ProvideDefinedStackNames(),
-							bottom.ProvideBottomStack(),
-							top.ProvideTopStack()))
+							goCommsDefinitions.ProvideTransportFactoryForEmptyName(
+								top.ProvideTopStack(),
+								bottom.ProvideBottomStack(),
+							),
+						),
+					)
 					return f(
 						params.NetAppFuncInParams)
 				},
