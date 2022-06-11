@@ -2,6 +2,7 @@ package listener
 
 import (
 	"github.com/bhbosman/goCommsStacks"
+	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
@@ -9,7 +10,6 @@ import (
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
 	"github.com/bhbosman/gocomms/netListener"
-	"github.com/bhbosman/gocomms/stacks/bottom"
 	"github.com/bhbosman/gocomms/stacks/bvisMessageBreaker"
 	"github.com/bhbosman/gocomms/stacks/messageCompressor"
 	"github.com/bhbosman/gocomms/stacks/messageNumber"

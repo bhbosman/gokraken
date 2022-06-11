@@ -2,12 +2,12 @@ package connection
 
 import (
 	"github.com/bhbosman/goCommsStacks"
+	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gocomms/netDial"
-	"github.com/bhbosman/gocomms/stacks/bottom"
 	"github.com/bhbosman/gocomms/stacks/top"
 	"github.com/bhbosman/gocomms/stacks/websocket"
 	"github.com/cskr/pubsub"
