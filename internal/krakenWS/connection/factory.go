@@ -27,14 +27,16 @@ func (self Factory) Create(
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc model.ConnectionCancelFunc,
 	logger *zap.Logger,
-	userContext interface{}) intf.IConnectionReactor {
+	userContext interface{},
+) (intf.IConnectionReactor, error) {
 	return NewReactor(
-		logger,
-		cancelCtx,
-		cancelFunc,
-		connectionCancelFunc,
-		userContext,
-		self.PubSub)
+			logger,
+			cancelCtx,
+			cancelFunc,
+			connectionCancelFunc,
+			userContext,
+			self.PubSub),
+		nil
 }
 
 func NewFactory(

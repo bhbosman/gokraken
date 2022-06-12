@@ -30,8 +30,18 @@ func (self *Factory) Create(
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc model.ConnectionCancelFunc,
 	logger *zap.Logger,
-	userContext interface{}) intf.IConnectionReactor {
-	return NewReactor(logger, cancelCtx, cancelFunc, connectionCancelFunc, userContext, self.ConsumerCounter, self.SerializeData, self.pubSub)
+	userContext interface{},
+) (intf.IConnectionReactor, error) {
+	return NewReactor(
+			logger,
+			cancelCtx,
+			cancelFunc,
+			connectionCancelFunc,
+			userContext,
+			self.ConsumerCounter,
+			self.SerializeData,
+			self.pubSub),
+		nil
 }
 
 func NewFactory(
