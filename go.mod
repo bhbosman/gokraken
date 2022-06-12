@@ -7,7 +7,7 @@ require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20220611181910-f23644b1b31a
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220611182354-46d10d89b8e1
 	github.com/bhbosman/goCommsStacks v0.0.0-20220611100605-a342f0b42054
-	github.com/bhbosman/goMessages v0.0.0-20210414134625-4d7166d206a6
+	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
 	github.com/bhbosman/gocommon v0.0.0-20220608193411-270a4a7c70cc
 	github.com/bhbosman/gocomms v0.0.0-20220611042959-112035f663a7
 	github.com/bhbosman/goerrors v0.0.0-20210201065523-bb3e832fa9ab
@@ -16,7 +16,6 @@ require (
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
 	github.com/cskr/pubsub v1.0.2
 	github.com/emirpasic/gods v1.12.0
-	github.com/gobwas/ws v1.1.0 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/kardianos/service v1.1.0
 	github.com/stretchr/testify v1.7.0
