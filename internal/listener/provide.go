@@ -10,7 +10,6 @@ import (
 	"github.com/bhbosman/goCommsStacks/messageNumber"
 	"github.com/bhbosman/goCommsStacks/pingPong"
 	"github.com/bhbosman/goCommsStacks/top"
-	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
@@ -44,7 +43,7 @@ func CompressedListener(
 						serviceDependentOn,
 						CompressedListenerConnection,
 						url,
-						gocommon.TransportFactoryCompressedName,
+						goCommsDefinitions.TransportFactoryCompressedName,
 						func() (intf.IConnectionReactorFactory, error) {
 							cfr := NewFactory(
 								crfName,

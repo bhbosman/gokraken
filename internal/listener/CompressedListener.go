@@ -7,7 +7,6 @@ import (
 	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
-	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -42,7 +41,7 @@ func TextListener(
 						serviceDependentOn,
 						TextListenerConnection,
 						url,
-						gocommon.TransportFactoryEmptyName,
+						goCommsDefinitions.TransportFactoryEmptyName,
 						func() (intf.IConnectionReactorFactory, error) {
 							cfr := NewFactory(
 								crfName,

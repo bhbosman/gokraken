@@ -6,7 +6,6 @@ import (
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
 	"github.com/bhbosman/goCommsStacks/websocket"
-	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -43,7 +42,7 @@ func ProvideKrakenDialer(
 						serviceDependentOn,
 						"Kraken",
 						"wss://ws.kraken.com:443",
-						gocommon.WebSocketName,
+						goCommsDefinitions.WebSocketName,
 						func() (intf.IConnectionReactorFactory, error) {
 							cfr := NewFactory(crfName, params.PubSub)
 							return cfr, nil
