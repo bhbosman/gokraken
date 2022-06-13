@@ -42,20 +42,26 @@ func TextListener(
 						TextListenerConnection,
 						url,
 						goCommsDefinitions.TransportFactoryEmptyName,
-						func() (intf.IConnectionReactorFactory, error) {
-							cfr := NewFactory(
-								crfName,
-								params.PubSub,
-								func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
-									bytes, err := json.Marshal(m)
-									if err != nil {
-										return nil, err
-									}
-									return gomessageblock.NewReaderWriterBlock(bytes), nil
+						common.MoreOptions(
+							fx.Provide(
+								fx.Annotated{
+									Target: func() (intf.IConnectionReactorFactory, error) {
+										cfr := NewFactory(
+											crfName,
+											params.PubSub,
+											func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
+												bytes, err := json.Marshal(m)
+												if err != nil {
+													return nil, err
+												}
+												return gomessageblock.NewReaderWriterBlock(bytes), nil
+											},
+											ConsumerCounter)
+										return cfr, nil
+									},
 								},
-								ConsumerCounter)
-							return cfr, nil
-						},
+							),
+						),
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForEmptyName(

@@ -25,7 +25,9 @@ func CompressedListener(
 	serviceIdentifier model.ServiceIdentifier,
 	serviceDependentOn model.ServiceIdentifier,
 	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
-	maxConnections int, url string) fx.Option {
+	maxConnections int,
+	url string,
+) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
 	crfName := "CompressedListenerConnection.CRF"
 	return fx.Options(
@@ -44,16 +46,22 @@ func CompressedListener(
 						CompressedListenerConnection,
 						url,
 						goCommsDefinitions.TransportFactoryCompressedName,
-						func() (intf.IConnectionReactorFactory, error) {
-							cfr := NewFactory(
-								crfName,
-								params.PubSub,
-								func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
-									return stream.Marshall(data)
+						common.MoreOptions(
+							fx.Provide(
+								fx.Annotated{
+									Target: func() (intf.IConnectionReactorFactory, error) {
+										cfr := NewFactory(
+											crfName,
+											params.PubSub,
+											func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
+												return stream.Marshall(data)
+											},
+											ConsumerCounter)
+										return cfr, nil
+									},
 								},
-								ConsumerCounter)
-							return cfr, nil
-						},
+							),
+						),
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForCompressedName(
@@ -69,6 +77,7 @@ func CompressedListener(
 					return f(
 						params.NetAppFuncInParams)
 				},
-			}),
+			},
+		),
 	)
 }
