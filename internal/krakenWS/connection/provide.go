@@ -43,16 +43,6 @@ func ProvideKrakenDialer(
 						"Kraken",
 						"wss://ws.kraken.com:443",
 						goCommsDefinitions.WebSocketName,
-						common.MoreOptions(
-							fx.Provide(
-								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactory, error) {
-										cfr := NewFactory(crfName, params.PubSub)
-										return cfr, nil
-									},
-								},
-							),
-						),
 						common.MaxConnectionsSetting(1),
 						goCommsNetDialer.CanDial(canDials...),
 						common.NewConnectionInstanceOptions(
@@ -60,6 +50,14 @@ func ProvideKrakenDialer(
 								top.ProvideTopStack(),
 								websocket.ProvideWebsocketStacks(),
 								bottom.ProvideBottomStack(),
+							),
+							fx.Provide(
+								fx.Annotated{
+									Target: func() (intf.IConnectionReactorFactory, error) {
+										cfr := NewFactory(crfName, params.PubSub)
+										return cfr, nil
+									},
+								},
 							),
 						),
 					)

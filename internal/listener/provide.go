@@ -46,7 +46,16 @@ func CompressedListener(
 						CompressedListenerConnection,
 						url,
 						goCommsDefinitions.TransportFactoryCompressedName,
-						common.MoreOptions(
+						common.MaxConnectionsSetting(maxConnections),
+						common.NewConnectionInstanceOptions(
+							goCommsDefinitions.ProvideTransportFactoryForCompressedName(
+								top.ProvideTopStack(),
+								pingPong.ProvidePingPongStacks(),
+								messageCompressor.ProvideMessageCompressorStack(),
+								messageNumber.ProvideMessageNumberStack(),
+								bvisMessageBreaker.ProvideBvisMessageBreakerStack(),
+								bottom.ProvideBottomStack(),
+							),
 							fx.Provide(
 								fx.Annotated{
 									Target: func() (intf.IConnectionReactorFactory, error) {
@@ -60,17 +69,6 @@ func CompressedListener(
 										return cfr, nil
 									},
 								},
-							),
-						),
-						common.MaxConnectionsSetting(maxConnections),
-						common.NewConnectionInstanceOptions(
-							goCommsDefinitions.ProvideTransportFactoryForCompressedName(
-								top.ProvideTopStack(),
-								pingPong.ProvidePingPongStacks(),
-								messageCompressor.ProvideMessageCompressorStack(),
-								messageNumber.ProvideMessageNumberStack(),
-								bvisMessageBreaker.ProvideBvisMessageBreakerStack(),
-								bottom.ProvideBottomStack(),
 							),
 						),
 					)

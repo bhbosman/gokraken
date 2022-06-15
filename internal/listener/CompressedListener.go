@@ -42,7 +42,12 @@ func TextListener(
 						TextListenerConnection,
 						url,
 						goCommsDefinitions.TransportFactoryEmptyName,
-						common.MoreOptions(
+						common.MaxConnectionsSetting(maxConnections),
+						common.NewConnectionInstanceOptions(
+							goCommsDefinitions.ProvideTransportFactoryForEmptyName(
+								top.ProvideTopStack(),
+								bottom.ProvideBottomStack(),
+							),
 							fx.Provide(
 								fx.Annotated{
 									Target: func() (intf.IConnectionReactorFactory, error) {
@@ -60,13 +65,6 @@ func TextListener(
 										return cfr, nil
 									},
 								},
-							),
-						),
-						common.MaxConnectionsSetting(maxConnections),
-						common.NewConnectionInstanceOptions(
-							goCommsDefinitions.ProvideTransportFactoryForEmptyName(
-								top.ProvideTopStack(),
-								bottom.ProvideBottomStack(),
 							),
 						),
 					)
