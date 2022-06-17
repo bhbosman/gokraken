@@ -9,7 +9,7 @@ require (
 	github.com/bhbosman/goCommsStacks v0.0.0-20220611100605-a342f0b42054
 	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
 	github.com/bhbosman/gocommon v0.0.0-20220608193411-270a4a7c70cc
-	github.com/bhbosman/gocomms v0.0.0-20220611042959-112035f663a7
+	github.com/bhbosman/gocomms v0.0.0-20220614200341-e167364b814f
 	github.com/bhbosman/goerrors v0.0.0-20210201065523-bb3e832fa9ab
 	github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc
 	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303

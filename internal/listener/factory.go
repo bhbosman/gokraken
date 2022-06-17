@@ -48,11 +48,13 @@ func NewFactory(
 	crfName string,
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
-	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl) intf.IConnectionReactorFactory {
-	return &Factory{
+	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
+) (intf.IConnectionReactorFactoryCreateReactor, error) {
+	fac := &Factory{
 		crfName:         crfName,
 		pubSub:          pubSub,
 		SerializeData:   SerializeData,
 		ConsumerCounter: ConsumerCounter,
 	}
+	return fac, fac, nil
 }

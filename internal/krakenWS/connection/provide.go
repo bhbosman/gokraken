@@ -53,9 +53,8 @@ func ProvideKrakenDialer(
 							),
 							fx.Provide(
 								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactory, error) {
-										cfr := NewFactory(crfName, params.PubSub)
-										return cfr, nil
+									Target: func() (intf.IConnectionReactorFactoryCreateReactor, error) {
+										return NewFactory(crfName, params.PubSub)
 									},
 								},
 							),

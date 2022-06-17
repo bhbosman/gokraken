@@ -50,8 +50,8 @@ func TextListener(
 							),
 							fx.Provide(
 								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactory, error) {
-										cfr := NewFactory(
+									Target: func() (intf.IConnectionReactorFactoryCreateReactor, error) {
+										return NewFactory(
 											crfName,
 											params.PubSub,
 											func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
@@ -62,7 +62,6 @@ func TextListener(
 												return gomessageblock.NewReaderWriterBlock(bytes), nil
 											},
 											ConsumerCounter)
-										return cfr, nil
 									},
 								},
 							),

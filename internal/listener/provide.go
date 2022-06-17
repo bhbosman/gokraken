@@ -58,15 +58,14 @@ func CompressedListener(
 							),
 							fx.Provide(
 								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactory, error) {
-										cfr := NewFactory(
+									Target: func() (intf.IConnectionReactorFactoryCreateReactor, error) {
+										return NewFactory(
 											crfName,
 											params.PubSub,
 											func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
 												return stream.Marshall(data)
 											},
 											ConsumerCounter)
-										return cfr, nil
 									},
 								},
 							),
