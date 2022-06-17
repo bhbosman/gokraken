@@ -56,5 +56,5 @@ func NewFactory(
 		SerializeData:   SerializeData,
 		ConsumerCounter: ConsumerCounter,
 	}
-	return fac, fac, nil
+	return fac, nil
 }
