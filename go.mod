@@ -1,6 +1,6 @@
 module github.com/bhbosman/gokraken
 
-go 1.15
+go 1.18
 
 require (
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20220612151241-aebc475765c2
@@ -22,6 +22,35 @@ require (
 	go.uber.org/fx v1.17.1
 	go.uber.org/zap v1.21.0
 	google.golang.org/protobuf v1.25.0
+)
+
+require (
+	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/gdamore/encoding v1.0.0 // indirect
+	github.com/gdamore/tcell/v2 v2.5.1 // indirect
+	github.com/gobwas/httphead v0.1.0 // indirect
+	github.com/gobwas/pool v0.2.1 // indirect
+	github.com/gobwas/ws v1.1.0 // indirect
+	github.com/golang/mock v1.6.0 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/icza/gox v0.0.0-20220321141217-e2d488ab2fbc // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/mattn/go-runewidth v0.0.13 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/reactivex/rxgo/v2 v2.5.0 // indirect
+	github.com/rivo/tview v0.0.0-20220307222120-9994674d60a8 // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/stretchr/objx v0.1.0 // indirect
+	github.com/teivah/onecontext v0.0.0-20200513185103-40f981bfd775 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/dig v1.14.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
+	golang.org/x/text v0.3.7 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 replace (
