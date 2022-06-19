@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/bhbosman/goCommsNetDialer"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
-	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -16,7 +15,6 @@ import (
 	"github.com/cskr/pubsub"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
-	"net/url"
 	"strings"
 )
 
@@ -44,12 +42,17 @@ type Reactor struct {
 }
 
 func (self *Reactor) Init(
-	url *url.URL,
-	connectionId string,
-	connectionManager IConnectionManager.IService,
+	//url *url.URL,
+	//connectionId string,
+	//connectionManager IConnectionManager.IService,
 	toConnectionFunc goprotoextra.ToConnectionFunc,
 	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
-	_, err := self.BaseConnectionReactor.Init(url, connectionId, connectionManager, toConnectionFunc, toConnectionReactor)
+	_, err := self.BaseConnectionReactor.Init(
+		//url,
+		//connectionId,
+		//connectionManager,
+		toConnectionFunc,
+		toConnectionReactor)
 	if err != nil {
 		return nil, err
 	}

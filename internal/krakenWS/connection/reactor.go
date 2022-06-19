@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/bhbosman/goCommsStacks/webSocketMessages/wsmsg"
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
-	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -21,8 +20,6 @@ import (
 	"github.com/golang/protobuf/jsonpb"
 	"go.uber.org/zap"
 	"strconv"
-
-	"net/url"
 )
 
 type RePublishMessage struct {
@@ -229,15 +226,15 @@ func (self Reactor) handleMessageBlockReaderWriter(inData *gomessageblock.Reader
 }
 
 func (self *Reactor) Init(
-	url *url.URL,
-	connectionId string,
-	connectionManager IConnectionManager.IService,
+	//url *url.URL,
+	//connectionId string,
+	//connectionManager IConnectionManager.IService,
 	onSend goprotoextra.ToConnectionFunc,
 	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
 	_, err := self.BaseConnectionReactor.Init(
-		url,
-		connectionId,
-		connectionManager,
+		//url,
+		//connectionId,
+		//connectionManager,
 		onSend,
 		toConnectionReactor)
 	if err != nil {
