@@ -11,7 +11,6 @@ require (
 	github.com/bhbosman/gocommon v0.0.0-20220608193411-270a4a7c70cc
 	github.com/bhbosman/gocomms v0.0.0-20220614200341-e167364b814f
 	github.com/bhbosman/goerrors v0.0.0-20210201065523-bb3e832fa9ab
-	github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc
 	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
 	github.com/cskr/pubsub v1.0.2
@@ -24,7 +23,10 @@ require (
 	google.golang.org/protobuf v1.25.0
 )
 
+require github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
+
 require (
+	//github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
 	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
