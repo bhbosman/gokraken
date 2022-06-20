@@ -8,7 +8,7 @@ require (
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220611182354-46d10d89b8e1
 	github.com/bhbosman/goCommsStacks v0.0.0-20220611100605-a342f0b42054
 	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
-	github.com/bhbosman/gocommon v0.0.0-20220608193411-270a4a7c70cc
+	github.com/bhbosman/gocommon v0.0.0-20220620062839-d40b45675900
 	github.com/bhbosman/gocomms v0.0.0-20220614200341-e167364b814f
 	github.com/bhbosman/goerrors v0.0.0-20210201065523-bb3e832fa9ab
 	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303
