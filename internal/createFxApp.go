@@ -2,7 +2,7 @@ package internal
 
 import (
 	"github.com/bhbosman/goCommsNetDialer"
-	"github.com/bhbosman/gocommon/FxWrappers"
+	"github.com/bhbosman/goUi"
 	app2 "github.com/bhbosman/gocommon/Providers"
 	"github.com/bhbosman/gokraken/internal/krakenWS/connection"
 	"github.com/bhbosman/gokraken/internal/listener"
@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-func CreateFxApp() *FxWrappers.TerminalAppUsingFxApp {
+func CreateFxApp() *goUi.TerminalAppUsingFxApp {
 	settings := &AppSettings{
 		Logger:                log.New(os.Stderr, "", log.LstdFlags),
 		textListenerUrl:       "tcp4://127.0.0.1:3010",
@@ -20,7 +20,7 @@ func CreateFxApp() *FxWrappers.TerminalAppUsingFxApp {
 
 	ConsumerCounter := goCommsNetDialer.NewCanDialDefaultImpl()
 	var shutDowner fx.Shutdowner
-	return FxWrappers.NewFxMainApplicationServices(
+	return goUi.NewFxMainApplicationServices(
 		"KrakenStream",
 		false,
 		fx.Supply(settings, ConsumerCounter),

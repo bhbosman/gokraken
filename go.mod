@@ -8,7 +8,8 @@ require (
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220611182354-46d10d89b8e1
 	github.com/bhbosman/goCommsStacks v0.0.0-20220611100605-a342f0b42054
 	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
-	github.com/bhbosman/gocommon v0.0.0-20220620062839-d40b45675900
+	github.com/bhbosman/goUi v0.0.0-20220621055221-567fb05b1804
+	github.com/bhbosman/gocommon v0.0.0-20220621055214-3b04298a9d45
 	github.com/bhbosman/gocomms v0.0.0-20220614200341-e167364b814f
 	github.com/bhbosman/goerrors v0.0.0-20210201065523-bb3e832fa9ab
 	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303
@@ -23,10 +24,9 @@ require (
 	google.golang.org/protobuf v1.25.0
 )
 
-require github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
-
 require (
-	//github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
+	github.com/bhbosman/goFxApp v0.0.0-20220621055337-d5d1bfa131ee // indirect
+	github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
 	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
@@ -35,7 +35,6 @@ require (
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.1.0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/icza/gox v0.0.0-20220321141217-e2d488ab2fbc // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
@@ -68,3 +67,7 @@ replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
 replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
+
+replace github.com/bhbosman/goFxApp => ../goFxApp
+
+replace github.com/bhbosman/goUi => ../goUi
