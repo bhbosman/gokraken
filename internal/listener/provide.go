@@ -58,7 +58,7 @@ func CompressedListener(
 							),
 							fx.Provide(
 								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactoryCreateReactor, error) {
+									Target: func() (intf.IConnectionReactorFactory, error) {
 										return NewFactory(
 											crfName,
 											params.PubSub,

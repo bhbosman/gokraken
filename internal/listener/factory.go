@@ -49,7 +49,7 @@ func NewFactory(
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
 	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
-) (intf.IConnectionReactorFactoryCreateReactor, error) {
+) (intf.IConnectionReactorFactory, error) {
 	fac := &Factory{
 		crfName:         crfName,
 		pubSub:          pubSub,

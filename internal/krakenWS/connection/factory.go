@@ -42,7 +42,7 @@ func (self Factory) Create(
 func NewFactory(
 	crfName string,
 	PubSub *pubsub.PubSub,
-) (intf.IConnectionReactorFactoryCreateReactor, error) {
+) (intf.IConnectionReactorFactory, error) {
 	fac := &Factory{
 		crfName: crfName,
 		PubSub:  PubSub,
