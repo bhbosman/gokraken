@@ -8,8 +8,9 @@ require (
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220611182354-46d10d89b8e1
 	github.com/bhbosman/goCommsStacks v0.0.0-20220611100605-a342f0b42054
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
+	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
-	github.com/bhbosman/gocommon v0.0.0-20220623192853-0191012d9f94
+	github.com/bhbosman/gocommon v0.0.0-20220625172843-54633d70219d
 	github.com/bhbosman/gocomms v0.0.0-20220614200341-e167364b814f
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303
@@ -25,7 +26,6 @@ require (
 )
 
 require (
-	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2 // indirect
 	github.com/bhbosman/goUi v0.0.0-20220625174028-03193a90ee79 // indirect
 	github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
 	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
@@ -76,3 +76,5 @@ replace github.com/bhbosman/goFxApp => ../goFxApp
 replace github.com/bhbosman/goUi => ../goUi
 
 replace github.com/bhbosman/goerrors => ../goerrors
+
+replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
