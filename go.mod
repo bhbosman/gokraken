@@ -26,7 +26,7 @@ require (
 )
 
 require (
-	github.com/bhbosman/goConnectionManager v0.0.0-20220627074017-e78b02452674 // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20220628055237-4a995b1ae47c // indirect
 	github.com/bhbosman/goUi v0.0.0-20220625174028-03193a90ee79 // indirect
 	github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
 	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
