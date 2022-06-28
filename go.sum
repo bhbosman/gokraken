@@ -4,6 +4,8 @@ github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZx
 github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT8A=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb h1:13mpLpxXpwPsqv242olI+GbA5ir6iCgk9HKIeGlbUgI=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb/go.mod h1:jsLQVv8+iEkzR/2CUFJsRE1mu/zDNRY2GYKLhf8/KTM=
+github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4 h1:Mt94LeU6qtZTyr9lGN2RAdi7Sv16TwNJ9xI2hVt9TrU=
+github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4/go.mod h1:I2cFVeFficmJ5v13H6o2KjnejAdvxzv9KRjizY1+0Ko=
 github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b h1:nRL7b9cRNMb5/6SBPgETb4UOzDSOzG7ygTqVJa/hZmA=
 github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b/go.mod h1:WHW+D/SCj7MpVcGEfmUB7yphsdLKFbOmH1nSoY/992s=
 github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc h1:W2SGlAixV5+dBq5da/dVJDYcUxEItIA5IdqdLTjnaLQ=

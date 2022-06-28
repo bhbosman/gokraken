@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20220612151241-aebc475765c2
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb
-	github.com/bhbosman/goCommsNetListener v0.0.0-20220611182354-46d10d89b8e1
+	github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
 	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2 // indirect
@@ -68,7 +68,7 @@ replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.202
 
 //replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
 
-replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
+//replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
 
