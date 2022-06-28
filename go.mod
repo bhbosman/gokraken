@@ -66,7 +66,7 @@ replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.202
 
 //replace github.com/bhbosman/goCommsStacks => ../goCommsStacks
 
-replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
+//replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
 
 replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
 

@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT8A=
+github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb h1:13mpLpxXpwPsqv242olI+GbA5ir6iCgk9HKIeGlbUgI=
+github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb/go.mod h1:jsLQVv8+iEkzR/2CUFJsRE1mu/zDNRY2GYKLhf8/KTM=
 github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b h1:nRL7b9cRNMb5/6SBPgETb4UOzDSOzG7ygTqVJa/hZmA=
 github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b/go.mod h1:WHW+D/SCj7MpVcGEfmUB7yphsdLKFbOmH1nSoY/992s=
 github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc h1:W2SGlAixV5+dBq5da/dVJDYcUxEItIA5IdqdLTjnaLQ=
