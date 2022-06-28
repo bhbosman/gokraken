@@ -3,7 +3,7 @@ module github.com/bhbosman/gokraken
 go 1.18
 
 require (
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20220612151241-aebc475765c2
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20220628093721-7191a8828f7f
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
@@ -69,8 +69,13 @@ replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.202
 //replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
+
 replace github.com/bhbosman/goFxApp => ../goFxApp
+
 replace github.com/bhbosman/goUi => ../goUi
+
 replace github.com/bhbosman/goerrors => ../goerrors
+
 replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
+
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
