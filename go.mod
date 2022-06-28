@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20220612151241-aebc475765c2
-	github.com/bhbosman/goCommsNetDialer v0.0.0-20220611181910-f23644b1b31a
+	github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220611182354-46d10d89b8e1
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
