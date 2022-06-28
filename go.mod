@@ -65,19 +65,12 @@ replace (
 replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b
 
 //replace github.com/bhbosman/goCommsStacks => ../goCommsStacks
-
 //replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
-
 //replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
-
 replace github.com/bhbosman/goFxApp => ../goFxApp
-
 replace github.com/bhbosman/goUi => ../goUi
-
 replace github.com/bhbosman/goerrors => ../goerrors
-
 replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
-
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
