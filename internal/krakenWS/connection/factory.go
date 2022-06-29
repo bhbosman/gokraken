@@ -2,6 +2,7 @@ package connection
 
 import (
 	"context"
+	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/cskr/pubsub"
@@ -9,8 +10,9 @@ import (
 )
 
 type Factory struct {
-	crfName string
-	PubSub  *pubsub.PubSub
+	crfName           string
+	PubSub            *pubsub.PubSub
+	goFunctionCounter GoFunctionCounter.IService
 }
 
 func (self *Factory) Name() string {
@@ -22,7 +24,7 @@ func (self Factory) Values(_ map[string]interface{}) (map[string]interface{}, er
 	return result, nil
 }
 
-func (self Factory) Create(
+func (self *Factory) Create(
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc model.ConnectionCancelFunc,
@@ -35,17 +37,21 @@ func (self Factory) Create(
 			cancelFunc,
 			connectionCancelFunc,
 			userContext,
-			self.PubSub),
+			self.PubSub,
+			self.goFunctionCounter,
+		),
 		nil
 }
 
 func NewFactory(
 	crfName string,
 	PubSub *pubsub.PubSub,
+	goFunctionCounter GoFunctionCounter.IService,
 ) (intf.IConnectionReactorFactory, error) {
 	fac := &Factory{
-		crfName: crfName,
-		PubSub:  PubSub,
+		crfName:           crfName,
+		PubSub:            PubSub,
+		goFunctionCounter: goFunctionCounter,
 	}
 	return fac, nil
 }

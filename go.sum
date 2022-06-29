@@ -2,12 +2,6 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT8A=
-github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb h1:13mpLpxXpwPsqv242olI+GbA5ir6iCgk9HKIeGlbUgI=
-github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb/go.mod h1:jsLQVv8+iEkzR/2CUFJsRE1mu/zDNRY2GYKLhf8/KTM=
-github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4 h1:Mt94LeU6qtZTyr9lGN2RAdi7Sv16TwNJ9xI2hVt9TrU=
-github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4/go.mod h1:I2cFVeFficmJ5v13H6o2KjnejAdvxzv9KRjizY1+0Ko=
-github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b h1:nRL7b9cRNMb5/6SBPgETb4UOzDSOzG7ygTqVJa/hZmA=
-github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b/go.mod h1:WHW+D/SCj7MpVcGEfmUB7yphsdLKFbOmH1nSoY/992s=
 github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc h1:W2SGlAixV5+dBq5da/dVJDYcUxEItIA5IdqdLTjnaLQ=
 github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc/go.mod h1:h6gnYEoakrykzxs2ICT07wrO6yZC5lrSOqwUR/WInc0=
 github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303 h1:3YejBhT/cpHf3K9zH/RFLOtqPZe4EqkY7PmYZkv1AAg=
@@ -80,8 +74,6 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/reactivex/rxgo/v2 v2.5.0 h1:FhPgHwX9vKdNQB2gq9EPt+EKk9QrrzoeztGbEEnZam4=
 github.com/reactivex/rxgo/v2 v2.5.0/go.mod h1:bs4fVZxcb5ZckLIOeIeVH942yunJLWDABWGbrHAW+qU=
-github.com/rivo/tview v0.0.0-20220610163003-691f46d6f500 h1:KvoRB2TMfMqK2NF2mIvZprDT/Ofvsa4RphWLoCmUDag=
-github.com/rivo/tview v0.0.0-20220610163003-691f46d6f500/go.mod h1:WIfMkQNY+oq/mWwtsjOYHIZBuwthioY2srOmljJkTnk=
 github.com/rivo/uniseg v0.2.0 h1:S1pD9weZBuJdFmowNwbpi7BJ8TNftyUImj/0WQi72jY=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
@@ -136,6 +128,8 @@ golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod h1:t9HGtf8HONx5eT2rtn
 golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
+golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f h1:OfiFi4JbukWwe3lzw+xunroH1mnC1e2Gy5cxNJApiSY=
+golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=

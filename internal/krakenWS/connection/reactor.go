@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/bhbosman/goCommsStacks/webSocketMessages/wsmsg"
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
+	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -76,6 +77,7 @@ type Reactor struct {
 	reqid                    uint32
 	republishChannelName     string
 	publishChannelName       string
+	goFunctionCounter        GoFunctionCounter.IService
 }
 
 func (self *Reactor) handleKrakenStreamSubscribe(inData *krakenStream.Subscribe) error {
@@ -245,11 +247,22 @@ func (self *Reactor) Init(
 	self.publishChannelName = "publishChannel"
 
 	republishChannel := self.PubSub.Sub(self.republishChannelName)
+
+	// this function is part of the GoFunctionCounter count
 	go func(ch chan interface{}, topics ...string) {
+		functionName := self.goFunctionCounter.CreateFunctionName("Kraken.Init")
+		defer func(GoFunctionCounter GoFunctionCounter.IService, name string) {
+			_ = GoFunctionCounter.Remove(name)
+		}(self.goFunctionCounter, functionName)
+		_ = self.goFunctionCounter.Add(functionName)
+
+		//
+
 		<-self.CancelCtx.Done()
 		self.PubSub.Unsub(ch, topics...)
 	}(republishChannel, self.republishChannelName)
 
+	// Todo: Register function
 	go func(ch chan interface{}, topics ...string) {
 		for range ch {
 			if self.CancelCtx.Err() == nil {
@@ -413,14 +426,17 @@ func NewReactor(
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc model.ConnectionCancelFunc,
 	userContext interface{},
-	PubSub *pubsub.PubSub) *Reactor {
+	PubSub *pubsub.PubSub,
+	goFunctionCounter GoFunctionCounter.IService,
+) *Reactor {
 	result := &Reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
 			logger,
 			cancelCtx,
 			cancelFunc,
 			connectionCancelFunc,
-			userContext),
+			userContext,
+		),
 		messageRouter:            messageRouter.NewMessageRouter(),
 		connectionID:             0,
 		status:                   "",
@@ -430,6 +446,7 @@ func NewReactor(
 		registeredSubscriptions:  make(map[uint32]registeredSubscription),
 		FullMarketOrderBook:      make(map[string]*FullMarketOrderBook),
 		pairs:                    make(map[registrationKey]*registrationValue),
+		goFunctionCounter:        goFunctionCounter,
 	}
 	_ = result.messageRouter.Add(result.handleMessageBlockReaderWriter)
 	_ = result.messageRouter.Add(result.handleWebSocketMessageWrapper)

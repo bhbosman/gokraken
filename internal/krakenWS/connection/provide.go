@@ -6,6 +6,7 @@ import (
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
 	"github.com/bhbosman/goCommsStacks/websocket"
+	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -35,6 +36,7 @@ func ProvideKrakenDialer(
 					fx.In
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
+					GoFunctionCounter  GoFunctionCounter.IService
 				}) messages.CreateAppCallback {
 					f := goCommsNetDialer.NewNetDialApp(
 						"Kraken",
@@ -54,7 +56,11 @@ func ProvideKrakenDialer(
 							fx.Provide(
 								fx.Annotated{
 									Target: func() (intf.IConnectionReactorFactory, error) {
-										return NewFactory(crfName, params.PubSub)
+										return NewFactory(
+											crfName,
+											params.PubSub,
+											params.GoFunctionCounter,
+										)
 									},
 								},
 							),

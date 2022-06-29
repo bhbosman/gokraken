@@ -66,6 +66,7 @@ func (self *Reactor) Init(
 		<-self.CancelCtx.Done()
 	}(ch, self.publishChannelName)
 
+	// Todo: Register function
 	go func(ch chan interface{}, topics ...string) {
 		for v := range ch {
 			if self.CancelCtx.Err() == nil {

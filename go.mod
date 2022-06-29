@@ -10,8 +10,8 @@ require (
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
 	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
-	github.com/bhbosman/gocommon v0.0.0-20220627073905-4951fb81c325
-	github.com/bhbosman/gocomms v0.0.0-20220614200341-e167364b814f
+	github.com/bhbosman/gocommon v0.0.0-20220628055238-cde1e1c5e593
+	github.com/bhbosman/gocomms v0.0.0-20220628074707-e93417aaaed2
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
@@ -56,6 +56,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
+require golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
+
 replace (
 	github.com/bhbosman/goMessages => ../goMessages
 	github.com/bhbosman/gocommon => ../gocommon
@@ -64,9 +66,11 @@ replace (
 
 replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b
 
-//replace github.com/bhbosman/goCommsStacks => ../goCommsStacks
-//replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
-//replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
+replace github.com/bhbosman/goCommsStacks => ../goCommsStacks
+
+replace github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
+
+replace github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
 
@@ -79,3 +83,5 @@ replace github.com/bhbosman/goerrors => ../goerrors
 replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
 
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
+
+replace github.com/rivo/tview => ../tview
