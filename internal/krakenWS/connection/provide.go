@@ -13,6 +13,7 @@ import (
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
+	"net/url"
 )
 
 const FactoryName = "KrakenWSS"
@@ -20,7 +21,8 @@ const FactoryName = "KrakenWSS"
 func ProvideKrakenDialer(
 	serviceIdentifier model.ServiceIdentifier,
 	serviceDependentOn model.ServiceIdentifier,
-	canDial goCommsNetDialer.ICanDial) fx.Option {
+	canDial goCommsNetDialer.ICanDial,
+) fx.Option {
 	var canDials []goCommsNetDialer.ICanDial
 	if canDial != nil {
 		canDials = append(canDials, canDial)
@@ -28,6 +30,11 @@ func ProvideKrakenDialer(
 
 	const KrakenDialerConst = "KrakenDialer"
 	crfName := "KrakenDialer.CRF"
+
+	krakenUrl, err := url.Parse("wss://ws.kraken.com:443")
+	if err != nil {
+		fx.Error(err)
+	}
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -37,13 +44,15 @@ func ProvideKrakenDialer(
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
 					GoFunctionCounter  GoFunctionCounter.IService
-				}) messages.CreateAppCallback {
+				}) (messages.CreateAppCallback, error) {
 					f := goCommsNetDialer.NewNetDialApp(
 						"Kraken",
 						serviceIdentifier,
 						serviceDependentOn,
 						"Kraken",
-						"wss://ws.kraken.com:443",
+						false,
+						nil,
+						krakenUrl,
 						goCommsDefinitions.WebSocketName,
 						common.MaxConnectionsSetting(1),
 						goCommsNetDialer.CanDial(canDials...),
@@ -51,7 +60,7 @@ func ProvideKrakenDialer(
 							goCommsDefinitions.ProvideTransportFactoryForWebSocketName(
 								top.ProvideTopStack(),
 								websocket.ProvideWebsocketStacks(),
-								bottom.ProvideBottomStack(),
+								bottom.Provide(),
 							),
 							fx.Provide(
 								fx.Annotated{
@@ -66,8 +75,7 @@ func ProvideKrakenDialer(
 							),
 						),
 					)
-					return f(
-						params.NetAppFuncInParams)
+					return f(params.NetAppFuncInParams), nil
 				},
 			}))
 }

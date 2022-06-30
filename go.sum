@@ -6,8 +6,6 @@ github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc h1:W2SGlAixV5+d
 github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc/go.mod h1:h6gnYEoakrykzxs2ICT07wrO6yZC5lrSOqwUR/WInc0=
 github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303 h1:3YejBhT/cpHf3K9zH/RFLOtqPZe4EqkY7PmYZkv1AAg=
 github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303/go.mod h1:dpi/UCINpgLFQ8vWS98SNbUtFp0xT0lDEPIhvoba0WU=
-github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7 h1:4WoK4jBmCIH5oUIqM7EakmKYVn0w+Q8TSUuk31VZASM=
-github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7/go.mod h1:XW64igzX3ph2KXKGAzt11RK3oc6GvS7U8DoaY76jJ0Y=
 github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b h1:mfhKWKkAnnEpjWYcFHR5B3G7VqYSaOJJ5SENyky5nOw=
 github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b/go.mod h1:wSkrPaXoiIWZqW/g7Px4xc79di6FTcpB8tvaKJ6uGBo=
 github.com/cenkalti/backoff/v4 v4.0.0 h1:6VeaLF9aI+MAUQ95106HwWzYZgJJpZ4stumjj6RFYAU=

@@ -16,6 +16,7 @@ import (
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/proto"
+	"net/url"
 )
 
 func TextListener(
@@ -23,7 +24,7 @@ func TextListener(
 	serviceDependentOn model.ServiceIdentifier,
 	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
 	maxConnections int,
-	url string) fx.Option {
+	urlAsText string) fx.Option {
 	const TextListenerConnection = "TextListenerConnection"
 	crfName := "TextListenerConnection.CRF"
 	return fx.Options(
@@ -34,19 +35,24 @@ func TextListener(
 					fx.In
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
-				}) messages.CreateAppCallback {
+				}) (messages.CreateAppCallback, error) {
+					textListenerUrl, err := url.Parse(urlAsText)
+					if err != nil {
+						return messages.CreateAppCallback{}, err
+					}
 					f := goCommsNetListener.NewNetListenApp(
 						TextListenerConnection,
 						serviceIdentifier,
 						serviceDependentOn,
 						TextListenerConnection,
-						url,
+						false, nil,
+						textListenerUrl,
 						goCommsDefinitions.TransportFactoryEmptyName,
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForEmptyName(
 								top.ProvideTopStack(),
-								bottom.ProvideBottomStack(),
+								bottom.Provide(),
 							),
 							fx.Provide(
 								fx.Annotated{
@@ -67,8 +73,7 @@ func TextListener(
 							),
 						),
 					)
-					return f(
-						params.NetAppFuncInParams)
+					return f(params.NetAppFuncInParams), nil
 				},
 			}),
 	)

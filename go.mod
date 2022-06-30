@@ -41,7 +41,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/reactivex/rxgo/v2 v2.5.0 // indirect
+	github.com/reactivex/rxgo/v2 v2.5.0
 	github.com/rivo/tview v0.0.0-20220610163003-691f46d6f500 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/stretchr/objx v0.1.0 // indirect
@@ -59,7 +59,6 @@ require (
 require golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
 
 replace (
-	github.com/bhbosman/goMessages => ../goMessages
 	github.com/bhbosman/gocommon => ../gocommon
 	github.com/bhbosman/gocomms => ../gocomms
 )
@@ -85,3 +84,7 @@ replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
 replace github.com/rivo/tview => ../tview
+
+replace github.com/bhbosman/goprotoextra => ../goprotoextra
+
+replace github.com/bhbosman/goMessages => ../goMessages

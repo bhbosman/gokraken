@@ -13,12 +13,12 @@ import (
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
 	"github.com/bhbosman/gocomms/common"
-	"github.com/bhbosman/gocomms/intf"
 	krakenWsStream "github.com/bhbosman/gokraken/internal/krakenWS/internal/stream"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"github.com/golang/protobuf/jsonpb"
+	"github.com/reactivex/rxgo/v2"
 	"go.uber.org/zap"
 	"strconv"
 )
@@ -102,7 +102,7 @@ func (self *Reactor) handleKrakenStreamSubscribe(inData *krakenStream.Subscribe)
 		msg.Subscription.Depth = 25
 	}
 
-	return SendTextOpMessage(msg, self.ToConnection)
+	return SendTextOpMessage(msg, self.ToConnection, self.ToConnectionFuncReplacement)
 }
 
 func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.KrakenWsMessageIncoming) error {
@@ -213,7 +213,17 @@ func (self *Reactor) handleWebSocketMessageWrapper(inData *wsmsg.WebSocketMessag
 }
 
 func (self Reactor) handleMessageBlockReaderWriter(inData *gomessageblock.ReaderWriter) error {
-	marshal, err := stream.UnMarshal(inData, self.CancelCtx, self.CancelFunc, self.ToReactor, self.ToConnection)
+	marshal, err := stream.UnMarshal(
+		inData,
+		func(i interface{}) {
+			self.ToReactor(false, i)
+		},
+		func(i interface{}) {
+			if unk, ok := i.(goprotoextra.ReadWriterSize); ok {
+				self.ToConnection(unk)
+			}
+		},
+	)
 	if err != nil {
 		println(err.Error())
 		return err
@@ -228,19 +238,19 @@ func (self Reactor) handleMessageBlockReaderWriter(inData *gomessageblock.Reader
 }
 
 func (self *Reactor) Init(
-	//url *url.URL,
-	//connectionId string,
-	//connectionManager IConnectionManager.IService,
 	onSend goprotoextra.ToConnectionFunc,
-	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
-	_, err := self.BaseConnectionReactor.Init(
-		//url,
-		//connectionId,
-		//connectionManager,
+	toConnectionReactor goprotoextra.ToReactorFunc,
+	onSendReplacement rxgo.NextFunc,
+	toConnectionReactorReplacement rxgo.NextFunc,
+) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
+	_, _, _, err := self.BaseConnectionReactor.Init(
 		onSend,
-		toConnectionReactor)
+		toConnectionReactor,
+		onSendReplacement,
+		toConnectionReactorReplacement,
+	)
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	self.republishChannelName = "republishChannel"
@@ -271,7 +281,15 @@ func (self *Reactor) Init(
 		}
 	}(republishChannel, self.republishChannelName)
 
-	return self.doNext, nil
+	return func(i interface{}) {
+			self.doNext(false, i)
+		},
+		func(err error) {
+			self.doNext(false, err)
+		},
+		func() {
+
+		}, nil
 }
 
 func (self *Reactor) Close() error {
@@ -318,7 +336,7 @@ func (self Reactor) handlePing(data krakenWsStream.IPing) error {
 	outgoing.Event = "pong"
 	outgoing.Reqid = data.GetReqid()
 
-	return SendTextOpMessage(outgoing, self.ToConnection)
+	return SendTextOpMessage(outgoing, self.ToConnection, self.ToConnectionFuncReplacement)
 }
 
 func (self Reactor) handleHeartbeat(_ interface{}) error {

@@ -7,9 +7,14 @@ import (
 	"github.com/bhbosman/goprotoextra"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
+	"github.com/reactivex/rxgo/v2"
 )
 
-func SendTextOpMessage(message proto.Message, ToConnection goprotoextra.ToConnectionFunc) error {
+func SendTextOpMessage(
+	message proto.Message,
+	ToConnection goprotoextra.ToConnectionFunc,
+	ToConnectionReplacement rxgo.NextFunc,
+) error {
 	rws := gomessageblock.NewReaderWriter()
 	m := jsonpb.Marshaler{
 		OrigName:     false,

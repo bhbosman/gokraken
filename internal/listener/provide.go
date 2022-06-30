@@ -19,6 +19,7 @@ import (
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/proto"
+	"net/url"
 )
 
 func CompressedListener(
@@ -26,7 +27,7 @@ func CompressedListener(
 	serviceDependentOn model.ServiceIdentifier,
 	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
 	maxConnections int,
-	url string,
+	urlAsText string,
 ) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
 	crfName := "CompressedListenerConnection.CRF"
@@ -38,23 +39,29 @@ func CompressedListener(
 					fx.In
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
-				}) messages.CreateAppCallback {
+				}) (messages.CreateAppCallback, error) {
+					compressedUrl, err := url.Parse(urlAsText)
+					if err != nil {
+						return messages.CreateAppCallback{}, err
+					}
 					f := goCommsNetListener.NewNetListenApp(
 						CompressedListenerConnection,
 						serviceIdentifier,
 						serviceDependentOn,
 						CompressedListenerConnection,
-						url,
+						false,
+						nil,
+						compressedUrl,
 						goCommsDefinitions.TransportFactoryCompressedName,
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForCompressedName(
 								top.ProvideTopStack(),
 								pingPong.ProvidePingPongStacks(),
-								messageCompressor.ProvideMessageCompressorStack(),
+								messageCompressor.Provide(),
 								messageNumber.ProvideMessageNumberStack(),
-								bvisMessageBreaker.ProvideBvisMessageBreakerStack(),
-								bottom.ProvideBottomStack(),
+								bvisMessageBreaker.Provide(),
+								bottom.Provide(),
 							),
 							fx.Provide(
 								fx.Annotated{
@@ -71,8 +78,7 @@ func CompressedListener(
 							),
 						),
 					)
-					return f(
-						params.NetAppFuncInParams)
+					return f(params.NetAppFuncInParams), nil
 				},
 			},
 		),

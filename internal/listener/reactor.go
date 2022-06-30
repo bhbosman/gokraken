@@ -9,10 +9,10 @@ import (
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
-	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
+	"github.com/reactivex/rxgo/v2"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 	"strings"
@@ -42,19 +42,19 @@ type Reactor struct {
 }
 
 func (self *Reactor) Init(
-	//url *url.URL,
-	//connectionId string,
-	//connectionManager IConnectionManager.IService,
 	toConnectionFunc goprotoextra.ToConnectionFunc,
-	toConnectionReactor goprotoextra.ToReactorFunc) (intf.NextExternalFunc, error) {
-	_, err := self.BaseConnectionReactor.Init(
-		//url,
-		//connectionId,
-		//connectionManager,
+	toConnectionReactor goprotoextra.ToReactorFunc,
+	toConnectionFuncReplacement rxgo.NextFunc,
+	toConnectionReactorReplacement rxgo.NextFunc,
+) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
+	_, _, _, err := self.BaseConnectionReactor.Init(
 		toConnectionFunc,
-		toConnectionReactor)
+		toConnectionReactor,
+		toConnectionFuncReplacement,
+		toConnectionReactorReplacement,
+	)
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	self.republishChannelName = "republishChannel"
@@ -77,7 +77,15 @@ func (self *Reactor) Init(
 
 	self.PubSub.Pub(&struct{}{}, self.republishChannelName)
 
-	return self.doNext, nil
+	return func(i interface{}) {
+			self.doNext(false, i)
+		},
+		func(err error) {
+			self.doNext(false, err)
+		},
+		func() {
+
+		}, nil
 }
 
 func (self *Reactor) doNext(_ bool, i interface{}) {
