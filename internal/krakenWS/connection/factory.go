@@ -10,13 +10,8 @@ import (
 )
 
 type Factory struct {
-	crfName           string
 	PubSub            *pubsub.PubSub
 	goFunctionCounter GoFunctionCounter.IService
-}
-
-func (self *Factory) Name() string {
-	return self.crfName
 }
 
 func (self Factory) Values(_ map[string]interface{}) (map[string]interface{}, error) {
@@ -44,12 +39,10 @@ func (self *Factory) Create(
 }
 
 func NewFactory(
-	crfName string,
 	PubSub *pubsub.PubSub,
 	goFunctionCounter GoFunctionCounter.IService,
-) (intf.IConnectionReactorFactory, error) {
+) (*Factory, error) {
 	fac := &Factory{
-		crfName:           crfName,
 		PubSub:            PubSub,
 		goFunctionCounter: goFunctionCounter,
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/top"
+	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -26,7 +27,6 @@ func TextListener(
 	maxConnections int,
 	urlAsText string) fx.Option {
 	const TextListenerConnection = "TextListenerConnection"
-	crfName := "TextListenerConnection.CRF"
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -54,27 +54,44 @@ func TextListener(
 								top.ProvideTopStack(),
 								bottom.Provide(),
 							),
+							PubSub.ProvidePubSubInstance("Application", params.PubSub),
 							fx.Provide(
 								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactory, error) {
-										return NewFactory(
-											crfName,
-											params.PubSub,
-											func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
-												bytes, err := json.Marshal(m)
-												if err != nil {
-													return nil, err
-												}
-												return gomessageblock.NewReaderWriterBlock(bytes), nil
-											},
-											ConsumerCounter)
+									Target: func() *goCommsNetDialer.CanDialDefaultImpl {
+										return ConsumerCounter
 									},
 								},
 							),
+							ProvideConnectionReactorFactory(),
 						),
 					)
 					return f(params.NetAppFuncInParams), nil
 				},
 			}),
+	)
+}
+
+func ProvideConnectionReactorFactory() fx.Option {
+	return fx.Provide(
+		fx.Annotated{
+			Target: func(
+				params struct {
+					fx.In
+					PubSub          *pubsub.PubSub `name:"Application"`
+					ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl
+				},
+			) (intf.IConnectionReactorFactory, error) {
+				return NewFactory(
+					params.PubSub,
+					func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
+						bytes, err := json.Marshal(m)
+						if err != nil {
+							return nil, err
+						}
+						return gomessageblock.NewReaderWriterBlock(bytes), nil
+					},
+					params.ConsumerCounter)
+			},
+		},
 	)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/bhbosman/goCommsStacks/top"
 	"github.com/bhbosman/goCommsStacks/websocket"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
+	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocomms/common"
@@ -29,7 +30,6 @@ func ProvideKrakenDialer(
 	}
 
 	const KrakenDialerConst = "KrakenDialer"
-	crfName := "KrakenDialer.CRF"
 
 	krakenUrl, err := url.Parse("wss://ws.kraken.com:443")
 	if err != nil {
@@ -62,20 +62,30 @@ func ProvideKrakenDialer(
 								websocket.ProvideWebsocketStacks(),
 								bottom.Provide(),
 							),
-							fx.Provide(
-								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactory, error) {
-										return NewFactory(
-											crfName,
-											params.PubSub,
-											params.GoFunctionCounter,
-										)
-									},
-								},
-							),
+							PubSub.ProvidePubSubInstance("Application", params.PubSub),
+							ProvideConnectionReactorFactory(),
 						),
 					)
 					return f(params.NetAppFuncInParams), nil
 				},
 			}))
+}
+
+func ProvideConnectionReactorFactory() fx.Option {
+	return fx.Provide(
+		fx.Annotated{
+			Target: func(
+				params struct {
+					fx.In
+					PubSub            *pubsub.PubSub `name:"Application"`
+					GoFunctionCounter GoFunctionCounter.IService
+				},
+			) (intf.IConnectionReactorFactory, error) {
+				return NewFactory(
+					params.PubSub,
+					params.GoFunctionCounter,
+				)
+			},
+		},
+	)
 }

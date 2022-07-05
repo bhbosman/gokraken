@@ -10,14 +10,9 @@ import (
 )
 
 type Factory struct {
-	crfName         string
 	pubSub          *pubsub.PubSub
 	SerializeData   SerializeData
 	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl
-}
-
-func (self *Factory) Name() string {
-	return self.crfName
 }
 
 func (self *Factory) Values(_ map[string]interface{}) (map[string]interface{}, error) {
@@ -45,13 +40,11 @@ func (self *Factory) Create(
 }
 
 func NewFactory(
-	crfName string,
 	pubSub *pubsub.PubSub,
 	SerializeData SerializeData,
 	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
-) (intf.IConnectionReactorFactory, error) {
+) (*Factory, error) {
 	fac := &Factory{
-		crfName:         crfName,
 		pubSub:          pubSub,
 		SerializeData:   SerializeData,
 		ConsumerCounter: ConsumerCounter,

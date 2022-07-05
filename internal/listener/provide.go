@@ -10,6 +10,7 @@ import (
 	"github.com/bhbosman/goCommsStacks/messageNumber"
 	"github.com/bhbosman/goCommsStacks/pingPong"
 	"github.com/bhbosman/goCommsStacks/top"
+	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
@@ -30,16 +31,17 @@ func CompressedListener(
 	urlAsText string,
 ) fx.Option {
 	const CompressedListenerConnection = "CompressedListenerConnection"
-	crfName := "CompressedListenerConnection.CRF"
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
 				Group: "Apps",
-				Target: func(params struct {
-					fx.In
-					PubSub             *pubsub.PubSub `name:"Application"`
-					NetAppFuncInParams common.NetAppFuncInParams
-				}) (messages.CreateAppCallback, error) {
+				Target: func(
+					params struct {
+						fx.In
+						PubSub             *pubsub.PubSub `name:"Application"`
+						NetAppFuncInParams common.NetAppFuncInParams
+					},
+				) (messages.CreateAppCallback, error) {
 					compressedUrl, err := url.Parse(urlAsText)
 					if err != nil {
 						return messages.CreateAppCallback{}, err
@@ -63,16 +65,12 @@ func CompressedListener(
 								bvisMessageBreaker.Provide(),
 								bottom.Provide(),
 							),
+							ProvideConnectionReactorFactory2(),
+							PubSub.ProvidePubSubInstance("Application", params.PubSub),
 							fx.Provide(
 								fx.Annotated{
-									Target: func() (intf.IConnectionReactorFactory, error) {
-										return NewFactory(
-											crfName,
-											params.PubSub,
-											func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
-												return stream.Marshall(data)
-											},
-											ConsumerCounter)
+									Target: func() *goCommsNetDialer.CanDialDefaultImpl {
+										return ConsumerCounter
 									},
 								},
 							),
@@ -82,5 +80,26 @@ func CompressedListener(
 				},
 			},
 		),
+	)
+}
+
+func ProvideConnectionReactorFactory2() fx.Option {
+	return fx.Provide(
+		fx.Annotated{
+			Target: func(
+				params struct {
+					fx.In
+					PubSub          *pubsub.PubSub `name:"Application"`
+					ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl
+				},
+			) (intf.IConnectionReactorFactory, error) {
+				return NewFactory(
+					params.PubSub,
+					func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
+						return stream.Marshall(data)
+					},
+					params.ConsumerCounter)
+			},
+		},
 	)
 }
