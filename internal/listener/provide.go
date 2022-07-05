@@ -19,6 +19,8 @@ import (
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
+	"golang.org/x/net/context"
 	"google.golang.org/protobuf/proto"
 	"net/url"
 )
@@ -84,22 +86,35 @@ func CompressedListener(
 }
 
 func ProvideConnectionReactorFactory2() fx.Option {
-	return fx.Provide(
-		fx.Annotated{
-			Target: func(
-				params struct {
-					fx.In
-					PubSub          *pubsub.PubSub `name:"Application"`
-					ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl
-				},
-			) (intf.IConnectionReactorFactory, error) {
-				return NewFactory(
-					params.PubSub,
-					func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
-						return stream.Marshall(data)
+	return fx.Options(
+		fx.Provide(
+			fx.Annotated{
+				Target: func(
+					params struct {
+						fx.In
+						CancelCtx            context.Context
+						CancelFunc           context.CancelFunc
+						ConnectionCancelFunc model.ConnectionCancelFunc
+						Logger               *zap.Logger
+						ClientContext        interface{}    `name:"UserContext"`
+						PubSub               *pubsub.PubSub `name:"Application"`
+						ConsumerCounter      *goCommsNetDialer.CanDialDefaultImpl
 					},
-					params.ConsumerCounter)
+				) (intf.IConnectionReactor, error) {
+					return NewReactor(
+							params.Logger,
+							params.CancelCtx,
+							params.CancelFunc,
+							params.ConnectionCancelFunc,
+							params.ClientContext,
+							params.ConsumerCounter,
+							func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
+								return stream.Marshall(data)
+							},
+							params.PubSub),
+						nil
+				},
 			},
-		},
+		),
 	)
 }

@@ -14,10 +14,10 @@ import (
 	"github.com/bhbosman/gocomms/intf"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
+	"golang.org/x/net/context"
 	"net/url"
 )
-
-const FactoryName = "KrakenWSS"
 
 func ProvideKrakenDialer(
 	serviceIdentifier model.ServiceIdentifier,
@@ -72,20 +72,34 @@ func ProvideKrakenDialer(
 }
 
 func ProvideConnectionReactorFactory() fx.Option {
-	return fx.Provide(
-		fx.Annotated{
-			Target: func(
-				params struct {
-					fx.In
-					PubSub            *pubsub.PubSub `name:"Application"`
-					GoFunctionCounter GoFunctionCounter.IService
+	return fx.Options(
+		fx.Provide(
+			fx.Annotated{
+				Target: func(
+					params struct {
+						fx.In
+						CancelCtx            context.Context
+						CancelFunc           context.CancelFunc
+						ConnectionCancelFunc model.ConnectionCancelFunc
+						Logger               *zap.Logger
+						ClientContext        interface{}    `name:"UserContext"`
+						PubSub               *pubsub.PubSub `name:"Application"`
+						GoFunctionCounter    GoFunctionCounter.IService
+					},
+				) (intf.IConnectionReactor, error) {
+					return NewReactor(
+							params.Logger,
+							params.CancelCtx,
+							params.CancelFunc,
+							params.ConnectionCancelFunc,
+							params.ClientContext,
+							params.PubSub,
+							params.GoFunctionCounter,
+						),
+						nil
+
 				},
-			) (intf.IConnectionReactorFactory, error) {
-				return NewFactory(
-					params.PubSub,
-					params.GoFunctionCounter,
-				)
 			},
-		},
+		),
 	)
 }
