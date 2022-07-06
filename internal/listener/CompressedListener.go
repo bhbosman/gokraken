@@ -6,7 +6,7 @@ import (
 	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks/bottom"
-	"github.com/bhbosman/goCommsStacks/top"
+	"github.com/bhbosman/goCommsStacks/topStack"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -53,7 +53,7 @@ func TextListener(
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForEmptyName(
-								top.ProvideTopStack(),
+								topStack.ProvideTopStack(),
 								bottom.Provide(),
 							),
 							PubSub.ProvidePubSubInstance("Application", params.PubSub),

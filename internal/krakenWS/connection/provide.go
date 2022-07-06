@@ -4,7 +4,7 @@ import (
 	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/goCommsStacks/bottom"
-	"github.com/bhbosman/goCommsStacks/top"
+	"github.com/bhbosman/goCommsStacks/topStack"
 	"github.com/bhbosman/goCommsStacks/websocket"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/fx/PubSub"
@@ -58,7 +58,7 @@ func ProvideKrakenDialer(
 						goCommsNetDialer.CanDial(canDials...),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForWebSocketName(
-								top.ProvideTopStack(),
+								topStack.ProvideTopStack(),
 								websocket.ProvideWebsocketStacks(),
 								bottom.Provide(),
 							),

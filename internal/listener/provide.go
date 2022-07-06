@@ -9,7 +9,7 @@ import (
 	"github.com/bhbosman/goCommsStacks/messageCompressor"
 	"github.com/bhbosman/goCommsStacks/messageNumber"
 	"github.com/bhbosman/goCommsStacks/pingPong"
-	"github.com/bhbosman/goCommsStacks/top"
+	"github.com/bhbosman/goCommsStacks/topStack"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -60,7 +60,7 @@ func CompressedListener(
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForCompressedName(
-								top.ProvideTopStack(),
+								topStack.ProvideTopStack(),
 								pingPong.ProvidePingPongStacks(),
 								messageCompressor.Provide(),
 								messageNumber.ProvideMessageNumberStack(),
