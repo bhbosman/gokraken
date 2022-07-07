@@ -32,7 +32,7 @@ type FullMarketOrderBook struct {
 }
 
 func (self *FullMarketOrderBook) AddOrder(side OrderSide, price float64, volume float64, crcValue string) {
-	get, found := self.OrderSide[uint8(side)].Get(price)
+	get, found := self.OrderSide[side].Get(price)
 	if found {
 		if pricePoint, ok := get.(*PricePoint); ok {
 			pricePoint.Volume = volume
