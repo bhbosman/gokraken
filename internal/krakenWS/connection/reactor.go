@@ -319,7 +319,8 @@ func (self *Reactor) sendAllRegistration() {
 			Pair:  value.pair,
 			Name:  value.name,
 		}
-		self.messageRouter.Route(message)
+		//self.messageRouter.Route(message)
+		_ = self.ToReactor(true, message)
 	}
 }
 
