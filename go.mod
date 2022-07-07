@@ -3,17 +3,17 @@ module github.com/bhbosman/gokraken
 go 1.18
 
 require (
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20220628093721-7191a8828f7f
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20220707044904-ceb8c2737904
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
 	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
-	github.com/bhbosman/gocommon v0.0.0-20220628055238-cde1e1c5e593
+	github.com/bhbosman/gocommon v0.0.0-20220707045107-1b6a40e49fd5
 	github.com/bhbosman/gocomms v0.0.0-20220628074707-e93417aaaed2
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
-	github.com/bhbosman/gomessageblock v0.0.0-20210901070622-be36a3f8d303
+	github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
 	github.com/cskr/pubsub v1.0.2
 	github.com/emirpasic/gods v1.12.0
@@ -26,9 +26,8 @@ require (
 )
 
 require (
-	github.com/bhbosman/goConnectionManager v0.0.0-20220628055237-4a995b1ae47c // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20220705103338-3f5a18784e60 // indirect
 	github.com/bhbosman/goUi v0.0.0-20220625174028-03193a90ee79 // indirect
-	github.com/bhbosman/gologging v0.0.0-20200921180328-d29fc55c00bc // indirect
 	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
@@ -56,7 +55,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
-require golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
+require golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
 
 replace (
 	github.com/bhbosman/gocommon => ../gocommon
