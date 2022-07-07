@@ -178,11 +178,14 @@ func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) e
 type websocketDataResponse []interface{}
 
 func (self *Reactor) handleWebSocketMessageWrapper(inData *wsmsg.WebSocketMessageWrapper) error {
-	switch inData.Data.OpCode {
+	return self.handleWebSocketMessage(inData.Data)
+}
+func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) error {
+	switch inData.OpCode {
 	case wsmsg.WebSocketMessage_OpText:
-		if len(inData.Data.Message) > 0 && inData.Data.Message[0] == '[' { //type WebsocketDataResponse []interface{}
+		if len(inData.Message) > 0 && inData.Message[0] == '[' { //type WebsocketDataResponse []interface{}
 			var dataResponse websocketDataResponse
-			err := json.Unmarshal(inData.Data.Message, &dataResponse)
+			err := json.Unmarshal(inData.Message, &dataResponse)
 			if err != nil {
 				return err
 			}
@@ -195,7 +198,7 @@ func (self *Reactor) handleWebSocketMessageWrapper(inData *wsmsg.WebSocketMessag
 				AllowUnknownFields: true,
 				AnyResolver:        nil,
 			}
-			err := unMarshaler.Unmarshal(bytes.NewBuffer(inData.Data.Message), krakenMessage)
+			err := unMarshaler.Unmarshal(bytes.NewBuffer(inData.Message), krakenMessage)
 			if err != nil {
 				return err
 			}
@@ -467,6 +470,7 @@ func NewReactor(
 		goFunctionCounter:        goFunctionCounter,
 	}
 	_ = result.messageRouter.Add(result.handleMessageBlockReaderWriter)
+	_ = result.messageRouter.Add(result.handleWebSocketMessage)
 	_ = result.messageRouter.Add(result.handleWebSocketMessageWrapper)
 	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
 	_ = result.messageRouter.Add(result.handleKrakenWsMessageIncoming)
