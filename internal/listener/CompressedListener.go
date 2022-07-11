@@ -49,7 +49,7 @@ func TextListener(
 						TextListenerConnection,
 						false, nil,
 						textListenerUrl,
-						goCommsDefinitions.TransportFactoryEmptyName,
+						//goCommsDefinitions.TransportFactoryEmptyName,
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForEmptyName(

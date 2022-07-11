@@ -53,7 +53,7 @@ func ProvideKrakenDialer(
 						false,
 						nil,
 						krakenUrl,
-						goCommsDefinitions.WebSocketName,
+						//goCommsDefinitions.WebSocketName,
 						common.MaxConnectionsSetting(1),
 						goCommsNetDialer.CanDial(canDials...),
 						common.NewConnectionInstanceOptions(

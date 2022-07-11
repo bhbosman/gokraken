@@ -56,7 +56,7 @@ func CompressedListener(
 						false,
 						nil,
 						compressedUrl,
-						goCommsDefinitions.TransportFactoryCompressedName,
+						//goCommsDefinitions.TransportFactoryCompressedName,
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForCompressedName(

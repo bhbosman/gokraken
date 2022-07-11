@@ -261,28 +261,26 @@ func (self *Reactor) Init(
 
 	republishChannel := self.PubSub.Sub(self.republishChannelName)
 
-	// this function is part of the GoFunctionCounter count
-	go func(ch chan interface{}, topics ...string) {
-		functionName := self.goFunctionCounter.CreateFunctionName("Kraken.Init")
-		defer func(GoFunctionCounter GoFunctionCounter.IService, name string) {
-			_ = GoFunctionCounter.Remove(name)
-		}(self.goFunctionCounter, functionName)
-		_ = self.goFunctionCounter.Add(functionName)
-
-		//
-
-		<-self.CancelCtx.Done()
-		self.PubSub.Unsub(ch, topics...)
-	}(republishChannel, self.republishChannelName)
-
+	self.goFunctionCounter.GoRun(
+		"Kraken.Init",
+		func(_ interface{}) {
+			<-self.CancelCtx.Done()
+			self.PubSub.Unsub(republishChannel, self.republishChannelName)
+		},
+		nil,
+	)
 	// Todo: Register function
-	go func(ch chan interface{}, topics ...string) {
-		for range ch {
-			if self.CancelCtx.Err() == nil {
-				_ = self.ToReactor(false, &RePublishMessage{})
+	self.goFunctionCounter.GoRun(
+		"Kraken Read Republish Channel",
+		func(_ interface{}) {
+			for range republishChannel {
+				if self.CancelCtx.Err() == nil {
+					_ = self.ToReactor(false, &RePublishMessage{})
+				}
 			}
-		}
-	}(republishChannel, self.republishChannelName)
+		},
+		nil,
+	)
 
 	return func(i interface{}) {
 			self.doNext(false, i)
