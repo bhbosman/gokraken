@@ -10,6 +10,7 @@ import (
 	"github.com/bhbosman/goCommsStacks/messageNumber"
 	"github.com/bhbosman/goCommsStacks/pingPong"
 	"github.com/bhbosman/goCommsStacks/topStack"
+	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -92,13 +93,14 @@ func ProvideConnectionReactorFactory2() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						CancelCtx            context.Context
-						CancelFunc           context.CancelFunc
-						ConnectionCancelFunc model.ConnectionCancelFunc
-						Logger               *zap.Logger
-						ClientContext        interface{}    `name:"UserContext"`
-						PubSub               *pubsub.PubSub `name:"Application"`
-						ConsumerCounter      *goCommsNetDialer.CanDialDefaultImpl
+						CancelCtx              context.Context
+						CancelFunc             context.CancelFunc
+						ConnectionCancelFunc   model.ConnectionCancelFunc
+						Logger                 *zap.Logger
+						ClientContext          interface{}    `name:"UserContext"`
+						PubSub                 *pubsub.PubSub `name:"Application"`
+						ConsumerCounter        *goCommsNetDialer.CanDialDefaultImpl
+						UniqueReferenceService interfaces.IUniqueReferenceService
 					},
 				) (intf.IConnectionReactor, error) {
 					return NewReactor(
@@ -111,7 +113,8 @@ func ProvideConnectionReactorFactory2() fx.Option {
 							func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
 								return stream.Marshall(data)
 							},
-							params.PubSub),
+							params.PubSub,
+							params.UniqueReferenceService),
 						nil
 				},
 			},

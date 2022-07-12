@@ -7,6 +7,7 @@ import (
 	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/topStack"
+	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -80,13 +81,14 @@ func ProvideConnectionReactorFactory() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						CancelCtx            context.Context
-						CancelFunc           context.CancelFunc
-						ConnectionCancelFunc model.ConnectionCancelFunc
-						Logger               *zap.Logger
-						ClientContext        interface{}    `name:"UserContext"`
-						PubSub               *pubsub.PubSub `name:"Application"`
-						ConsumerCounter      *goCommsNetDialer.CanDialDefaultImpl
+						CancelCtx              context.Context
+						CancelFunc             context.CancelFunc
+						ConnectionCancelFunc   model.ConnectionCancelFunc
+						Logger                 *zap.Logger
+						ClientContext          interface{}    `name:"UserContext"`
+						PubSub                 *pubsub.PubSub `name:"Application"`
+						ConsumerCounter        *goCommsNetDialer.CanDialDefaultImpl
+						UniqueReferenceService interfaces.IUniqueReferenceService
 					},
 				) (intf.IConnectionReactor, error) {
 					return NewReactor(
@@ -103,7 +105,9 @@ func ProvideConnectionReactorFactory() fx.Option {
 								}
 								return gomessageblock.NewReaderWriterBlock(bytes), nil
 							},
-							params.PubSub),
+							params.PubSub,
+							params.UniqueReferenceService,
+						),
 						nil
 				},
 			},

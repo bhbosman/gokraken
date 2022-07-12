@@ -8,6 +8,7 @@ import (
 	"github.com/bhbosman/goCommsStacks/webSocketMessages/wsmsg"
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
+	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -245,15 +246,15 @@ func (self *Reactor) Init(
 	toConnectionReactor goprotoextra.ToReactorFunc,
 	onSendReplacement rxgo.NextFunc,
 	toConnectionReactorReplacement rxgo.NextFunc,
-) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
-	_, _, _, err := self.BaseConnectionReactor.Init(
+) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, chan interface{}, error) {
+	_, _, _, _, err := self.BaseConnectionReactor.Init(
 		onSend,
 		toConnectionReactor,
 		onSendReplacement,
 		toConnectionReactorReplacement,
 	)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
 	self.republishChannelName = "republishChannel"
@@ -263,23 +264,21 @@ func (self *Reactor) Init(
 
 	self.goFunctionCounter.GoRun(
 		"Kraken.Init",
-		func(interface{}) {
+		func() {
 			<-self.CancelCtx.Done()
 			self.PubSub.Unsub(republishChannel, self.republishChannelName)
 		},
-		nil,
 	)
 	// Todo: Register function
 	self.goFunctionCounter.GoRun(
 		"Kraken Read Republish Channel",
-		func(interface{}) {
+		func() {
 			for range republishChannel {
 				if self.CancelCtx.Err() == nil {
 					_ = self.ToReactor(false, &RePublishMessage{})
 				}
 			}
 		},
-		nil,
 	)
 
 	return func(i interface{}) {
@@ -290,7 +289,7 @@ func (self *Reactor) Init(
 		},
 		func() {
 
-		}, nil
+		}, nil, nil
 }
 
 func (self *Reactor) Close() error {
@@ -448,6 +447,7 @@ func NewReactor(
 	userContext interface{},
 	PubSub *pubsub.PubSub,
 	goFunctionCounter GoFunctionCounter.IService,
+	UniqueReferenceService interfaces.IUniqueReferenceService,
 ) *Reactor {
 	result := &Reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
@@ -456,6 +456,7 @@ func NewReactor(
 			cancelFunc,
 			connectionCancelFunc,
 			userContext,
+			UniqueReferenceService.Next("ConnectionReactor"),
 		),
 		messageRouter:            messageRouter.NewMessageRouter(),
 		connectionID:             0,
