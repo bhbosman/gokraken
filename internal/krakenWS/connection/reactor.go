@@ -263,7 +263,7 @@ func (self *Reactor) Init(
 
 	self.goFunctionCounter.GoRun(
 		"Kraken.Init",
-		func(_ interface{}) {
+		func(interface{}) {
 			<-self.CancelCtx.Done()
 			self.PubSub.Unsub(republishChannel, self.republishChannelName)
 		},
@@ -272,7 +272,7 @@ func (self *Reactor) Init(
 	// Todo: Register function
 	self.goFunctionCounter.GoRun(
 		"Kraken Read Republish Channel",
-		func(_ interface{}) {
+		func(interface{}) {
 			for range republishChannel {
 				if self.CancelCtx.Err() == nil {
 					_ = self.ToReactor(false, &RePublishMessage{})
