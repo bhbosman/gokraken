@@ -81,11 +81,11 @@ func ProvideConnectionReactorFactory() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						CancelCtx              context.Context
-						CancelFunc             context.CancelFunc
-						ConnectionCancelFunc   model.ConnectionCancelFunc
-						Logger                 *zap.Logger
-						ClientContext          interface{}    `name:"UserContext"`
+						CancelCtx            context.Context
+						CancelFunc           context.CancelFunc
+						ConnectionCancelFunc model.ConnectionCancelFunc
+						Logger               *zap.Logger
+						//ClientContext          interface{}    `name:"UserContext"`
 						PubSub                 *pubsub.PubSub `name:"Application"`
 						ConsumerCounter        *goCommsNetDialer.CanDialDefaultImpl
 						UniqueReferenceService interfaces.IUniqueReferenceService
@@ -96,7 +96,7 @@ func ProvideConnectionReactorFactory() fx.Option {
 							params.CancelCtx,
 							params.CancelFunc,
 							params.ConnectionCancelFunc,
-							params.ClientContext,
+							//params.ClientContext,
 							params.ConsumerCounter,
 							func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
 								bytes, err := json.Marshal(m)

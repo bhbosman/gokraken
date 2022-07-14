@@ -46,15 +46,16 @@ func ProvideKrakenDialer(
 					NetAppFuncInParams common.NetAppFuncInParams
 					GoFunctionCounter  GoFunctionCounter.IService
 				}) (messages.CreateAppCallback, error) {
-					f := goCommsNetDialer.NewNetDialApp(
+					f := goCommsNetDialer.NewSingleNetDialApp(
 						"Kraken",
 						serviceIdentifier,
 						serviceDependentOn,
 						"Kraken",
-						false,
-						nil,
-						krakenUrl,
-						//goCommsDefinitions.WebSocketName,
+						common.MoreOptions(
+							goCommsDefinitions.ProvideUrl("ConnectionUrl", krakenUrl),
+							goCommsDefinitions.ProvideUrl("ProxyUrl", nil),
+							goCommsDefinitions.ProvideBool("UseProxy", false),
+						),
 						common.MaxConnectionsSetting(1),
 						goCommsNetDialer.CanDial(canDials...),
 						common.NewConnectionInstanceOptions(
@@ -79,11 +80,11 @@ func ProvideConnectionReactorFactory() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						CancelCtx              context.Context
-						CancelFunc             context.CancelFunc
-						ConnectionCancelFunc   model.ConnectionCancelFunc
-						Logger                 *zap.Logger
-						ClientContext          interface{}    `name:"UserContext"`
+						CancelCtx            context.Context
+						CancelFunc           context.CancelFunc
+						ConnectionCancelFunc model.ConnectionCancelFunc
+						Logger               *zap.Logger
+						//ClientContext          interface{}    `name:"UserContext"`
 						PubSub                 *pubsub.PubSub `name:"Application"`
 						GoFunctionCounter      GoFunctionCounter.IService
 						UniqueReferenceService interfaces.IUniqueReferenceService
@@ -94,7 +95,7 @@ func ProvideConnectionReactorFactory() fx.Option {
 							params.CancelCtx,
 							params.CancelFunc,
 							params.ConnectionCancelFunc,
-							params.ClientContext,
+							//params.ClientContext,
 							params.PubSub,
 							params.GoFunctionCounter,
 							params.UniqueReferenceService,
