@@ -1,7 +1,10 @@
 package internal
 
 import (
-	"github.com/bhbosman/goCommsNetDialer"
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataHelper"
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerViewer"
+	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goFxApp"
 	app2 "github.com/bhbosman/gocommon/Providers"
 	"github.com/bhbosman/gokraken/internal/krakenWS/connection"
@@ -18,16 +21,20 @@ func CreateFxApp() *goFxApp.TerminalAppUsingFxApp {
 		compressedListenerUrl: "tcp4://127.0.0.1:3011",
 	}
 
-	ConsumerCounter := goCommsNetDialer.NewCanDialDefaultImpl()
 	var shutDowner fx.Shutdowner
 	return goFxApp.NewFxMainApplicationServices(
 		"KrakenStream",
 		false,
-		fx.Supply(settings, ConsumerCounter),
+		fx.Supply(settings),
 		fx.Populate(&shutDowner),
 		app2.RegisterRunTimeManager(),
-		connection.ProvideKrakenDialer(0, 0, ConsumerCounter),
-		listener.TextListener(0, 0, ConsumerCounter, 1024, settings.textListenerUrl),
-		listener.CompressedListener(0, 0, ConsumerCounter, 1024, settings.compressedListenerUrl),
+		fullMarketDataManagerViewer.Provide(),
+		fullMarketDataManagerService.Provide(false),
+		fullMarketDataHelper.Provide(),
+		instrumentReference.Provide(),
+
+		connection.ProvideKrakenDialer(),
+		listener.TextListener(1024, settings.textListenerUrl),
+		listener.CompressedListener(1024, settings.compressedListenerUrl),
 	)
 }

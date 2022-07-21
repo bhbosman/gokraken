@@ -3,10 +3,10 @@ package listener
 import (
 	"encoding/json"
 	"github.com/bhbosman/goCommsDefinitions"
-	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/topStack"
+	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
@@ -24,9 +24,6 @@ import (
 )
 
 func TextListener(
-	serviceIdentifier model.ServiceIdentifier,
-	serviceDependentOn model.ServiceIdentifier,
-	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
 	maxConnections int,
 	urlAsText string) fx.Option {
 	const TextListenerConnection = "TextListenerConnection"
@@ -37,6 +34,7 @@ func TextListener(
 				Target: func(params struct {
 					fx.In
 					PubSub             *pubsub.PubSub `name:"Application"`
+					GoFunctionCounter  GoFunctionCounter.IService
 					NetAppFuncInParams common.NetAppFuncInParams
 				}) (messages.CreateAppCallback, error) {
 					textListenerUrl, err := url.Parse(urlAsText)
@@ -45,8 +43,6 @@ func TextListener(
 					}
 					f := goCommsNetListener.NewNetListenApp(
 						TextListenerConnection,
-						serviceIdentifier,
-						serviceDependentOn,
 						TextListenerConnection,
 						false, nil,
 						textListenerUrl,
@@ -60,8 +56,8 @@ func TextListener(
 							PubSub.ProvidePubSubInstance("Application", params.PubSub),
 							fx.Provide(
 								fx.Annotated{
-									Target: func() *goCommsNetDialer.CanDialDefaultImpl {
-										return ConsumerCounter
+									Target: func() GoFunctionCounter.IService {
+										return params.GoFunctionCounter
 									},
 								},
 							),
@@ -81,14 +77,13 @@ func ProvideConnectionReactorFactory() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						CancelCtx            context.Context
-						CancelFunc           context.CancelFunc
-						ConnectionCancelFunc model.ConnectionCancelFunc
-						Logger               *zap.Logger
-						//ClientContext          interface{}    `name:"UserContext"`
+						CancelCtx              context.Context
+						CancelFunc             context.CancelFunc
+						ConnectionCancelFunc   model.ConnectionCancelFunc
+						Logger                 *zap.Logger
 						PubSub                 *pubsub.PubSub `name:"Application"`
-						ConsumerCounter        *goCommsNetDialer.CanDialDefaultImpl
 						UniqueReferenceService interfaces.IUniqueReferenceService
+						GoFunctionCounter      GoFunctionCounter.IService
 					},
 				) (intf.IConnectionReactor, error) {
 					return NewReactor(
@@ -96,8 +91,6 @@ func ProvideConnectionReactorFactory() fx.Option {
 							params.CancelCtx,
 							params.CancelFunc,
 							params.ConnectionCancelFunc,
-							//params.ClientContext,
-							params.ConsumerCounter,
 							func(m proto.Message) (goprotoextra.IReadWriterSize, error) {
 								bytes, err := json.Marshal(m)
 								if err != nil {
@@ -107,6 +100,7 @@ func ProvideConnectionReactorFactory() fx.Option {
 							},
 							params.PubSub,
 							params.UniqueReferenceService,
+							params.GoFunctionCounter,
 						),
 						nil
 				},

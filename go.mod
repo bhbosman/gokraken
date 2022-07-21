@@ -3,31 +3,31 @@ module github.com/bhbosman/gokraken
 go 1.18
 
 require (
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20220707044904-ceb8c2737904
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20220721070505-30206872567f
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
 	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2 // indirect
-	github.com/bhbosman/goMessages v0.0.0-20220528063809-824142fa3d9e
-	github.com/bhbosman/gocommon v0.0.0-20220707045107-1b6a40e49fd5
+	github.com/bhbosman/goMessages v0.0.0-20220719163819-d38fc7e6d38c
+	github.com/bhbosman/gocommon v0.0.0-20220721070423-baf2cd622704
 	github.com/bhbosman/gocomms v0.0.0-20220628074707-e93417aaaed2
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
 	github.com/cskr/pubsub v1.0.2
-	github.com/emirpasic/gods v1.12.0
-	github.com/golang/protobuf v1.4.2
+	github.com/emirpasic/gods v1.18.1
+	github.com/golang/protobuf v1.5.0
 	github.com/kardianos/service v1.1.0
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/fx v1.17.1
 	go.uber.org/zap v1.21.0
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/protobuf v1.28.0
 )
 
 require (
-	github.com/bhbosman/goConnectionManager v0.0.0-20220705103338-3f5a18784e60 // indirect
-	github.com/bhbosman/goUi v0.0.0-20220625174028-03193a90ee79 // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20220721070628-0f4b3c036d93 // indirect
+	github.com/bhbosman/goUi v0.0.0-20220721070442-c6483ac2b608 // indirect
 	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
@@ -41,7 +41,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/reactivex/rxgo/v2 v2.5.0
-	github.com/rivo/tview v0.0.0-20220610163003-691f46d6f500 // indirect
+	github.com/rivo/tview v0.0.0-20220709181631-73bf2902b59a // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/stretchr/objx v0.1.0 // indirect
 	github.com/teivah/onecontext v0.0.0-20200513185103-40f981bfd775 // indirect
@@ -55,7 +55,10 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
-require golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
+require (
+	github.com/bhbosman/goCommonMarketData v0.0.0-20220721194348-4c0f095abe4c
+	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
+)
 
 replace (
 	github.com/bhbosman/gocommon => ../gocommon
@@ -87,3 +90,7 @@ replace github.com/rivo/tview => ../tview
 replace github.com/bhbosman/goprotoextra => ../goprotoextra
 
 replace github.com/bhbosman/goMessages => ../goMessages
+
+replace github.com/cskr/pubsub => ../pubsub
+
+replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData

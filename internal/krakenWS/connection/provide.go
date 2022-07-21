@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goCommsNetDialer"
 	"github.com/bhbosman/goCommsStacks/bottom"
@@ -20,15 +21,8 @@ import (
 	"net/url"
 )
 
-func ProvideKrakenDialer(
-	serviceIdentifier model.ServiceIdentifier,
-	serviceDependentOn model.ServiceIdentifier,
-	canDial goCommsNetDialer.ICanDial,
-) fx.Option {
+func ProvideKrakenDialer() fx.Option {
 	var canDials []goCommsNetDialer.ICanDial
-	if canDial != nil {
-		canDials = append(canDials, canDial)
-	}
 
 	const KrakenDialerConst = "KrakenDialer"
 
@@ -45,11 +39,10 @@ func ProvideKrakenDialer(
 					PubSub             *pubsub.PubSub `name:"Application"`
 					NetAppFuncInParams common.NetAppFuncInParams
 					GoFunctionCounter  GoFunctionCounter.IService
+					FmdService         fullMarketDataManagerService.IFmdManagerService
 				}) (messages.CreateAppCallback, error) {
 					f := goCommsNetDialer.NewSingleNetDialApp(
 						"Kraken",
-						serviceIdentifier,
-						serviceDependentOn,
 						"Kraken",
 						common.MoreOptions(
 							goCommsDefinitions.ProvideUrl("ConnectionUrl", krakenUrl),
@@ -65,12 +58,20 @@ func ProvideKrakenDialer(
 								bottom.Provide(),
 							),
 							PubSub.ProvidePubSubInstance("Application", params.PubSub),
+							fx.Provide(
+								fx.Annotated{
+									Target: func() fullMarketDataManagerService.IFmdManagerService {
+										return params.FmdService
+									},
+								}),
 							ProvideConnectionReactorFactory(),
 						),
 					)
 					return f(params.NetAppFuncInParams), nil
 				},
-			}))
+			},
+		),
+	)
 }
 
 func ProvideConnectionReactorFactory() fx.Option {
@@ -80,14 +81,14 @@ func ProvideConnectionReactorFactory() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						CancelCtx            context.Context
-						CancelFunc           context.CancelFunc
-						ConnectionCancelFunc model.ConnectionCancelFunc
-						Logger               *zap.Logger
-						//ClientContext          interface{}    `name:"UserContext"`
+						CancelCtx              context.Context
+						CancelFunc             context.CancelFunc
+						ConnectionCancelFunc   model.ConnectionCancelFunc
+						Logger                 *zap.Logger
 						PubSub                 *pubsub.PubSub `name:"Application"`
 						GoFunctionCounter      GoFunctionCounter.IService
 						UniqueReferenceService interfaces.IUniqueReferenceService
+						FmdService             fullMarketDataManagerService.IFmdManagerService
 					},
 				) (intf.IConnectionReactor, error) {
 					return NewReactor(
@@ -95,10 +96,10 @@ func ProvideConnectionReactorFactory() fx.Option {
 							params.CancelCtx,
 							params.CancelFunc,
 							params.ConnectionCancelFunc,
-							//params.ClientContext,
 							params.PubSub,
 							params.GoFunctionCounter,
 							params.UniqueReferenceService,
+							params.FmdService,
 						),
 						nil
 

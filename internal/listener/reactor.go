@@ -3,8 +3,8 @@ package listener
 import (
 	"context"
 	"fmt"
-	"github.com/bhbosman/goCommsNetDialer"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
+	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/messages"
@@ -32,49 +32,28 @@ func NewDirtyMapData(data *marketDataStream.PublishTop5) *DirtyMapData {
 type SerializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
 type Reactor struct {
 	common.BaseConnectionReactor
-	ConsumerCounter      *goCommsNetDialer.CanDialDefaultImpl
 	messageRouter        *messageRouter.MessageRouter
 	SerializeData        SerializeData
 	republishChannelName string
 	publishChannelName   string
 	dirtyMap             map[string]*DirtyMapData
-	PubSub               *pubsub.PubSub
 	messageOut           int
 }
 
 func (self *Reactor) Init(
-	toConnectionFunc goprotoextra.ToConnectionFunc,
-	toConnectionReactor goprotoextra.ToReactorFunc,
-	toConnectionFuncReplacement rxgo.NextFunc,
-	toConnectionReactorReplacement rxgo.NextFunc,
-) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, chan interface{}, error) {
-	_, _, _, _, err := self.BaseConnectionReactor.Init(
-		toConnectionFunc,
-		toConnectionReactor,
-		toConnectionFuncReplacement,
-		toConnectionReactorReplacement,
+	onSendToReactor rxgo.NextFunc,
+	onSendToConnection rxgo.NextFunc,
+) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
+	_, _, _, err := self.BaseConnectionReactor.Init(
+		onSendToReactor,
+		onSendToConnection,
 	)
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	self.republishChannelName = "republishChannel"
 	self.publishChannelName = "publishChannel"
-
-	ch := self.PubSub.Sub(self.publishChannelName)
-	go func(ch chan interface{}, topics ...string) {
-		defer self.PubSub.Unsub(ch, topics...)
-		<-self.CancelCtx.Done()
-	}(ch, self.publishChannelName)
-
-	// Todo: Register function
-	go func(ch chan interface{}, topics ...string) {
-		for v := range ch {
-			if self.CancelCtx.Err() == nil {
-				_ = self.ToReactor(true, v)
-			}
-		}
-	}(ch, self.publishChannelName)
 
 	self.PubSub.Pub(&struct{}{}, self.republishChannelName)
 
@@ -86,7 +65,7 @@ func (self *Reactor) Init(
 		},
 		func() {
 
-		}, nil, nil
+		}, nil
 }
 
 func (self *Reactor) doNext(_ bool, i interface{}) {
@@ -94,12 +73,10 @@ func (self *Reactor) doNext(_ bool, i interface{}) {
 }
 
 func (self *Reactor) Open() error {
-	self.ConsumerCounter.AddConsumer()
 	return self.BaseConnectionReactor.Open()
 }
 
 func (self *Reactor) Close() error {
-	self.ConsumerCounter.RemoveConsumer()
 	return self.BaseConnectionReactor.Close()
 }
 
@@ -111,7 +88,7 @@ func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
 		if err != nil {
 			return err
 		}
-		_ = self.ToConnection(marshal)
+		self.OnSendToConnection(marshal)
 		deleteKeys = append(deleteKeys, k)
 	}
 	for _, s := range deleteKeys {
@@ -121,7 +98,7 @@ func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
 	s := fmt.Sprintf("\n\r-->%v<--\r\n", self.messageOut)
 	rws := gomessageblock.NewReaderWriter()
 	_, _ = rws.Write([]byte(s))
-	_ = self.ToConnection(rws)
+	self.OnSendToConnection(rws)
 	return nil
 }
 
@@ -145,11 +122,10 @@ func NewReactor(
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc model.ConnectionCancelFunc,
-	//userContext interface{},
-	ConsumerCounter *goCommsNetDialer.CanDialDefaultImpl,
 	SerializeData SerializeData,
 	PubSub *pubsub.PubSub,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
+	GoFunctionCounter GoFunctionCounter.IService,
 ) *Reactor {
 	result := &Reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
@@ -157,14 +133,13 @@ func NewReactor(
 			cancelCtx,
 			cancelFunc,
 			connectionCancelFunc,
-			//userContext,
 			UniqueReferenceService.Next("ConnectionReactor"),
+			PubSub,
+			GoFunctionCounter,
 		),
-		ConsumerCounter: ConsumerCounter,
-		messageRouter:   messageRouter.NewMessageRouter(),
-		SerializeData:   SerializeData,
-		dirtyMap:        make(map[string]*DirtyMapData),
-		PubSub:          PubSub,
+		messageRouter: messageRouter.NewMessageRouter(),
+		SerializeData: SerializeData,
+		dirtyMap:      make(map[string]*DirtyMapData),
 	}
 	result.messageRouter.Add(result.HandlePublishTop5)
 	result.messageRouter.Add(result.HandleEmptyQueue)

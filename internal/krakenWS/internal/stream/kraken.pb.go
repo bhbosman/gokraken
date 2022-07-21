@@ -10,7 +10,6 @@ import (
 	stream "github.com/bhbosman/gocommon/stream"
 	goerrors "github.com/bhbosman/goerrors"
 	goprotoextra "github.com/bhbosman/goprotoextra"
-	v2 "github.com/reactivex/rxgo/v2"
 	proto "google.golang.org/protobuf/proto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -714,14 +713,10 @@ func (self *KrakenSubscriptionDataWrapper) messageWrapper() interface{} {
 }
 
 func NewKrakenSubscriptionDataWrapper(
-	toReactor v2.NextFunc,
-	toConnection v2.NextFunc,
 	data *KrakenSubscriptionData) *KrakenSubscriptionDataWrapper {
 	return &KrakenSubscriptionDataWrapper{
-		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(
-			toReactor,
-			toConnection),
-		Data: data,
+		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(),
+		Data:               data,
 	}
 }
 
@@ -732,13 +727,9 @@ var _ = stream.Register(
 			return &KrakenSubscriptionData{}
 		},
 		CreateWrapper: func(
-			toReactor v2.NextFunc,
-			toConnection v2.NextFunc,
 			data proto.Message) (goprotoextra.IMessageWrapper, error) {
 			if msg, ok := data.(*KrakenSubscriptionData); ok {
 				return NewKrakenSubscriptionDataWrapper(
-					toReactor,
-					toConnection,
 					msg), nil
 			}
 			return nil, goerrors.InvalidParam
@@ -762,14 +753,10 @@ func (self *KrakenWsMessageIncomingWrapper) messageWrapper() interface{} {
 }
 
 func NewKrakenWsMessageIncomingWrapper(
-	toReactor v2.NextFunc,
-	toConnection v2.NextFunc,
 	data *KrakenWsMessageIncoming) *KrakenWsMessageIncomingWrapper {
 	return &KrakenWsMessageIncomingWrapper{
-		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(
-			toReactor,
-			toConnection),
-		Data: data,
+		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(),
+		Data:               data,
 	}
 }
 
@@ -780,13 +767,9 @@ var _ = stream.Register(
 			return &KrakenWsMessageIncoming{}
 		},
 		CreateWrapper: func(
-			toReactor v2.NextFunc,
-			toConnection v2.NextFunc,
 			data proto.Message) (goprotoextra.IMessageWrapper, error) {
 			if msg, ok := data.(*KrakenWsMessageIncoming); ok {
 				return NewKrakenWsMessageIncomingWrapper(
-					toReactor,
-					toConnection,
 					msg), nil
 			}
 			return nil, goerrors.InvalidParam
@@ -810,14 +793,10 @@ func (self *KrakenWsMessageOutgoingWrapper) messageWrapper() interface{} {
 }
 
 func NewKrakenWsMessageOutgoingWrapper(
-	toReactor v2.NextFunc,
-	toConnection v2.NextFunc,
 	data *KrakenWsMessageOutgoing) *KrakenWsMessageOutgoingWrapper {
 	return &KrakenWsMessageOutgoingWrapper{
-		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(
-			toReactor,
-			toConnection),
-		Data: data,
+		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(),
+		Data:               data,
 	}
 }
 
@@ -828,13 +807,9 @@ var _ = stream.Register(
 			return &KrakenWsMessageOutgoing{}
 		},
 		CreateWrapper: func(
-			toReactor v2.NextFunc,
-			toConnection v2.NextFunc,
 			data proto.Message) (goprotoextra.IMessageWrapper, error) {
 			if msg, ok := data.(*KrakenWsMessageOutgoing); ok {
 				return NewKrakenWsMessageOutgoingWrapper(
-					toReactor,
-					toConnection,
 					msg), nil
 			}
 			return nil, goerrors.InvalidParam
@@ -858,14 +833,10 @@ func (self *TickerInformationWrapper) messageWrapper() interface{} {
 }
 
 func NewTickerInformationWrapper(
-	toReactor v2.NextFunc,
-	toConnection v2.NextFunc,
 	data *TickerInformation) *TickerInformationWrapper {
 	return &TickerInformationWrapper{
-		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(
-			toReactor,
-			toConnection),
-		Data: data,
+		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(),
+		Data:               data,
 	}
 }
 
@@ -876,13 +847,9 @@ var _ = stream.Register(
 			return &TickerInformation{}
 		},
 		CreateWrapper: func(
-			toReactor v2.NextFunc,
-			toConnection v2.NextFunc,
 			data proto.Message) (goprotoextra.IMessageWrapper, error) {
 			if msg, ok := data.(*TickerInformation); ok {
 				return NewTickerInformationWrapper(
-					toReactor,
-					toConnection,
 					msg), nil
 			}
 			return nil, goerrors.InvalidParam
@@ -906,14 +873,10 @@ func (self *TickerMessageWrapper) messageWrapper() interface{} {
 }
 
 func NewTickerMessageWrapper(
-	toReactor v2.NextFunc,
-	toConnection v2.NextFunc,
 	data *TickerMessage) *TickerMessageWrapper {
 	return &TickerMessageWrapper{
-		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(
-			toReactor,
-			toConnection),
-		Data: data,
+		BaseMessageWrapper: goprotoextra.NewBaseMessageWrapper(),
+		Data:               data,
 	}
 }
 
@@ -924,13 +887,9 @@ var _ = stream.Register(
 			return &TickerMessage{}
 		},
 		CreateWrapper: func(
-			toReactor v2.NextFunc,
-			toConnection v2.NextFunc,
 			data proto.Message) (goprotoextra.IMessageWrapper, error) {
 			if msg, ok := data.(*TickerMessage); ok {
 				return NewTickerMessageWrapper(
-					toReactor,
-					toConnection,
 					msg), nil
 			}
 			return nil, goerrors.InvalidParam

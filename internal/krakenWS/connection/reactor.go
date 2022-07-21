@@ -5,6 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/bhbosman/goCommonMarketData/fullMarketData"
+	stream2 "github.com/bhbosman/goCommonMarketData/fullMarketData/stream"
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	"github.com/bhbosman/goCommsStacks/webSocketMessages/wsmsg"
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
@@ -16,16 +19,15 @@ import (
 	"github.com/bhbosman/gocomms/common"
 	krakenWsStream "github.com/bhbosman/gokraken/internal/krakenWS/internal/stream"
 	"github.com/bhbosman/gomessageblock"
-	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
 	"github.com/reactivex/rxgo/v2"
 	"go.uber.org/zap"
+	"hash/crc32"
 	"strconv"
+	"strings"
 )
-
-type RePublishMessage struct {
-}
 
 type registrationKey struct {
 	pair string
@@ -51,17 +53,20 @@ func newRegistrationValue(reqid uint32, pair, name string) *registrationValue {
 }
 
 type outstandingSubscription struct {
-	Reqid uint32
+	ReqId uint32
 	Pair  string
 	Name  string
+	Depth uint32
 }
 
 type registeredSubscription struct {
-	channelName string
-	channelId   uint32
-	Reqid       uint32
-	Pair        string
-	Name        string
+	channelName  string
+	channelId    uint32
+	Reqid        uint32
+	Pair         string
+	Name         string
+	LastCheckSum uint32
+	depth        uint32
 }
 
 type Reactor struct {
@@ -70,57 +75,54 @@ type Reactor struct {
 	connectionID             uint64
 	status                   string
 	version                  string
-	PubSub                   *pubsub.PubSub
 	outstandingSubscriptions map[uint32]outstandingSubscription
-	registeredSubscriptions  map[uint32]registeredSubscription
-	FullMarketOrderBook      map[string]*FullMarketOrderBook
+	registeredSubscriptions  map[uint32]*registeredSubscription
 	pairs                    map[registrationKey]*registrationValue
 	reqid                    uint32
 	republishChannelName     string
 	publishChannelName       string
-	goFunctionCounter        GoFunctionCounter.IService
+	FmdService               fullMarketDataManagerService.IFmdManagerService
 }
 
 func (self *Reactor) handleKrakenStreamSubscribe(inData *krakenStream.Subscribe) error {
-	self.outstandingSubscriptions[inData.Reqid] = outstandingSubscription{
-		Reqid: inData.Reqid,
+	outstandingSubscriptionInstance := outstandingSubscription{
+		ReqId: inData.Reqid,
 		Pair:  inData.Pair,
 		Name:  inData.Name,
+		Depth: 100,
 	}
+
+	self.outstandingSubscriptions[inData.Reqid] = outstandingSubscriptionInstance
 	msg := &krakenWsStream.KrakenWsMessageOutgoing{
 		Event: "subscribe",
 		Reqid: inData.Reqid,
 		Pair:  []string{inData.Pair},
 		Subscription: &krakenWsStream.KrakenSubscriptionData{
-			Depth:    0,
+			Depth:    outstandingSubscriptionInstance.Depth,
 			Interval: 0,
 			Name:     inData.Name,
 			Snapshot: false,
 			Token:    "",
 		},
 	}
-	if inData.Name == "book" {
-		msg.Subscription.Depth = 25
-	}
 
-	return SendTextOpMessage(msg, self.ToConnection, self.ToConnectionFuncReplacement)
+	return self.SendTextOpMessage(msg)
 }
 
-func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.KrakenWsMessageIncoming) error {
+func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.KrakenWsMessageIncoming) {
 	switch inData.Event {
 	case "heartbeat":
-		return self.handleHeartbeat(inData)
+		self.handleHeartbeat(inData)
 	case "ping":
-		return self.handlePing(inData)
+		self.handlePing(inData)
 	case "systemStatus":
-		return self.handleSystemStatus(inData)
+		self.handleSystemStatus(inData)
 	case "subscriptionStatus":
-		return self.handleSubscriptionStatus(inData)
+		self.handleSubscriptionStatus(inData)
 	default:
 		self.Logger.Info(fmt.Sprintf("Unhandled message: %v\nData: %v",
 			zap.String("event", inData.Event),
 			zap.String("data", inData.String())))
-		return nil
 	}
 }
 
@@ -137,15 +139,16 @@ func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) e
 			//case "spread":
 			//	return self.handleSpread(data, inData[1].([]interface{}))
 			case "book":
-				var FullMarketOrderBook *FullMarketOrderBook
-				if storedValue, ok := self.FullMarketOrderBook[data.Pair]; ok {
-					FullMarketOrderBook = storedValue
-				} else {
-					FullMarketOrderBook = NewFullMarketOrderBook(data.Pair, inData[2].(string))
-					self.FullMarketOrderBook[data.Pair] = FullMarketOrderBook
+				//var FullMarketOrderBook *FullMarketOrderBook
+				//if storedValue, ok := self.FullMarketOrderBook[data.Pair]; ok {
+				//	FullMarketOrderBook = storedValue
+				//} else {
+				//	FullMarketOrderBook = NewFullMarketOrderBook(data.Pair, inData[2].(string))
+				//	self.FullMarketOrderBook[data.Pair] = FullMarketOrderBook
+				//
+				//}
 
-				}
-				return FullMarketOrderBook.HandleBook(inData[1].(map[string]interface{}))
+				return self.HandleBook(data, inData[1].(map[string]interface{}))
 			}
 
 			//switch data.Name {
@@ -178,20 +181,18 @@ func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) e
 
 type websocketDataResponse []interface{}
 
-func (self *Reactor) handleWebSocketMessageWrapper(inData *wsmsg.WebSocketMessageWrapper) error {
-	return self.handleWebSocketMessage(inData.Data)
-}
-func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) error {
+func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
 	switch inData.OpCode {
 	case wsmsg.WebSocketMessage_OpText:
 		if len(inData.Message) > 0 && inData.Message[0] == '[' { //type WebsocketDataResponse []interface{}
 			var dataResponse websocketDataResponse
+
 			err := json.Unmarshal(inData.Message, &dataResponse)
 			if err != nil {
-				return err
+				return
 			}
 			_, _ = self.messageRouter.Route(dataResponse)
-			return nil
+			return
 
 		} else {
 			krakenMessage := &krakenWsStream.KrakenWsMessageIncoming{}
@@ -201,85 +202,29 @@ func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) erro
 			}
 			err := unMarshaler.Unmarshal(bytes.NewBuffer(inData.Message), krakenMessage)
 			if err != nil {
-				return err
+				return
 			}
 			_, _ = self.messageRouter.Route(krakenMessage)
-			return nil
+			return
 		}
-	case wsmsg.WebSocketMessage_OpEndLoop:
-		return nil
-
-	case wsmsg.WebSocketMessage_OpStartLoop:
-		return nil
 	default:
-		return nil
 	}
-}
-
-func (self Reactor) handleMessageBlockReaderWriter(inData *gomessageblock.ReaderWriter) error {
-	marshal, err := stream.UnMarshal(
-		inData,
-		func(i interface{}) {
-			self.ToReactor(false, i)
-		},
-		func(i interface{}) {
-			if unk, ok := i.(goprotoextra.ReadWriterSize); ok {
-				self.ToConnection(unk)
-			}
-		},
-	)
-	if err != nil {
-		println(err.Error())
-		return err
-	}
-
-	_, err = self.messageRouter.Route(marshal)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (self *Reactor) Init(
-	onSend goprotoextra.ToConnectionFunc,
-	toConnectionReactor goprotoextra.ToReactorFunc,
-	onSendReplacement rxgo.NextFunc,
-	toConnectionReactorReplacement rxgo.NextFunc,
-) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, chan interface{}, error) {
-	_, _, _, _, err := self.BaseConnectionReactor.Init(
-		onSend,
-		toConnectionReactor,
-		onSendReplacement,
-		toConnectionReactorReplacement,
+	onSendToReactor rxgo.NextFunc,
+	onSendToConnection rxgo.NextFunc,
+) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
+	_, _, _, err := self.BaseConnectionReactor.Init(
+		onSendToReactor,
+		onSendToConnection,
 	)
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	self.republishChannelName = "republishChannel"
 	self.publishChannelName = "publishChannel"
-
-	republishChannel := self.PubSub.Sub(self.republishChannelName)
-
-	self.goFunctionCounter.GoRun(
-		"Kraken.Init",
-		func() {
-			<-self.CancelCtx.Done()
-			self.PubSub.Unsub(republishChannel, self.republishChannelName)
-		},
-	)
-	// Todo: Register function
-	self.goFunctionCounter.GoRun(
-		"Kraken Read Republish Channel",
-		func() {
-			for range republishChannel {
-				if self.CancelCtx.Err() == nil {
-					_ = self.ToReactor(false, &RePublishMessage{})
-				}
-			}
-		},
-	)
 
 	return func(i interface{}) {
 			self.doNext(false, i)
@@ -289,13 +234,17 @@ func (self *Reactor) Init(
 		},
 		func() {
 
-		}, nil, nil
+		},
+		nil
 }
 
 func (self *Reactor) Close() error {
-	for _, v := range self.FullMarketOrderBook {
-		v.Clear()
-		v.Publish(true)
+	for _, value := range self.pairs {
+		_ = self.FmdService.Send(
+			&stream2.FullMarketData_Clear{
+				Instrument: value.pair,
+			},
+		)
 	}
 	return self.BaseConnectionReactor.Close()
 }
@@ -304,21 +253,22 @@ func (self *Reactor) Open() error {
 	if err != nil {
 		return err
 	}
-	self.sendAllRegistration()
-	return nil
 
-}
-
-func (self *Reactor) sendAllRegistration() {
 	for _, value := range self.pairs {
 		message := &krakenStream.Subscribe{
 			Reqid: value.reqid,
 			Pair:  value.pair,
 			Name:  value.name,
 		}
-		//self.messageRouter.Route(message)
-		_ = self.ToReactor(true, message)
+		self.OnSendToReactor(message)
+
+		_ = self.FmdService.Send(
+			&stream2.FullMarketData_Clear{
+				Instrument: value.pair,
+			},
+		)
 	}
+	return nil
 }
 
 func (self *Reactor) doNext(_ bool, i interface{}) {
@@ -333,38 +283,41 @@ func (self *Reactor) handleSystemStatus(data krakenWsStream.ISystemStatus) error
 }
 
 func (self Reactor) handlePing(data krakenWsStream.IPing) error {
-	outgoing := &krakenWsStream.KrakenWsMessageOutgoing{}
-	outgoing.Event = "pong"
-	outgoing.Reqid = data.GetReqid()
-
-	return SendTextOpMessage(outgoing, self.ToConnection, self.ToConnectionFuncReplacement)
-}
-
-func (self Reactor) handleHeartbeat(_ interface{}) error {
+	_ = self.SendTextOpMessage(
+		&krakenWsStream.KrakenWsMessageOutgoing{
+			Event: "pong",
+			Reqid: data.GetReqid(),
+		},
+	)
 	return nil
 }
 
-func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptionStatus) error {
+func (self Reactor) handleHeartbeat(_ interface{}) {
+	return
+}
+
+func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptionStatus) {
 	if data, ok := self.outstandingSubscriptions[inData.GetReqid()]; ok {
 		if inData.GetStatus() == "error" {
+			// TODO: logging and some status
 			err := fmt.Errorf(inData.GetErrorMessage())
 			self.Logger.Error("subscription failed", zap.Error(err))
-			return err
+			return
 		}
-		delete(self.outstandingSubscriptions, data.Reqid)
+		delete(self.outstandingSubscriptions, data.ReqId)
 
-		self.registeredSubscriptions[inData.GetChannelID()] = registeredSubscription{
+		self.registeredSubscriptions[inData.GetChannelID()] = &registeredSubscription{
 			channelName: inData.GetChannelName(),
 			channelId:   inData.GetChannelID(),
 			Reqid:       inData.GetReqid(),
 			Pair:        inData.GetPair(),
 			Name:        inData.GetSubscription().Name,
+			depth:       data.Depth,
 		}
 	}
-	return nil
 }
 
-func (self *Reactor) handleTicker(channelData registeredSubscription, data map[string]interface{}) error {
+func (self *Reactor) handleTicker(channelData *registeredSubscription, data map[string]interface{}) error {
 	closePrice, err := strconv.ParseFloat(data["c"].([]interface{})[0].(string), 64)
 	if err != nil {
 		return err
@@ -411,22 +364,9 @@ func (self *Reactor) handleTicker(channelData registeredSubscription, data map[s
 	return nil
 }
 
-func (self *Reactor) HandlePublishMessage(_ *RePublishMessage) error {
-	return self.publishData(true)
-}
+func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCounters) {}
 
-func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
-	return self.publishData(false)
-}
-
-func (self *Reactor) publishData(forcePublish bool) error {
-	for _, v := range self.FullMarketOrderBook {
-		top5 := v.Publish(forcePublish)
-		if top5 != nil {
-			self.PubSub.Pub(top5, self.publishChannelName)
-		}
-	}
-	return nil
+func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
 }
 
 func (self *Reactor) Register(pair string, name string) error {
@@ -439,15 +379,222 @@ func (self *Reactor) Register(pair string, name string) error {
 	return nil
 }
 
+func (self *Reactor) Unknown(i interface{}) {
+
+}
+
+func (self *Reactor) SendTextOpMessage(
+	message proto.Message,
+) error {
+	rws := gomessageblock.NewReaderWriter()
+	m := jsonpb.Marshaler{
+		OrigName:     false,
+		EnumsAsInts:  false,
+		EmitDefaults: false,
+		Indent:       "",
+		AnyResolver:  nil,
+	}
+	var err error
+	err = m.Marshal(rws, message)
+	if err != nil {
+		return err
+	}
+
+	var flatten []byte
+	flatten, err = rws.Flatten()
+	if err != nil {
+		return err
+	}
+
+	WebSocketMessage := wsmsg.WebSocketMessage{
+		OpCode:  wsmsg.WebSocketMessage_OpText,
+		Message: flatten,
+	}
+	readWriterSize, err := stream.Marshall(&WebSocketMessage)
+	if err != nil {
+		return err
+	}
+
+	self.OnSendToConnection(readWriterSize)
+	return nil
+}
+
+func (self *Reactor) wsProcessOrderBookPartial(
+	instrumentData *registeredSubscription,
+	askData, bidData []interface{},
+	snapShot bool,
+) {
+	if snapShot {
+		_ = self.FmdService.Send(
+			&stream2.FullMarketData_Clear{
+				Instrument: instrumentData.Pair,
+			},
+		)
+	}
+	for i := range askData {
+		asks := askData[i].([]interface{})
+		priceAsString := asks[0].(string)
+		price, err := strconv.ParseFloat(priceAsString, 64)
+		if err != nil {
+			return
+		}
+		volumeAsString := asks[1].(string)
+		volume, err := strconv.ParseFloat(volumeAsString, 64)
+		if err != nil {
+			return
+		}
+
+		_ = self.FmdService.Send(
+			&stream2.FullMarketData_DeleteOrderInstruction{
+				Instrument: instrumentData.Pair,
+				Id:         priceAsString,
+			},
+		)
+
+		if volume != 0 {
+			aa := StateTrimmer(priceAsString) + StateTrimmer(volumeAsString)
+			_ = self.FmdService.Send(
+				&stream2.FullMarketData_AddOrderInstruction{
+					Instrument: instrumentData.Pair,
+					Order: &stream2.FullMarketData_AddOrder{
+						Side:      stream2.OrderSide_AskOrder,
+						Id:        priceAsString,
+						Price:     price,
+						Volume:    volume,
+						ExtraData: aa,
+					},
+				},
+			)
+		}
+	}
+
+	for i := range bidData {
+		bids := bidData[i].([]interface{})
+		priceAsString := bids[0].(string)
+		price, err := strconv.ParseFloat(priceAsString, 64)
+		if err != nil {
+			return
+		}
+		volumeAsString := bids[1].(string)
+		volume, err := strconv.ParseFloat(volumeAsString, 64)
+		if err != nil {
+			return
+		}
+
+		_ = self.FmdService.Send(
+			&stream2.FullMarketData_DeleteOrderInstruction{
+				Instrument: instrumentData.Pair,
+				Id:         priceAsString,
+			},
+		)
+
+		if volume != 0 {
+			aa := StateTrimmer(priceAsString) + StateTrimmer(volumeAsString)
+			_ = self.FmdService.Send(
+				&stream2.FullMarketData_AddOrderInstruction{
+					Instrument: instrumentData.Pair,
+					Order: &stream2.FullMarketData_AddOrder{
+						Side:      stream2.OrderSide_BidOrder,
+						Id:        priceAsString,
+						Price:     price,
+						Volume:    volume,
+						ExtraData: aa,
+					},
+				},
+			)
+		}
+	}
+}
+
+func (self *Reactor) HandleBook(
+	instrumentData *registeredSubscription,
+	data map[string]interface{},
+) error {
+	askSnapshot, askSnapshotExists := data["as"].([]interface{})
+	bidSnapshot, bidSnapshotExists := data["bs"].([]interface{})
+	if askSnapshotExists || bidSnapshotExists {
+		self.wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true)
+	} else {
+		askData, asksExist := data["a"].([]interface{})
+		bidData, bidsExist := data["b"].([]interface{})
+		if asksExist || bidsExist {
+			self.wsProcessOrderBookPartial(instrumentData, askData, bidData, false)
+		}
+	}
+	_ = self.FmdService.Send(
+		fullMarketDataManagerService.NewCallbackMessage(
+			instrumentData.Pair,
+			func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) {
+				if v, ok := data.(*registeredSubscription); ok {
+					for fullMarketOrderBook.BidOrderSide().Size() > int(v.depth) {
+						fullMarketOrderBook.BidOrderSide().Remove(fullMarketOrderBook.BidOrderSide().Left().Key)
+					}
+
+					for fullMarketOrderBook.AskOrderSide().Size() > int(v.depth) {
+						fullMarketOrderBook.AskOrderSide().Remove(fullMarketOrderBook.AskOrderSide().Right().Key)
+					}
+				}
+			},
+			instrumentData,
+		),
+	)
+
+	if checkSumData, checkSumExist := data["c"].(string); checkSumExist {
+		if atoi, err := strconv.Atoi(checkSumData); err == nil {
+			_ = self.FmdService.Send(
+				fullMarketDataManagerService.NewCallbackMessage(
+					instrumentData.Pair,
+					func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) {
+						if v, ok := data.(*dddd); ok {
+							crc := crc32.NewIEEE()
+							var count uint32 = 0
+							for node := fullMarketOrderBook.AskOrderSide().Left(); node != nil && count < 10; node = node.Next() {
+								pp := node.Value.(*fullMarketData.PricePoint)
+								unk, _ := pp.List.Get(0)
+								ss := unk.(*fullMarketData.FullMarketOrder)
+								_, _ = crc.Write([]byte(StateTrimmer(ss.ExtraData)))
+								count++
+							}
+							count = 0
+							for node := fullMarketOrderBook.BidOrderSide().Right(); node != nil && count < 10; node = node.Prev() {
+								pp := node.Value.(*fullMarketData.PricePoint)
+								unk, _ := pp.List.Get(0)
+								ss := unk.(*fullMarketData.FullMarketOrder)
+								_, _ = crc.Write([]byte(StateTrimmer(ss.ExtraData)))
+								count++
+							}
+							ddd := crc.Sum32()
+							if ddd == uint32(v.crc) {
+							} else {
+
+							}
+						}
+					},
+					&dddd{
+						dept: instrumentData.depth,
+						crc:  uint32(atoi),
+					},
+				),
+			)
+		}
+	}
+	return nil
+}
+
+type dddd struct {
+	dept uint32
+	crc  uint32
+}
+
 func NewReactor(
 	logger *zap.Logger,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
 	connectionCancelFunc model.ConnectionCancelFunc,
-	//userContext interface{},
 	PubSub *pubsub.PubSub,
 	goFunctionCounter GoFunctionCounter.IService,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
+	FmdService fullMarketDataManagerService.IFmdManagerService,
 ) *Reactor {
 	result := &Reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
@@ -455,29 +602,27 @@ func NewReactor(
 			cancelCtx,
 			cancelFunc,
 			connectionCancelFunc,
-			//userContext,
 			UniqueReferenceService.Next("ConnectionReactor"),
+			PubSub,
+			goFunctionCounter,
 		),
 		messageRouter:            messageRouter.NewMessageRouter(),
 		connectionID:             0,
 		status:                   "",
 		version:                  "",
-		PubSub:                   PubSub,
 		outstandingSubscriptions: make(map[uint32]outstandingSubscription),
-		registeredSubscriptions:  make(map[uint32]registeredSubscription),
-		FullMarketOrderBook:      make(map[string]*FullMarketOrderBook),
+		registeredSubscriptions:  make(map[uint32]*registeredSubscription),
 		pairs:                    make(map[registrationKey]*registrationValue),
-		goFunctionCounter:        goFunctionCounter,
+		FmdService:               FmdService,
 	}
-	_ = result.messageRouter.Add(result.handleMessageBlockReaderWriter)
 	_ = result.messageRouter.Add(result.handleWebSocketMessage)
-	_ = result.messageRouter.Add(result.handleWebSocketMessageWrapper)
 	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
 	_ = result.messageRouter.Add(result.handleKrakenWsMessageIncoming)
 	_ = result.messageRouter.Add(result.handleWebsocketDataResponse)
 	_ = result.messageRouter.Add(result.HandleEmptyQueue)
-	_ = result.messageRouter.Add(result.HandlePublishMessage)
+	_ = result.messageRouter.Add(result.HandlePublishRxHandlerCounters)
 
+	result.messageRouter.RegisterUnknown(result.Unknown)
 	_ = result.Register("XBT/USD", "book")
 	_ = result.Register("XBT/EUR", "book")
 	_ = result.Register("XBT/CAD", "book")
@@ -491,4 +636,26 @@ func NewReactor(
 	//_ = result.Register("XBT/USD", "trade")
 
 	return result
+}
+
+func StateTrimmer(s string) string {
+	addValue := false
+	ddd := func(r rune) bool {
+		switch r {
+		case '0':
+			return addValue
+		case '.':
+			return false
+		default:
+			addValue = true
+			return true
+		}
+	}
+	sb := strings.Builder{}
+	for _, r := range s {
+		if ddd(r) {
+			sb.WriteRune(r)
+		}
+	}
+	return sb.String()
 }
