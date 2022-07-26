@@ -7,7 +7,7 @@ import (
 	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goFxApp"
 	app2 "github.com/bhbosman/gocommon/Providers"
-	"github.com/bhbosman/gokraken/internal/krakenWS/connection"
+	"github.com/bhbosman/gokraken/internal/krakenWS"
 	"github.com/bhbosman/gokraken/internal/listener"
 	"go.uber.org/fx"
 	"log"
@@ -33,7 +33,7 @@ func CreateFxApp() *goFxApp.TerminalAppUsingFxApp {
 		fullMarketDataHelper.Provide(),
 		instrumentReference.Provide(),
 
-		connection.ProvideKrakenDialer(),
+		krakenWS.ProvideKrakenDialer(),
 		listener.TextListener(1024, settings.textListenerUrl),
 		listener.CompressedListener(1024, settings.compressedListenerUrl),
 	)
