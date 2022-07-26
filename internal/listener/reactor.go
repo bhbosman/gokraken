@@ -32,7 +32,7 @@ func NewDirtyMapData(data *marketDataStream.PublishTop5) *DirtyMapData {
 }
 
 type SerializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
-type Reactor struct {
+type reactor struct {
 	common.BaseConnectionReactor
 	messageRouter        *messageRouter.MessageRouter
 	SerializeData        SerializeData
@@ -42,7 +42,7 @@ type Reactor struct {
 	messageOut           int
 }
 
-func (self *Reactor) Init(
+func (self *reactor) Init(
 	onSendToReactor rxgo.NextFunc,
 	onSendToConnection rxgo.NextFunc,
 ) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
@@ -70,19 +70,19 @@ func (self *Reactor) Init(
 		}, nil
 }
 
-func (self *Reactor) doNext(_ bool, i interface{}) {
+func (self *reactor) doNext(_ bool, i interface{}) {
 	_, _ = self.messageRouter.Route(i)
 }
 
-func (self *Reactor) Open() error {
+func (self *reactor) Open() error {
 	return self.BaseConnectionReactor.Open()
 }
 
-func (self *Reactor) Close() error {
+func (self *reactor) Close() error {
 	return self.BaseConnectionReactor.Close()
 }
 
-func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
+func (self *reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
 	var deleteKeys []string
 	for k, v := range self.dirtyMap {
 		self.messageOut++
@@ -104,7 +104,7 @@ func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
 	return nil
 }
 
-func (self *Reactor) HandlePublishTop5(top5 *marketDataStream.PublishTop5) error {
+func (self *reactor) HandlePublishTop5(top5 *marketDataStream.PublishTop5) error {
 	if self.CancelCtx.Err() != nil {
 		return self.CancelCtx.Err()
 	}
@@ -130,8 +130,8 @@ func NewReactor(
 	GoFunctionCounter GoFunctionCounter.IService,
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper,
 	FmdService fullMarketDataManagerService.IFmdManagerService,
-) *Reactor {
-	result := &Reactor{
+) *reactor {
+	result := &reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
 			logger,
 			cancelCtx,
