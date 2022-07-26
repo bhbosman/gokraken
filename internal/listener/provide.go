@@ -78,13 +78,13 @@ func CompressedListener(
 								},
 							),
 
-							fx.Provide(
-								fx.Annotated{
-									Target: func() GoFunctionCounter.IService {
-										return params.GoFunctionCounter
-									},
-								},
-							),
+							//fx.Provide(
+							//	fx.Annotated{
+							//		Target: func() GoFunctionCounter.IService {
+							//			return params.GoFunctionCounter
+							//		},
+							//	},
+							//),
 						),
 					)
 					return f(params.NetAppFuncInParams), nil
