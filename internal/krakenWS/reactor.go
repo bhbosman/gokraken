@@ -230,6 +230,11 @@ func (self *Reactor) Close() error {
 				Instrument: value.pair,
 			},
 		)
+		_ = self.FmdService.Send(
+			&stream2.FullMarketData_RemoveInstrumentInstruction{
+				Instrument: value.pair,
+			},
+		)
 	}
 	return self.BaseConnectionReactor.Close()
 }
