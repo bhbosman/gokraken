@@ -2,44 +2,29 @@ package listener
 
 import (
 	"context"
-	"fmt"
+	stream2 "github.com/bhbosman/goCommonMarketData/fullMarketData/stream"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataHelper"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
-	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/messageRouter"
-	"github.com/bhbosman/gocommon/messages"
-	"github.com/bhbosman/gocommon/model"
-	"github.com/bhbosman/gocomms/common"
-	"github.com/bhbosman/gomessageblock"
+	common3 "github.com/bhbosman/gocommon/model"
+	common2 "github.com/bhbosman/gocomms/common"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"github.com/reactivex/rxgo/v2"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
-	"strings"
 )
 
-type DirtyMapData struct {
-	data *marketDataStream.PublishTop5
-}
-
-func NewDirtyMapData(data *marketDataStream.PublishTop5) *DirtyMapData {
-	return &DirtyMapData{
-		data: data,
-	}
-}
-
-type SerializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
+type serializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
 type reactor struct {
-	common.BaseConnectionReactor
-	messageRouter        *messageRouter.MessageRouter
-	SerializeData        SerializeData
-	republishChannelName string
-	publishChannelName   string
-	dirtyMap             map[string]*DirtyMapData
-	messageOut           int
+	common2.BaseConnectionReactor
+	messageRouter          *messageRouter.MessageRouter
+	SerializeData          serializeData
+	UniqueReferenceService interfaces.IUniqueReferenceService
+	FullMarketDataHelper   fullMarketDataHelper.IFullMarketDataHelper
+	FmdService             fullMarketDataManagerService.IFmdManagerService
 }
 
 func (self *reactor) Init(
@@ -54,11 +39,6 @@ func (self *reactor) Init(
 		return nil, nil, nil, err
 	}
 
-	self.republishChannelName = "republishChannel"
-	self.publishChannelName = "publishChannel"
-
-	self.PubSub.Pub(&struct{}{}, self.republishChannelName)
-
 	return func(i interface{}) {
 			self.doNext(false, i)
 		},
@@ -67,7 +47,8 @@ func (self *reactor) Init(
 		},
 		func() {
 
-		}, nil
+		},
+		nil
 }
 
 func (self *reactor) doNext(_ bool, i interface{}) {
@@ -75,64 +56,61 @@ func (self *reactor) doNext(_ bool, i interface{}) {
 }
 
 func (self *reactor) Open() error {
-	return self.BaseConnectionReactor.Open()
+	err := self.BaseConnectionReactor.Open()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (self *reactor) Close() error {
 	return self.BaseConnectionReactor.Close()
 }
 
-func (self *reactor) HandleEmptyQueue(_ *messages.EmptyQueue) error {
-	var deleteKeys []string
-	for k, v := range self.dirtyMap {
-		self.messageOut++
-		marshal, err := self.SerializeData(v.data)
-		if err != nil {
-			return err
-		}
-		self.OnSendToConnection(marshal)
-		deleteKeys = append(deleteKeys, k)
-	}
-	for _, s := range deleteKeys {
-		delete(self.dirtyMap, s)
-	}
-
-	s := fmt.Sprintf("\n\r-->%v<--\r\n", self.messageOut)
-	rws := gomessageblock.NewReaderWriter()
-	_, _ = rws.Write([]byte(s))
-	self.OnSendToConnection(rws)
-	return nil
+//goland:noinspection GoSnakeCaseUsage
+func (self *reactor) handleFullMarketData_Instrument_RegisterWrapper(message *stream2.FullMarketData_Instrument_RegisterWrapper) {
+	key := self.FullMarketDataHelper.InstrumentChannelName(message.Data.Instrument)
+	self.PubSub.AddSub(self.OnSendToConnectionPubSubBag, key)
+	message.SetNext(self.OnSendToConnectionPubSubBag)
+	_ = self.FmdService.Send(message)
 }
 
-func (self *reactor) HandlePublishTop5(top5 *marketDataStream.PublishTop5) error {
-	if self.CancelCtx.Err() != nil {
-		return self.CancelCtx.Err()
-	}
-	top5.Source = "KrakenWS"
-	s := strings.Replace(fmt.Sprintf("%v.%v", top5.Source, top5.Instrument), "/", ".", -1)
-	top5.UniqueName = s
-	if dirtyData, ok := self.dirtyMap[s]; ok {
-		dirtyData.data = top5
-	} else {
-		self.dirtyMap[s] = NewDirtyMapData(top5)
-	}
-	return nil
+//goland:noinspection GoSnakeCaseUsage
+func (self *reactor) handleFullMarketData_Instrument_UnregisterWrapper(message *stream2.FullMarketData_Instrument_UnregisterWrapper) {
+	key := self.FullMarketDataHelper.InstrumentChannelName(message.Data.Instrument)
+	self.PubSub.Unsub(self.OnSendToConnectionPubSubBag, key)
+	message.SetNext(self.OnSendToConnectionPubSubBag)
+	_ = self.FmdService.Send(message)
 }
 
-func NewReactor(
+//goland:noinspection GoSnakeCaseUsage
+func (self *reactor) handleFullMarketData_InstrumentList_SubscribeWrapper(message *stream2.FullMarketData_InstrumentList_SubscribeWrapper) {
+	self.PubSub.AddSub(
+		self.OnSendToConnectionPubSubBag,
+		self.FullMarketDataHelper.InstrumentListChannelName(),
+	)
+}
+
+//goland:noinspection GoSnakeCaseUsage
+func (self *reactor) handleFullMarketData_InstrumentList_RequestWrapper(message *stream2.FullMarketData_InstrumentList_RequestWrapper) {
+	message.SetNext(self.OnSendToConnectionPubSubBag)
+	_ = self.FmdService.Send(message)
+}
+
+func NewConnectionReactor(
 	logger *zap.Logger,
 	cancelCtx context.Context,
 	cancelFunc context.CancelFunc,
-	connectionCancelFunc model.ConnectionCancelFunc,
-	SerializeData SerializeData,
+	connectionCancelFunc common3.ConnectionCancelFunc,
 	PubSub *pubsub.PubSub,
-	UniqueReferenceService interfaces.IUniqueReferenceService,
+	SerializeData serializeData,
 	GoFunctionCounter GoFunctionCounter.IService,
+	UniqueReferenceService interfaces.IUniqueReferenceService,
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper,
 	FmdService fullMarketDataManagerService.IFmdManagerService,
-) *reactor {
+) (*reactor, error) {
 	result := &reactor{
-		BaseConnectionReactor: common.NewBaseConnectionReactor(
+		BaseConnectionReactor: common2.NewBaseConnectionReactor(
 			logger,
 			cancelCtx,
 			cancelFunc,
@@ -141,11 +119,17 @@ func NewReactor(
 			PubSub,
 			GoFunctionCounter,
 		),
-		messageRouter: messageRouter.NewMessageRouter(),
-		SerializeData: SerializeData,
-		dirtyMap:      make(map[string]*DirtyMapData),
+		messageRouter:          messageRouter.NewMessageRouter(),
+		SerializeData:          SerializeData,
+		UniqueReferenceService: UniqueReferenceService,
+		FmdService:             FmdService,
+		FullMarketDataHelper:   FullMarketDataHelper,
 	}
-	result.messageRouter.Add(result.HandlePublishTop5)
-	result.messageRouter.Add(result.HandleEmptyQueue)
-	return result
+	result.messageRouter.Add(result.handleFullMarketData_InstrumentList_SubscribeWrapper)
+	result.messageRouter.Add(result.handleFullMarketData_InstrumentList_RequestWrapper)
+	//
+	result.messageRouter.Add(result.handleFullMarketData_Instrument_RegisterWrapper)
+	result.messageRouter.Add(result.handleFullMarketData_Instrument_UnregisterWrapper)
+
+	return result, nil
 }

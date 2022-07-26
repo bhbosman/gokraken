@@ -120,22 +120,20 @@ func ProvideConnectionReactor() fx.Option {
 						FmdService             fullMarketDataManagerService.IFmdManagerService
 					},
 				) (intf.IConnectionReactor, error) {
-					return NewReactor(
-							params.Logger,
-							params.CancelCtx,
-							params.CancelFunc,
-							params.ConnectionCancelFunc,
-							//params.ClientContext,
-							func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
-								return stream.Marshall(data)
-							},
-							params.PubSub,
-							params.UniqueReferenceService,
-							params.GoFunctionCounter,
-							params.FullMarketDataHelper,
-							params.FmdService,
-						),
-						nil
+					return NewConnectionReactor(
+						params.Logger,
+						params.CancelCtx,
+						params.CancelFunc,
+						params.ConnectionCancelFunc,
+						params.PubSub,
+						func(data proto.Message) (goprotoextra.IReadWriterSize, error) {
+							return stream.Marshall(data)
+						},
+						params.GoFunctionCounter,
+						params.UniqueReferenceService,
+						params.FullMarketDataHelper,
+						params.FmdService,
+					)
 				},
 			},
 		),
