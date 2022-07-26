@@ -23,7 +23,7 @@ func CreateFxApp() *goFxApp.TerminalAppUsingFxApp {
 
 	var shutDowner fx.Shutdowner
 	return goFxApp.NewFxMainApplicationServices(
-		"KrakenStream",
+		"kraken-stream",
 		false,
 		fx.Supply(settings),
 		fx.Populate(&shutDowner),
