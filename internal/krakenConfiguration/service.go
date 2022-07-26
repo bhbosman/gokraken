@@ -81,12 +81,47 @@ func (self *service) start(_ context.Context) error {
 
 	_ = self.Send(
 		krakenWS.NewKrakenConnection(
-			"Connection00001",
+			"Connection XBT/USD",
 			krakenWS.NewInstance("XBT/USD", "book"),
+		),
+	)
+
+	//krakenWS.NewInstance("XBT/EUR", "book"),
+	_ = self.Send(
+		krakenWS.NewKrakenConnection(
+			"Connection XBT/EUR",
 			krakenWS.NewInstance("XBT/EUR", "book"),
+		),
+	)
+
+	//krakenWS.NewInstance("XBT/CAD", "book"),
+	_ = self.Send(
+		krakenWS.NewKrakenConnection(
+			"Connection XBT/CAD",
 			krakenWS.NewInstance("XBT/CAD", "book"),
+		),
+	)
+
+	//krakenWS.NewInstance("EUR/USD", "book"),
+	_ = self.Send(
+		krakenWS.NewKrakenConnection(
+			"Connection EUR/USD",
 			krakenWS.NewInstance("EUR/USD", "book"),
+		),
+	)
+
+	//krakenWS.NewInstance("GBP/USD", "book"),
+	_ = self.Send(
+		krakenWS.NewKrakenConnection(
+			"Connection GBP/USD",
 			krakenWS.NewInstance("GBP/USD", "book"),
+		),
+	)
+
+	//krakenWS.NewInstance("USD/CAD", "book"),
+	_ = self.Send(
+		krakenWS.NewKrakenConnection(
+			"Connection USD/CAD",
 			krakenWS.NewInstance("USD/CAD", "book"),
 		),
 	)
