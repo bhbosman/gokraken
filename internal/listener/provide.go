@@ -69,7 +69,7 @@ func CompressedListener(
 								bvisMessageBreaker.Provide(),
 								bottom.Provide(),
 							),
-							ProvideConnectionReactorFactory222(),
+							ProvideConnectionReactor(),
 							PubSub.ProvidePubSubInstance("Application", params.PubSub),
 							fx.Provide(
 								fx.Annotated{
@@ -102,7 +102,7 @@ func CompressedListener(
 	)
 }
 
-func ProvideConnectionReactorFactory222() fx.Option {
+func ProvideConnectionReactor() fx.Option {
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{

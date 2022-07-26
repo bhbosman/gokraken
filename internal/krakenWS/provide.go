@@ -64,7 +64,7 @@ func ProvideKrakenDialer() fx.Option {
 										return params.FmdService
 									},
 								}),
-							ProvideConnectionReactorFactory(),
+							ProvideConnectionReactor(),
 						),
 					)
 					return f(params.NetAppFuncInParams), nil
@@ -74,7 +74,7 @@ func ProvideKrakenDialer() fx.Option {
 	)
 }
 
-func ProvideConnectionReactorFactory() fx.Option {
+func ProvideConnectionReactor() fx.Option {
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -102,7 +102,6 @@ func ProvideConnectionReactorFactory() fx.Option {
 							params.FmdService,
 						),
 						nil
-
 				},
 			},
 		),
