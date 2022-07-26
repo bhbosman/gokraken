@@ -3,8 +3,8 @@ module github.com/bhbosman/gokraken
 go 1.18
 
 require (
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20220721070505-30206872567f
-	github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20220724214237-63eea03e3695
+	github.com/bhbosman/goCommsNetDialer v0.0.0-20220628065530-174b367e3fbb // indirect
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
