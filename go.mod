@@ -8,7 +8,7 @@ require (
 	github.com/bhbosman/goCommsNetListener v0.0.0-20220628065846-84d389e32fc4
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
-	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2 // indirect
+	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2
 	github.com/bhbosman/goMessages v0.0.0-20220719163819-d38fc7e6d38c
 	github.com/bhbosman/gocommon v0.0.0-20220721070423-baf2cd622704
 	github.com/bhbosman/gocomms v0.0.0-20220628074707-e93417aaaed2
@@ -16,10 +16,9 @@ require (
 	github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
 	github.com/cskr/pubsub v1.0.2
-	github.com/emirpasic/gods v1.18.1
+	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/golang/protobuf v1.5.0
-	github.com/kardianos/service v1.1.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.0 // indirect
 	go.uber.org/fx v1.17.1
 	go.uber.org/zap v1.21.0
 	google.golang.org/protobuf v1.28.0
@@ -47,7 +46,7 @@ require (
 	github.com/teivah/onecontext v0.0.0-20200513185103-40f981bfd775 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/dig v1.14.0 // indirect
-	go.uber.org/multierr v1.6.0 // indirect
+	go.uber.org/multierr v1.6.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
@@ -57,6 +56,7 @@ require (
 
 require (
 	github.com/bhbosman/goCommonMarketData v0.0.0-20220721194348-4c0f095abe4c
+	github.com/bhbosman/goCommsMultiDialer v0.0.0-20220725200742-03776d188cb8
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
 )
 
@@ -66,6 +66,8 @@ replace (
 )
 
 replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b
+
+replace github.com/golang/mock => github.com/bhbosman/gomock v1.6.1-0.20220617134815-f277ff266f47
 
 replace github.com/bhbosman/goCommsStacks => ../goCommsStacks
 

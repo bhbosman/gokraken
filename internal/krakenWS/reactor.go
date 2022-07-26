@@ -26,17 +26,7 @@ import (
 	"go.uber.org/zap"
 	"hash/crc32"
 	"strconv"
-	"strings"
 )
-
-type registrationKey struct {
-	pair string
-	name string
-}
-
-func newRegistrationKey(pair string, name string) registrationKey {
-	return registrationKey{pair: pair, name: name}
-}
 
 type registrationValue struct {
 	reqid uint32
@@ -77,11 +67,10 @@ type Reactor struct {
 	version                  string
 	outstandingSubscriptions map[uint32]outstandingSubscription
 	registeredSubscriptions  map[uint32]*registeredSubscription
-	pairs                    map[registrationKey]*registrationValue
+	pairs                    map[FeedRegistration]*registrationValue
 	reqid                    uint32
-	republishChannelName     string
-	publishChannelName       string
 	FmdService               fullMarketDataManagerService.IFmdManagerService
+	krakenConnection         *KrakenConnection
 }
 
 func (self *Reactor) handleKrakenStreamSubscribe(inData *krakenStream.Subscribe) error {
@@ -89,7 +78,7 @@ func (self *Reactor) handleKrakenStreamSubscribe(inData *krakenStream.Subscribe)
 		ReqId: inData.Reqid,
 		Pair:  inData.Pair,
 		Name:  inData.Name,
-		Depth: 100,
+		Depth: 10,
 	}
 
 	self.outstandingSubscriptions[inData.Reqid] = outstandingSubscriptionInstance
@@ -126,12 +115,12 @@ func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.Kraken
 	}
 }
 
-func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) error {
+func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) {
 	if channelId, ok := inData[0].(float64); ok {
 		if data, ok := self.registeredSubscriptions[uint32(channelId)]; ok {
 			switch data.Name {
 			case "ticker":
-				return self.handleTicker(data, inData[1].(map[string]interface{}))
+				self.handleTicker(data, inData[1].(map[string]interface{}))
 			//case "ohlc":
 			//	return self.handleOhlc(data, inData[1].([]interface{}))
 			//case "trade":
@@ -148,7 +137,7 @@ func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) e
 				//
 				//}
 
-				return self.HandleBook(data, inData[1].(map[string]interface{}))
+				self.HandleBook(data, inData[1].(map[string]interface{}))
 			}
 
 			//switch data.Name {
@@ -176,7 +165,6 @@ func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) e
 		//	return err
 		//}
 	}
-	return nil
 }
 
 type websocketDataResponse []interface{}
@@ -222,9 +210,6 @@ func (self *Reactor) Init(
 	if err != nil {
 		return nil, nil, nil, err
 	}
-
-	self.republishChannelName = "republishChannel"
-	self.publishChannelName = "publishChannel"
 
 	return func(i interface{}) {
 			self.doNext(false, i)
@@ -275,21 +260,19 @@ func (self *Reactor) doNext(_ bool, i interface{}) {
 	_, _ = self.messageRouter.Route(i)
 }
 
-func (self *Reactor) handleSystemStatus(data krakenWsStream.ISystemStatus) error {
+func (self *Reactor) handleSystemStatus(data krakenWsStream.ISystemStatus) {
 	self.status = data.GetStatus()
 	self.connectionID = data.GetConnectionID()
 	self.version = data.GetVersion()
-	return nil
 }
 
-func (self Reactor) handlePing(data krakenWsStream.IPing) error {
+func (self Reactor) handlePing(data krakenWsStream.IPing) {
 	_ = self.SendTextOpMessage(
 		&krakenWsStream.KrakenWsMessageOutgoing{
 			Event: "pong",
 			Reqid: data.GetReqid(),
 		},
 	)
-	return nil
 }
 
 func (self Reactor) handleHeartbeat(_ interface{}) {
@@ -317,34 +300,41 @@ func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptio
 	}
 }
 
-func (self *Reactor) handleTicker(channelData *registeredSubscription, data map[string]interface{}) error {
+func (self *Reactor) handleTicker(channelData *registeredSubscription, data map[string]interface{}) {
 	closePrice, err := strconv.ParseFloat(data["c"].([]interface{})[0].(string), 64)
 	if err != nil {
-		return err
+		self.Logger.Error("Error in ClosePrice convert", zap.Error(err))
+		return
 	}
 	openPrice, err := strconv.ParseFloat(data["o"].([]interface{})[0].(string), 64)
 	if err != nil {
-		return err
+		self.Logger.Error("Error in openPrice convert", zap.Error(err))
+		return
 	}
 	highPrice, err := strconv.ParseFloat(data["h"].([]interface{})[0].(string), 64)
 	if err != nil {
-		return err
+		self.Logger.Error("Error in highPrice convert", zap.Error(err))
+		return
 	}
 	lowPrice, err := strconv.ParseFloat(data["l"].([]interface{})[0].(string), 64)
 	if err != nil {
-		return err
+		self.Logger.Error("Error in lowPrice convert", zap.Error(err))
+		return
 	}
 	quantity, err := strconv.ParseFloat(data["v"].([]interface{})[0].(string), 64)
 	if err != nil {
-		return err
+		self.Logger.Error("Error in quantity convert", zap.Error(err))
+		return
 	}
 	ask, err := strconv.ParseFloat(data["a"].([]interface{})[0].(string), 64)
 	if err != nil {
-		return err
+		self.Logger.Error("Error in ask convert", zap.Error(err))
+		return
 	}
 	bid, err := strconv.ParseFloat(data["b"].([]interface{})[0].(string), 64)
 	if err != nil {
-		return err
+		self.Logger.Error("Error in bid convert", zap.Error(err))
+		return
 	}
 
 	priceData := &krakenStream.Price{
@@ -361,7 +351,6 @@ func (self *Reactor) handleTicker(channelData *registeredSubscription, data map[
 	if priceData != nil {
 
 	}
-	return nil
 }
 
 func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCounters) {}
@@ -369,11 +358,10 @@ func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCou
 func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
 }
 
-func (self *Reactor) Register(pair string, name string) error {
-	key := newRegistrationKey(pair, name)
+func (self *Reactor) Register(key FeedRegistration) error {
 	if _, ok := self.pairs[key]; !ok {
 		self.reqid++
-		value := newRegistrationValue(self.reqid, pair, name)
+		value := newRegistrationValue(self.reqid, key.Pair, key.Name)
 		self.pairs[key] = value
 	}
 	return nil
@@ -452,7 +440,9 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		)
 
 		if volume != 0 {
-			aa := StateTrimmer(priceAsString) + StateTrimmer(volumeAsString)
+			buffer := bytes.Buffer{}
+			self.preCrc(&buffer, priceAsString)
+			self.preCrc(&buffer, volumeAsString)
 			_ = self.FmdService.Send(
 				&stream2.FullMarketData_AddOrderInstruction{
 					Instrument: instrumentData.Pair,
@@ -461,7 +451,7 @@ func (self *Reactor) wsProcessOrderBookPartial(
 						Id:        priceAsString,
 						Price:     price,
 						Volume:    volume,
-						ExtraData: aa,
+						ExtraData: buffer.Bytes(),
 					},
 				},
 			)
@@ -489,7 +479,9 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		)
 
 		if volume != 0 {
-			aa := StateTrimmer(priceAsString) + StateTrimmer(volumeAsString)
+			buffer := bytes.Buffer{}
+			self.preCrc(&buffer, priceAsString)
+			self.preCrc(&buffer, volumeAsString)
 			_ = self.FmdService.Send(
 				&stream2.FullMarketData_AddOrderInstruction{
 					Instrument: instrumentData.Pair,
@@ -498,7 +490,7 @@ func (self *Reactor) wsProcessOrderBookPartial(
 						Id:        priceAsString,
 						Price:     price,
 						Volume:    volume,
-						ExtraData: aa,
+						ExtraData: buffer.Bytes(),
 					},
 				},
 			)
@@ -506,21 +498,42 @@ func (self *Reactor) wsProcessOrderBookPartial(
 	}
 }
 
+func (self *Reactor) preCrc(writer *bytes.Buffer, s string) {
+	addValue := false
+	cb := func(r rune) bool {
+		switch r {
+		case '0':
+			return addValue
+		case '.':
+			return false
+		default:
+			addValue = true
+			return true
+		}
+	}
+	for _, r := range s {
+		if cb(r) {
+			writer.WriteRune(r)
+		}
+	}
+}
+
 func (self *Reactor) HandleBook(
 	instrumentData *registeredSubscription,
 	data map[string]interface{},
-) error {
+) {
 	askSnapshot, askSnapshotExists := data["as"].([]interface{})
 	bidSnapshot, bidSnapshotExists := data["bs"].([]interface{})
+	askData, asksExist := data["a"].([]interface{})
+	bidData, bidsExist := data["b"].([]interface{})
+	checkSumData, checkSumExist := data["c"].(string)
+
 	if askSnapshotExists || bidSnapshotExists {
 		self.wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true)
-	} else {
-		askData, asksExist := data["a"].([]interface{})
-		bidData, bidsExist := data["b"].([]interface{})
-		if asksExist || bidsExist {
-			self.wsProcessOrderBookPartial(instrumentData, askData, bidData, false)
-		}
+	} else if asksExist || bidsExist {
+		self.wsProcessOrderBookPartial(instrumentData, askData, bidData, false)
 	}
+
 	_ = self.FmdService.Send(
 		fullMarketDataManagerService.NewCallbackMessage(
 			instrumentData.Pair,
@@ -539,20 +552,20 @@ func (self *Reactor) HandleBook(
 		),
 	)
 
-	if checkSumData, checkSumExist := data["c"].(string); checkSumExist {
+	if checkSumExist {
 		if atoi, err := strconv.Atoi(checkSumData); err == nil {
 			_ = self.FmdService.Send(
 				fullMarketDataManagerService.NewCallbackMessage(
 					instrumentData.Pair,
 					func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) {
-						if v, ok := data.(*dddd); ok {
+						if v, ok := data.(int); ok {
 							crc := crc32.NewIEEE()
 							var count uint32 = 0
 							for node := fullMarketOrderBook.AskOrderSide().Left(); node != nil && count < 10; node = node.Next() {
 								pp := node.Value.(*fullMarketData.PricePoint)
 								unk, _ := pp.List.Get(0)
 								ss := unk.(*fullMarketData.FullMarketOrder)
-								_, _ = crc.Write([]byte(StateTrimmer(ss.ExtraData)))
+								_, _ = crc.Write(ss.ExtraData)
 								count++
 							}
 							count = 0
@@ -560,30 +573,21 @@ func (self *Reactor) HandleBook(
 								pp := node.Value.(*fullMarketData.PricePoint)
 								unk, _ := pp.List.Get(0)
 								ss := unk.(*fullMarketData.FullMarketOrder)
-								_, _ = crc.Write([]byte(StateTrimmer(ss.ExtraData)))
+								_, _ = crc.Write(ss.ExtraData)
 								count++
 							}
 							ddd := crc.Sum32()
-							if ddd == uint32(v.crc) {
+							if int(ddd) == v {
 							} else {
-
+								self.CancelFunc()
 							}
 						}
 					},
-					&dddd{
-						dept: instrumentData.depth,
-						crc:  uint32(atoi),
-					},
+					&atoi,
 				),
 			)
 		}
 	}
-	return nil
-}
-
-type dddd struct {
-	dept uint32
-	crc  uint32
 }
 
 func NewReactor(
@@ -595,6 +599,7 @@ func NewReactor(
 	goFunctionCounter GoFunctionCounter.IService,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
 	FmdService fullMarketDataManagerService.IFmdManagerService,
+	krakenConnection *KrakenConnection,
 ) *Reactor {
 	result := &Reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
@@ -612,8 +617,9 @@ func NewReactor(
 		version:                  "",
 		outstandingSubscriptions: make(map[uint32]outstandingSubscription),
 		registeredSubscriptions:  make(map[uint32]*registeredSubscription),
-		pairs:                    make(map[registrationKey]*registrationValue),
+		pairs:                    make(map[FeedRegistration]*registrationValue),
 		FmdService:               FmdService,
+		krakenConnection:         krakenConnection,
 	}
 	_ = result.messageRouter.Add(result.handleWebSocketMessage)
 	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
@@ -623,39 +629,9 @@ func NewReactor(
 	_ = result.messageRouter.Add(result.HandlePublishRxHandlerCounters)
 
 	result.messageRouter.RegisterUnknown(result.Unknown)
-	_ = result.Register("XBT/USD", "book")
-	_ = result.Register("XBT/EUR", "book")
-	_ = result.Register("XBT/CAD", "book")
-	_ = result.Register("EUR/USD", "book")
-	_ = result.Register("GBP/USD", "book")
-	_ = result.Register("USD/CAD", "book")
-
-	//_ = result.Register("XBT/USD", "ohlc")
-	//_ = result.Register("XBT/USD", "spread")
-	//_ = result.Register("XBT/USD", "ticker")
-	//_ = result.Register("XBT/USD", "trade")
+	for _, registration := range krakenConnection.Instance {
+		_ = result.Register(registration)
+	}
 
 	return result
-}
-
-func StateTrimmer(s string) string {
-	addValue := false
-	ddd := func(r rune) bool {
-		switch r {
-		case '0':
-			return addValue
-		case '.':
-			return false
-		default:
-			addValue = true
-			return true
-		}
-	}
-	sb := strings.Builder{}
-	for _, r := range s {
-		if ddd(r) {
-			sb.WriteRune(r)
-		}
-	}
-	return sb.String()
 }

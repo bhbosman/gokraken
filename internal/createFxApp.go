@@ -5,9 +5,10 @@ import (
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerViewer"
 	"github.com/bhbosman/goCommonMarketData/instrumentReference"
+	"github.com/bhbosman/goCommsMultiDialer"
 	"github.com/bhbosman/goFxApp"
 	app2 "github.com/bhbosman/gocommon/Providers"
-	"github.com/bhbosman/gokraken/internal/krakenWS"
+	"github.com/bhbosman/gokraken/internal/krakenConfiguration"
 	"github.com/bhbosman/gokraken/internal/listener"
 	"go.uber.org/fx"
 )
@@ -28,8 +29,9 @@ func CreateFxApp() *goFxApp.TerminalAppUsingFxApp {
 		fullMarketDataManagerService.Provide(false),
 		fullMarketDataHelper.Provide(),
 		instrumentReference.Provide(),
-
-		krakenWS.ProvideKrakenDialer(),
+		goCommsMultiDialer.Provide(),
+		krakenConfiguration.Provide(),
+		//krakenWS.ProvideKrakenDialer(),
 		listener.CompressedListener(1024, settings.compressedListenerUrl),
 	)
 }
