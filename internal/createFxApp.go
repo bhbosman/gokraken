@@ -10,14 +10,10 @@ import (
 	"github.com/bhbosman/gokraken/internal/krakenWS"
 	"github.com/bhbosman/gokraken/internal/listener"
 	"go.uber.org/fx"
-	"log"
-	"os"
 )
 
 func CreateFxApp() *goFxApp.TerminalAppUsingFxApp {
 	settings := &AppSettings{
-		Logger:                log.New(os.Stderr, "", log.LstdFlags),
-		textListenerUrl:       "tcp4://127.0.0.1:3010",
 		compressedListenerUrl: "tcp4://127.0.0.1:3011",
 	}
 
