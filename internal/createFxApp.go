@@ -34,7 +34,6 @@ func CreateFxApp() *goFxApp.TerminalAppUsingFxApp {
 		instrumentReference.Provide(),
 
 		krakenWS.ProvideKrakenDialer(),
-		listener.TextListener(1024, settings.textListenerUrl),
 		listener.CompressedListener(1024, settings.compressedListenerUrl),
 	)
 }

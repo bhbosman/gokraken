@@ -3,6 +3,8 @@ package listener
 import (
 	"context"
 	"fmt"
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataHelper"
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	marketDataStream "github.com/bhbosman/goMessages/marketData/stream"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/interfaces"
@@ -126,6 +128,8 @@ func NewReactor(
 	PubSub *pubsub.PubSub,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
 	GoFunctionCounter GoFunctionCounter.IService,
+	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper,
+	FmdService fullMarketDataManagerService.IFmdManagerService,
 ) *Reactor {
 	result := &Reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(

@@ -1,6 +1,8 @@
 package listener
 
 import (
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataHelper"
+	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goCommsNetListener"
 	"github.com/bhbosman/goCommsStacks/bottom"
@@ -39,9 +41,11 @@ func CompressedListener(
 				Target: func(
 					params struct {
 						fx.In
-						PubSub             *pubsub.PubSub `name:"Application"`
-						GoFunctionCounter  GoFunctionCounter.IService
-						NetAppFuncInParams common.NetAppFuncInParams
+						PubSub               *pubsub.PubSub `name:"Application"`
+						GoFunctionCounter    GoFunctionCounter.IService
+						NetAppFuncInParams   common.NetAppFuncInParams
+						FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper
+						FmdService           fullMarketDataManagerService.IFmdManagerService
 					},
 				) (messages.CreateAppCallback, error) {
 					compressedUrl, err := url.Parse(urlAsText)
@@ -65,8 +69,23 @@ func CompressedListener(
 								bvisMessageBreaker.Provide(),
 								bottom.Provide(),
 							),
-							ProvideConnectionReactorFactory2(),
+							ProvideConnectionReactorFactory222(),
 							PubSub.ProvidePubSubInstance("Application", params.PubSub),
+							fx.Provide(
+								fx.Annotated{
+									Target: func() fullMarketDataHelper.IFullMarketDataHelper {
+										return params.FullMarketDataHelper
+									},
+								},
+							),
+							fx.Provide(
+								fx.Annotated{
+									Target: func() fullMarketDataManagerService.IFmdManagerService {
+										return params.FmdService
+									},
+								},
+							),
+
 							fx.Provide(
 								fx.Annotated{
 									Target: func() GoFunctionCounter.IService {
@@ -83,7 +102,7 @@ func CompressedListener(
 	)
 }
 
-func ProvideConnectionReactorFactory2() fx.Option {
+func ProvideConnectionReactorFactory222() fx.Option {
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -97,6 +116,8 @@ func ProvideConnectionReactorFactory2() fx.Option {
 						PubSub                 *pubsub.PubSub `name:"Application"`
 						UniqueReferenceService interfaces.IUniqueReferenceService
 						GoFunctionCounter      GoFunctionCounter.IService
+						FullMarketDataHelper   fullMarketDataHelper.IFullMarketDataHelper
+						FmdService             fullMarketDataManagerService.IFmdManagerService
 					},
 				) (intf.IConnectionReactor, error) {
 					return NewReactor(
@@ -111,6 +132,8 @@ func ProvideConnectionReactorFactory2() fx.Option {
 							params.PubSub,
 							params.UniqueReferenceService,
 							params.GoFunctionCounter,
+							params.FullMarketDataHelper,
+							params.FmdService,
 						),
 						nil
 				},
