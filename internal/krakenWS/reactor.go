@@ -8,6 +8,7 @@ import (
 	"github.com/bhbosman/goCommonMarketData/fullMarketData"
 	stream2 "github.com/bhbosman/goCommonMarketData/fullMarketData/stream"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
+	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goCommsStacks/webSocketMessages/wsmsg"
 	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
@@ -70,7 +71,7 @@ type Reactor struct {
 	pairs                    map[FeedRegistration]*registrationValue
 	reqid                    uint32
 	FmdService               fullMarketDataManagerService.IFmdManagerService
-	krakenConnection         *KrakenConnection
+	otherData                instrumentReference.KrakenReferenceData
 }
 
 func (self *Reactor) handleKrakenStreamSubscribe(inData *krakenStream.Subscribe) error {
@@ -290,6 +291,7 @@ func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptio
 			// TODO: logging and some status
 			err := fmt.Errorf(inData.GetErrorMessage())
 			self.Logger.Error("subscription failed", zap.Error(err))
+			self.CancelFunc()
 			return
 		}
 		delete(self.outstandingSubscriptions, data.ReqId)
@@ -363,11 +365,15 @@ func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCou
 func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
 }
 
-func (self *Reactor) Register(key FeedRegistration) error {
-	if _, ok := self.pairs[key]; !ok {
+func (self *Reactor) Register(key instrumentReference.KrakenFeed) error {
+	fr := FeedRegistration{
+		Pair: key.Pair,
+		Name: key.Type,
+	}
+	if _, ok := self.pairs[fr]; !ok {
 		self.reqid++
-		value := newRegistrationValue(self.reqid, key.Pair, key.Name)
-		self.pairs[key] = value
+		value := newRegistrationValue(self.reqid, key.Pair, key.Type)
+		self.pairs[fr] = value
 	}
 	return nil
 }
@@ -604,7 +610,7 @@ func NewReactor(
 	goFunctionCounter GoFunctionCounter.IService,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
 	FmdService fullMarketDataManagerService.IFmdManagerService,
-	krakenConnection *KrakenConnection,
+	otherData instrumentReference.KrakenReferenceData,
 ) *Reactor {
 	result := &Reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
@@ -624,7 +630,7 @@ func NewReactor(
 		registeredSubscriptions:  make(map[uint32]*registeredSubscription),
 		pairs:                    make(map[FeedRegistration]*registrationValue),
 		FmdService:               FmdService,
-		krakenConnection:         krakenConnection,
+		otherData:                otherData,
 	}
 	_ = result.messageRouter.Add(result.handleWebSocketMessage)
 	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
@@ -634,8 +640,8 @@ func NewReactor(
 	_ = result.messageRouter.Add(result.HandlePublishRxHandlerCounters)
 
 	result.messageRouter.RegisterUnknown(result.Unknown)
-	for _, registration := range krakenConnection.Instance {
-		_ = result.Register(registration)
+	for _, registration := range otherData.Feeds {
+		_ = result.Register(*registration)
 	}
 
 	return result

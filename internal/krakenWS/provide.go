@@ -2,6 +2,7 @@ package krakenWS
 
 import (
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
+	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/model"
@@ -81,7 +82,7 @@ func ProvideConnectionReactor() fx.Option {
 						GoFunctionCounter      GoFunctionCounter.IService
 						UniqueReferenceService interfaces.IUniqueReferenceService
 						FmdService             fullMarketDataManagerService.IFmdManagerService
-						KrakenConnection       *KrakenConnection
+						OtherData              instrumentReference.KrakenReferenceData
 					},
 				) (
 					intf.IConnectionReactor,
@@ -96,7 +97,7 @@ func ProvideConnectionReactor() fx.Option {
 							params.GoFunctionCounter,
 							params.UniqueReferenceService,
 							params.FmdService,
-							params.KrakenConnection,
+							params.OtherData,
 						),
 						nil
 				},

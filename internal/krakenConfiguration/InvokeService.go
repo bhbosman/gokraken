@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataHelper"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
+	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goCommsMultiDialer"
 	fxAppManager "github.com/bhbosman/goFxAppManager/service"
 	"github.com/bhbosman/gocommon/messages"
@@ -27,19 +28,25 @@ func InvokeService() fx.Option {
 				PubSub                     *pubsub.PubSub `name:"Application"`
 				FullMarketDataHelper       fullMarketDataHelper.IFullMarketDataHelper
 				FmdService                 fullMarketDataManagerService.IFmdManagerService
+				InstrumentReferenceService instrumentReference.IInstrumentReferenceService
 			},
 		) error {
 			params.Lifecycle.Append(
 				fx.Hook{
 					OnStart: func(ctx context.Context) error {
-						allLunoConfiguration := params.KrakenConfigurationService.GetAll()
-						var err error
-						f := func(krakenConnection *krakenWS.KrakenConnection) func() (messages.IApp, context.CancelFunc, error) {
+						providers, err := params.InstrumentReferenceService.GetKrakenProviders()
+						if err != nil {
+							return err
+						}
+						//allLunoConfiguration := params.KrakenConfigurationService.GetAll()
+						f := func(
+							otherData instrumentReference.KrakenReferenceData,
+						) func() (messages.IApp, context.CancelFunc, error) {
 							return func() (messages.IApp, context.CancelFunc, error) {
 								dec := krakenWS.NewDecorator(
 									params.Logger,
 									params.NetMultiDialer,
-									krakenConnection,
+									otherData,
 									params.PubSub,
 									params.FullMarketDataHelper,
 									params.FmdService,
@@ -48,12 +55,12 @@ func InvokeService() fx.Option {
 							}
 						}
 
-						for _, configuration := range allLunoConfiguration {
+						for _, configuration := range providers {
 							localConfiguration := configuration
 							err = multierr.Append(
 								err,
 								params.FxManagerService.Add(
-									localConfiguration.Name,
+									localConfiguration.ConnectionName,
 									f(localConfiguration),
 								),
 							)

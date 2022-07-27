@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataHelper"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
+	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goCommsMultiDialer"
 	"github.com/bhbosman/goCommsStacks/bottom"
@@ -20,9 +21,10 @@ import (
 )
 
 type decorator struct {
-	stoppedCalled        bool
-	NetMultiDialer       goCommsMultiDialer.INetMultiDialerService
-	krakenConnection     *KrakenConnection
+	stoppedCalled  bool
+	NetMultiDialer goCommsMultiDialer.INetMultiDialerService
+	otherData      instrumentReference.KrakenReferenceData
+
 	pubSub               *pubsub.PubSub
 	dialApp              messages.IApp
 	dialAppCancelFunc    goCommsDefinitions.ICancellationContext
@@ -34,18 +36,18 @@ type decorator struct {
 func NewDecorator(
 	Logger *zap.Logger,
 	NetMultiDialer goCommsMultiDialer.INetMultiDialerService,
-	krakenConnection *KrakenConnection,
+	otherData instrumentReference.KrakenReferenceData,
 	pubSub *pubsub.PubSub,
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper,
 	FmdService fullMarketDataManagerService.IFmdManagerService,
 ) *decorator {
 	return &decorator{
 		NetMultiDialer:       NetMultiDialer,
-		krakenConnection:     krakenConnection,
 		pubSub:               pubSub,
 		Logger:               Logger,
 		FullMarketDataHelper: FullMarketDataHelper,
 		FmdService:           FmdService,
+		otherData:            otherData,
 	}
 }
 
@@ -88,8 +90,8 @@ func (self *decorator) internalStart(ctx context.Context) error {
 		nil,
 		krakenUrl,
 		self.reconnect,
-		fmt.Sprintf("Luno.%v", self.krakenConnection.Name),
-		fmt.Sprintf("Luno.%v", self.krakenConnection.Name),
+		fmt.Sprintf("Luno.%v", self.otherData.ConnectionName),
+		fmt.Sprintf("Luno.%v", self.otherData.ConnectionName),
 		ProvideConnectionReactor(),
 		goCommsDefinitions.ProvideTransportFactoryForWebSocketName(
 			topStack.ProvideTopStack(),
@@ -97,16 +99,15 @@ func (self *decorator) internalStart(ctx context.Context) error {
 			bottom.Provide(),
 		),
 		PubSub.ProvidePubSubInstance("Application", self.pubSub),
+		fx.Supply(self.otherData),
 		fx.Provide(
 			fx.Annotated{
 				Target: func() (
 					fullMarketDataHelper.IFullMarketDataHelper,
 					fullMarketDataManagerService.IFmdManagerService,
-					*KrakenConnection,
 				) {
 					return self.FullMarketDataHelper,
-						self.FmdService,
-						self.krakenConnection
+						self.FmdService
 				},
 			},
 		),

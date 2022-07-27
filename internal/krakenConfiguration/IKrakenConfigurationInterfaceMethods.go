@@ -196,13 +196,6 @@ func CallIKrakenConfigurationSend(context context.Context, channel chan<- interf
 
 func ChannelEventsForIKrakenConfiguration(next IKrakenConfiguration, event interface{}) (bool, error) {
 	switch v := event.(type) {
-	case *IKrakenConfigurationGetAll:
-		data := IKrakenConfigurationGetAllOut{}
-		data.Args0 = next.GetAll()
-		if v.outDataChannel != nil {
-			v.outDataChannel <- data
-		}
-		return true, nil
 	case *IKrakenConfigurationSend:
 		data := IKrakenConfigurationSendOut{}
 		data.Args0 = next.Send(v.inData.arg0)
