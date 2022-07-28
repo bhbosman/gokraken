@@ -30,16 +30,19 @@ import (
 )
 
 type registrationValue struct {
-	reqid uint32
-	pair  string
-	name  string
+	reqid               uint32
+	name                string
+	instrumentReference instrumentReference.KrakenFeed
 }
 
-func newRegistrationValue(reqid uint32, pair, name string) *registrationValue {
+func newRegistrationValue(
+	reqid uint32,
+	name string,
+	instrumentReference instrumentReference.KrakenFeed) *registrationValue {
 	return &registrationValue{
-		reqid: reqid,
-		pair:  pair,
-		name:  name,
+		reqid:               reqid,
+		name:                name,
+		instrumentReference: instrumentReference,
 	}
 }
 
@@ -228,12 +231,12 @@ func (self *Reactor) Close() error {
 	for _, value := range self.pairs {
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
-				Instrument: value.pair,
+				Instrument: value.instrumentReference.Pair,
 			},
 		)
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_RemoveInstrumentInstruction{
-				Instrument: value.pair,
+				Instrument: value.instrumentReference.Pair,
 			},
 		)
 	}
@@ -248,14 +251,14 @@ func (self *Reactor) Open() error {
 	for _, value := range self.pairs {
 		message := &krakenStream.Subscribe{
 			Reqid: value.reqid,
-			Pair:  value.pair,
+			Pair:  value.instrumentReference.Pair,
 			Name:  value.name,
 		}
 		self.OnSendToReactor(message)
 
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
-				Instrument: value.pair,
+				Instrument: value.instrumentReference.Pair,
 			},
 		)
 	}
@@ -365,14 +368,14 @@ func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCou
 func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
 }
 
-func (self *Reactor) Register(key instrumentReference.KrakenFeed) error {
+func (self *Reactor) Register(name string, key instrumentReference.KrakenFeed) error {
 	fr := FeedRegistration{
 		Pair: key.Pair,
-		Name: key.Type,
+		Name: name,
 	}
 	if _, ok := self.pairs[fr]; !ok {
 		self.reqid++
-		value := newRegistrationValue(self.reqid, key.Pair, key.Type)
+		value := newRegistrationValue(self.reqid, name, key)
 		self.pairs[fr] = value
 	}
 	return nil
@@ -641,7 +644,7 @@ func NewReactor(
 
 	result.messageRouter.RegisterUnknown(result.Unknown)
 	for _, registration := range otherData.Feeds {
-		_ = result.Register(*registration)
+		_ = result.Register(otherData.Type, *registration)
 	}
 
 	return result
