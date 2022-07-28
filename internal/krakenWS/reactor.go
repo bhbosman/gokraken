@@ -52,6 +52,11 @@ type outstandingSubscription struct {
 	Name  string
 	Depth uint32
 }
+type Subscribe struct {
+	Reqid uint32 `protobuf:"varint,1,opt,name=reqid,proto3" json:"reqid,omitempty"`
+	Pair  string `protobuf:"bytes,2,opt,name=pair,proto3" json:"pair,omitempty"`
+	Name  string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+}
 
 type registeredSubscription struct {
 	channelName  string
@@ -77,7 +82,7 @@ type Reactor struct {
 	otherData                instrumentReference.KrakenReferenceData
 }
 
-func (self *Reactor) handleKrakenStreamSubscribe(inData *krakenStream.Subscribe) error {
+func (self *Reactor) handleKrakenStreamSubscribe(inData *Subscribe) error {
 	outstandingSubscriptionInstance := outstandingSubscription{
 		ReqId: inData.Reqid,
 		Pair:  inData.Pair,
@@ -249,7 +254,7 @@ func (self *Reactor) Open() error {
 	}
 
 	for _, value := range self.pairs {
-		message := &krakenStream.Subscribe{
+		message := &Subscribe{
 			Reqid: value.reqid,
 			Pair:  value.instrumentReference.Pair,
 			Name:  value.name,
