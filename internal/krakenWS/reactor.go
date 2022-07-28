@@ -29,33 +29,33 @@ import (
 	"strconv"
 )
 
-type registrationValue struct {
-	reqid               uint32
-	name                string
-	instrumentReference instrumentReference.KrakenFeed
-}
+//type registrationValue struct {
+//	reqid               uint32
+//	name                string
+//	instrumentReference instrumentReference.KrakenFeed
+//}
 
-func newRegistrationValue(
-	reqid uint32,
-	name string,
-	instrumentReference instrumentReference.KrakenFeed) *registrationValue {
-	return &registrationValue{
-		reqid:               reqid,
-		name:                name,
-		instrumentReference: instrumentReference,
-	}
-}
+//func newRegistrationValue(
+//	reqid uint32,
+//	name string,
+//	instrumentReference instrumentReference.KrakenFeed) *registrationValue {
+//	return &registrationValue{
+//		reqid:               reqid,
+//		name:                name,
+//		instrumentReference: instrumentReference,
+//	}
+//}
 
 type outstandingSubscription struct {
-	ReqId uint32
+	ReqId int
 	Pair  string
 	Name  string
 	Depth uint32
 }
 type Subscribe struct {
-	Reqid uint32 `protobuf:"varint,1,opt,name=reqid,proto3" json:"reqid,omitempty"`
-	Pair  string `protobuf:"bytes,2,opt,name=pair,proto3" json:"pair,omitempty"`
-	Name  string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Reqid int
+	Pair  string
+	Name  string
 }
 
 type registeredSubscription struct {
@@ -76,10 +76,10 @@ type Reactor struct {
 	version                  string
 	outstandingSubscriptions map[uint32]outstandingSubscription
 	registeredSubscriptions  map[uint32]*registeredSubscription
-	pairs                    map[FeedRegistration]*registrationValue
-	reqid                    uint32
-	FmdService               fullMarketDataManagerService.IFmdManagerService
-	otherData                instrumentReference.KrakenReferenceData
+	//pairs                    map[FeedRegistration]*registrationValue
+	reqid      uint32
+	FmdService fullMarketDataManagerService.IFmdManagerService
+	otherData  instrumentReference.KrakenReferenceData
 }
 
 func (self *Reactor) handleKrakenStreamSubscribe(inData *Subscribe) error {
@@ -90,10 +90,10 @@ func (self *Reactor) handleKrakenStreamSubscribe(inData *Subscribe) error {
 		Depth: 10,
 	}
 
-	self.outstandingSubscriptions[inData.Reqid] = outstandingSubscriptionInstance
+	self.outstandingSubscriptions[uint32(inData.Reqid)] = outstandingSubscriptionInstance
 	msg := &krakenWsStream.KrakenWsMessageOutgoing{
 		Event: "subscribe",
-		Reqid: inData.Reqid,
+		Reqid: uint32(inData.Reqid),
 		Pair:  []string{inData.Pair},
 		Subscription: &krakenWsStream.KrakenSubscriptionData{
 			Depth:    outstandingSubscriptionInstance.Depth,
@@ -233,15 +233,15 @@ func (self *Reactor) Init(
 }
 
 func (self *Reactor) Close() error {
-	for _, value := range self.pairs {
+	for _, value := range self.otherData.Feeds {
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
-				Instrument: value.instrumentReference.Pair,
+				Instrument: value.Pair,
 			},
 		)
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_RemoveInstrumentInstruction{
-				Instrument: value.instrumentReference.Pair,
+				Instrument: value.Pair,
 			},
 		)
 	}
@@ -253,17 +253,17 @@ func (self *Reactor) Open() error {
 		return err
 	}
 
-	for _, value := range self.pairs {
+	for i, value := range self.otherData.Feeds {
 		message := &Subscribe{
-			Reqid: value.reqid,
-			Pair:  value.instrumentReference.Pair,
-			Name:  value.name,
+			Reqid: i,
+			Pair:  value.Pair,
+			Name:  self.otherData.Type,
 		}
 		self.OnSendToReactor(message)
 
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
-				Instrument: value.instrumentReference.Pair,
+				Instrument: value.Pair,
 			},
 		)
 	}
@@ -302,7 +302,7 @@ func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptio
 			self.CancelFunc()
 			return
 		}
-		delete(self.outstandingSubscriptions, data.ReqId)
+		delete(self.outstandingSubscriptions, uint32(data.ReqId))
 
 		self.registeredSubscriptions[inData.GetChannelID()] = &registeredSubscription{
 			channelName: inData.GetChannelName(),
@@ -371,19 +371,6 @@ func (self *Reactor) handleTicker(channelData *registeredSubscription, data map[
 func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCounters) {}
 
 func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
-}
-
-func (self *Reactor) Register(name string, key instrumentReference.KrakenFeed) error {
-	fr := FeedRegistration{
-		Pair: key.Pair,
-		Name: name,
-	}
-	if _, ok := self.pairs[fr]; !ok {
-		self.reqid++
-		value := newRegistrationValue(self.reqid, name, key)
-		self.pairs[fr] = value
-	}
-	return nil
 }
 
 func (self *Reactor) Unknown(i interface{}) {
@@ -636,7 +623,6 @@ func NewReactor(
 		version:                  "",
 		outstandingSubscriptions: make(map[uint32]outstandingSubscription),
 		registeredSubscriptions:  make(map[uint32]*registeredSubscription),
-		pairs:                    make(map[FeedRegistration]*registrationValue),
 		FmdService:               FmdService,
 		otherData:                otherData,
 	}
@@ -648,9 +634,6 @@ func NewReactor(
 	_ = result.messageRouter.Add(result.HandlePublishRxHandlerCounters)
 
 	result.messageRouter.RegisterUnknown(result.Unknown)
-	for _, registration := range otherData.Feeds {
-		_ = result.Register(otherData.Type, *registration)
-	}
 
 	return result
 }
