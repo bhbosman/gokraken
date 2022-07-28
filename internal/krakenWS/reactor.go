@@ -29,23 +29,6 @@ import (
 	"strconv"
 )
 
-//type registrationValue struct {
-//	reqid               uint32
-//	name                string
-//	instrumentReference instrumentReference.KrakenFeed
-//}
-
-//func newRegistrationValue(
-//	reqid uint32,
-//	name string,
-//	instrumentReference instrumentReference.KrakenFeed) *registrationValue {
-//	return &registrationValue{
-//		reqid:               reqid,
-//		name:                name,
-//		instrumentReference: instrumentReference,
-//	}
-//}
-
 type outstandingSubscription struct {
 	ReqId int
 	Pair  string
@@ -53,7 +36,7 @@ type outstandingSubscription struct {
 	Depth uint32
 }
 type Subscribe struct {
-	Reqid int
+	ReqId int
 	Pair  string
 	Name  string
 }
@@ -61,7 +44,7 @@ type Subscribe struct {
 type registeredSubscription struct {
 	channelName  string
 	channelId    uint32
-	Reqid        uint32
+	ReqId        uint32
 	Pair         string
 	Name         string
 	LastCheckSum uint32
@@ -84,16 +67,16 @@ type Reactor struct {
 
 func (self *Reactor) handleKrakenStreamSubscribe(inData *Subscribe) error {
 	outstandingSubscriptionInstance := outstandingSubscription{
-		ReqId: inData.Reqid,
+		ReqId: inData.ReqId,
 		Pair:  inData.Pair,
 		Name:  inData.Name,
 		Depth: 10,
 	}
 
-	self.outstandingSubscriptions[uint32(inData.Reqid)] = outstandingSubscriptionInstance
+	self.outstandingSubscriptions[uint32(inData.ReqId)] = outstandingSubscriptionInstance
 	msg := &krakenWsStream.KrakenWsMessageOutgoing{
 		Event: "subscribe",
-		Reqid: uint32(inData.Reqid),
+		Reqid: uint32(inData.ReqId),
 		Pair:  []string{inData.Pair},
 		Subscription: &krakenWsStream.KrakenSubscriptionData{
 			Depth:    outstandingSubscriptionInstance.Depth,
@@ -255,7 +238,7 @@ func (self *Reactor) Open() error {
 
 	for i, value := range self.otherData.Feeds {
 		message := &Subscribe{
-			Reqid: i,
+			ReqId: i,
 			Pair:  value.Pair,
 			Name:  self.otherData.Type,
 		}
@@ -296,7 +279,6 @@ func (self Reactor) handleHeartbeat(_ interface{}) {
 func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptionStatus) {
 	if data, ok := self.outstandingSubscriptions[inData.GetReqid()]; ok {
 		if inData.GetStatus() == "error" {
-			// TODO: logging and some status
 			err := fmt.Errorf(inData.GetErrorMessage())
 			self.Logger.Error("subscription failed", zap.Error(err))
 			self.CancelFunc()
@@ -307,7 +289,7 @@ func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptio
 		self.registeredSubscriptions[inData.GetChannelID()] = &registeredSubscription{
 			channelName: inData.GetChannelName(),
 			channelId:   inData.GetChannelID(),
-			Reqid:       inData.GetReqid(),
+			ReqId:       inData.GetReqid(),
 			Pair:        inData.GetPair(),
 			Name:        inData.GetSubscription().Name,
 			depth:       data.Depth,
@@ -373,7 +355,7 @@ func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCou
 func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
 }
 
-func (self *Reactor) Unknown(i interface{}) {
+func (self *Reactor) Unknown(_ interface{}) {
 
 }
 
