@@ -2,8 +2,6 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT8A=
 github.com/benbjohnson/clock v1.3.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
-github.com/bhbosman/goCommsMultiDialer v0.0.0-20220725200742-03776d188cb8 h1:frOsGJIOtXZ/uI+bjbwNALxZn8nCrku2m6pMKcjQIJ4=
-github.com/bhbosman/goCommsMultiDialer v0.0.0-20220725200742-03776d188cb8/go.mod h1:ohsbLjTsk8mDAVr9m6owAUT92eDJ+enAMqlUnLARyrk=
 github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62 h1:m6HdigUwcde4zWU38ARP3I2Fa2NpxKiHQZmzySIx5Z4=
 github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62/go.mod h1:TZ2IkIqXD6cRPBNJYUlLC4V11cwB6KoO984OAcL9blI=
 github.com/bhbosman/gomock v1.6.1-0.20220617134815-f277ff266f47 h1:jO7xY8pZUUiV7zzWTZLQRjIpHUPelzp/i2I2aCuk5yk=

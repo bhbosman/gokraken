@@ -25,7 +25,7 @@ func CompressedListener(
 	maxConnections int,
 	urlAsText string,
 ) fx.Option {
-	const CompressedListenerConnection = "CompressedListenerConnection"
+	const CompressedListenerConnection = "Kraken Client Connection Manager(Compressed)"
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -77,14 +77,6 @@ func CompressedListener(
 									},
 								},
 							),
-
-							//fx.Provide(
-							//	fx.Annotated{
-							//		Target: func() GoFunctionCounter.IService {
-							//			return params.GoFunctionCounter
-							//		},
-							//	},
-							//),
 						),
 					)
 					return f(params.NetAppFuncInParams), nil

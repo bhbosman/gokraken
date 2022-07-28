@@ -10,7 +10,7 @@ require (
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
 	github.com/bhbosman/goFxAppManager v0.0.0-20220625173841-bbd050c3bfe2
 	github.com/bhbosman/goMessages v0.0.0-20220719163819-d38fc7e6d38c
-	github.com/bhbosman/gocommon v0.0.0-20220721070423-baf2cd622704
+	github.com/bhbosman/gocommon v0.0.0-20220725200742-9cdc334065f3
 	github.com/bhbosman/gocomms v0.0.0-20220628074707-e93417aaaed2
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62
@@ -26,7 +26,7 @@ require (
 
 require (
 	github.com/bhbosman/goConnectionManager v0.0.0-20220721070628-0f4b3c036d93 // indirect
-	github.com/bhbosman/goUi v0.0.0-20220721070442-c6483ac2b608 // indirect
+	github.com/bhbosman/goUi v0.0.0-20220725200743-ddc6ed05f1d6 // indirect
 	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
@@ -96,3 +96,5 @@ replace github.com/bhbosman/goMessages => ../goMessages
 replace github.com/cskr/pubsub => ../pubsub
 
 replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
+
+replace github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer

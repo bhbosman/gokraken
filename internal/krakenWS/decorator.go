@@ -90,8 +90,8 @@ func (self *decorator) internalStart(ctx context.Context) error {
 		nil,
 		krakenUrl,
 		self.reconnect,
-		fmt.Sprintf("Luno.%v", self.otherData.ConnectionName),
-		fmt.Sprintf("Luno.%v", self.otherData.ConnectionName),
+		fmt.Sprintf("Kraken.%v", self.otherData.ConnectionName),
+		fmt.Sprintf("Kraken.%v", self.otherData.ConnectionName),
 		ProvideConnectionReactor(),
 		goCommsDefinitions.ProvideTransportFactoryForWebSocketName(
 			topStack.ProvideTopStack(),

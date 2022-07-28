@@ -52,7 +52,7 @@ func (self *reactor) Init(
 }
 
 func (self *reactor) doNext(_ bool, i interface{}) {
-	_, _ = self.messageRouter.Route(i)
+	self.messageRouter.Route(i)
 }
 
 func (self *reactor) Open() error {

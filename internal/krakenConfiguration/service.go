@@ -70,7 +70,7 @@ func (self *service) start(_ context.Context) error {
 	}
 
 	err = self.goFunctionCounter.GoRun(
-		"Luno Configuration Service",
+		"Kraken Configuration Service",
 		func() {
 			self.goStart(instanceData)
 		},
@@ -155,7 +155,7 @@ func (self *service) State() IFxService.State {
 }
 
 func (self service) ServiceName() string {
-	return "LunoConfiguration"
+	return "KrakenConfiguration"
 }
 
 func newService(

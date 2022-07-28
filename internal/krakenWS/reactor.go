@@ -29,59 +29,65 @@ import (
 	"strconv"
 )
 
-type outstandingSubscription struct {
-	ReqId int
-	Pair  string
-	Name  string
-	Depth uint32
-}
 type Subscribe struct {
-	ReqId int
-	Pair  string
-	Name  string
 }
 
 type registeredSubscription struct {
-	channelName  string
-	channelId    uint32
-	ReqId        uint32
-	Pair         string
-	Name         string
-	LastCheckSum uint32
-	depth        uint32
+	instrumentReference.KrakenFeed
+	status string
+}
+
+type subscriptionKey struct {
+	pair string
+	name string
 }
 
 type Reactor struct {
 	common.BaseConnectionReactor
-	messageRouter            *messageRouter.MessageRouter
-	connectionID             uint64
-	status                   string
-	version                  string
-	outstandingSubscriptions map[uint32]outstandingSubscription
-	registeredSubscriptions  map[uint32]*registeredSubscription
-	//pairs                    map[FeedRegistration]*registrationValue
-	reqid      uint32
-	FmdService fullMarketDataManagerService.IFmdManagerService
-	otherData  instrumentReference.KrakenReferenceData
+	messageRouter             *messageRouter.MessageRouter
+	connectionID              uint64
+	status                    string
+	version                   string
+	registeredSubscriptionMap map[subscriptionKey]registeredSubscription
+	FmdService                fullMarketDataManagerService.IFmdManagerService
+	otherData                 instrumentReference.KrakenReferenceData
 }
 
-func (self *Reactor) handleKrakenStreamSubscribe(inData *Subscribe) error {
-	outstandingSubscriptionInstance := outstandingSubscription{
-		ReqId: inData.ReqId,
-		Pair:  inData.Pair,
-		Name:  inData.Name,
-		Depth: 10,
+func (self *Reactor) handleKrakenStreamSubscribe(_ *Subscribe) error {
+	var ss []string
+	messagesToFmdService := make([]interface{}, len(self.otherData.Feeds))
+	for _, feed := range self.otherData.Feeds {
+		ss = append(ss, feed.Pair)
+		name := self.otherData.Type
+		if name == "book" {
+			name = fmt.Sprintf("%v-%v", name, self.otherData.Depth)
+		}
+		key := subscriptionKey{
+			pair: feed.Pair,
+			name: name,
+		}
+		self.registeredSubscriptionMap[key] = registeredSubscription{
+			KrakenFeed: *feed,
+			status:     "Busy subscribing...",
+		}
+		messagesToFmdService = append(
+			messagesToFmdService,
+			&stream2.FullMarketData_Instrument_InstrumentStatus{
+				Instrument: feed.SystemName,
+				Status:     "Busy subscribing...",
+			},
+		)
 	}
+	self.FmdService.MultiSend(messagesToFmdService...)
 
-	self.outstandingSubscriptions[uint32(inData.ReqId)] = outstandingSubscriptionInstance
 	msg := &krakenWsStream.KrakenWsMessageOutgoing{
 		Event: "subscribe",
-		Reqid: uint32(inData.ReqId),
-		Pair:  []string{inData.Pair},
+		Reqid: 1,
+		Pair:  ss,
 		Subscription: &krakenWsStream.KrakenSubscriptionData{
-			Depth:    outstandingSubscriptionInstance.Depth,
+			Depth:    uint32(self.otherData.Depth),
 			Interval: 0,
-			Name:     inData.Name,
+			Name:     self.otherData.Type,
 			Snapshot: false,
 			Token:    "",
 		},
@@ -108,55 +114,62 @@ func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.Kraken
 }
 
 func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) {
-	if channelId, ok := inData[0].(float64); ok {
-		if data, ok := self.registeredSubscriptions[uint32(channelId)]; ok {
-			switch data.Name {
-			case "ticker":
-				self.handleTicker(data, inData[1].(map[string]interface{}))
-			//case "ohlc":
-			//	return self.handleOhlc(data, inData[1].([]interface{}))
-			//case "trade":
-			//	return self.handleTrade(data, inData[1].([]interface{}))
-			//case "spread":
-			//	return self.handleSpread(data, inData[1].([]interface{}))
-			case "book":
-				//var FullMarketOrderBook *FullMarketOrderBook
-				//if storedValue, ok := self.FullMarketOrderBook[data.Pair]; ok {
-				//	FullMarketOrderBook = storedValue
-				//} else {
-				//	FullMarketOrderBook = NewFullMarketOrderBook(data.Pair, inData[2].(string))
-				//	self.FullMarketOrderBook[data.Pair] = FullMarketOrderBook
-				//
-				//}
-
-				self.HandleBook(data, inData[1].(map[string]interface{}))
+	if len(inData) == 4 {
+		if pair, ok := inData[3].(string); ok {
+			if name, ok := inData[2].(string); ok {
+				key := subscriptionKey{
+					pair: pair,
+					name: name,
+				}
+				if v, ok := self.registeredSubscriptionMap[key]; ok {
+					switch self.otherData.Type {
+					case "book":
+						self.HandleBook(v, inData[1].(map[string]interface{}))
+					}
+				}
 			}
-
-			//switch data.Name {
-			//case krakenWsTicker:
-			//	return k.wsProcessTickers(&channelData, response[1].(map[string]interface{}))
-			//case krakenWsOHLC:
-			//	return k.wsProcessCandles(&channelData, response[1].([]interface{}))
-			//case krakenWsOrderbook:
-			//	return k.wsProcessOrderBook(&channelData, response[1].(map[string]interface{}))
-			//case krakenWsSpread:
-			//	k.wsProcessSpread(&channelData, response[1].([]interface{}))
-			//case krakenWsTrade:
-			//	k.wsProcessTrades(&channelData, response[1].([]interface{}))
-			//default:
-			//	return fmt.Errorf("%s Unidentified websocket data received: %+v",
-			//		k.Name,
-			//		response)
-			//}
-
 		}
-
-	} else if _, ok := inData[1].(string); ok {
-		//err = k.wsHandleAuthDataResponse(dataResponse)
-		//if err != nil {
-		//	return err
-		//}
 	}
+	//if channelId, ok := inData[0].(float64); ok {
+	//	if data, ok := self.registeredSubscriptions[uint32(channelId)]; ok {
+	//		switch data.Name {
+	//		case "ticker":
+	//			self.handleTicker(data, inData[1].(map[string]interface{}))
+	//		//case "ohlc":
+	//		//	return self.handleOhlc(data, inData[1].([]interface{}))
+	//		//case "trade":
+	//		//	return self.handleTrade(data, inData[1].([]interface{}))
+	//		//case "spread":
+	//		//	return self.handleSpread(data, inData[1].([]interface{}))
+	//		case "book":
+	//			self.HandleBook(data, inData[1].(map[string]interface{}))
+	//		}
+	//
+	//		//switch data.Name {
+	//		//case krakenWsTicker:
+	//		//	return k.wsProcessTickers(&channelData, response[1].(map[string]interface{}))
+	//		//case krakenWsOHLC:
+	//		//	return k.wsProcessCandles(&channelData, response[1].([]interface{}))
+	//		//case krakenWsOrderbook:
+	//		//	return k.wsProcessOrderBook(&channelData, response[1].(map[string]interface{}))
+	//		//case krakenWsSpread:
+	//		//	k.wsProcessSpread(&channelData, response[1].([]interface{}))
+	//		//case krakenWsTrade:
+	//		//	k.wsProcessTrades(&channelData, response[1].([]interface{}))
+	//		//default:
+	//		//	return fmt.Errorf("%s Unidentified websocket data received: %+v",
+	//		//		k.Name,
+	//		//		response)
+	//		//}
+	//
+	//	}
+	//
+	//} else if _, ok := inData[1].(string); ok {
+	//	//err = k.wsHandleAuthDataResponse(dataResponse)
+	//	//if err != nil {
+	//	//	return err
+	//	//}
+	//}
 }
 
 type websocketDataResponse []interface{}
@@ -171,7 +184,7 @@ func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
 			if err != nil {
 				return
 			}
-			_, _ = self.messageRouter.Route(dataResponse)
+			self.messageRouter.Route(dataResponse)
 			return
 
 		} else {
@@ -184,7 +197,7 @@ func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
 			if err != nil {
 				return
 			}
-			_, _ = self.messageRouter.Route(krakenMessage)
+			self.messageRouter.Route(krakenMessage)
 			return
 		}
 	default:
@@ -219,12 +232,12 @@ func (self *Reactor) Close() error {
 	for _, value := range self.otherData.Feeds {
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
-				Instrument: value.Pair,
+				Instrument: value.SystemName,
 			},
 		)
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_RemoveInstrumentInstruction{
-				Instrument: value.Pair,
+				Instrument: value.SystemName,
 			},
 		)
 	}
@@ -236,25 +249,26 @@ func (self *Reactor) Open() error {
 		return err
 	}
 
-	for i, value := range self.otherData.Feeds {
-		message := &Subscribe{
-			ReqId: i,
-			Pair:  value.Pair,
-			Name:  self.otherData.Type,
-		}
-		self.OnSendToReactor(message)
-
-		_ = self.FmdService.Send(
+	self.OnSendToReactor(&Subscribe{})
+	messagesToFmdService := make([]interface{}, len(self.otherData.Feeds)*2)
+	for _, value := range self.otherData.Feeds {
+		messagesToFmdService = append(
+			messagesToFmdService,
 			&stream2.FullMarketData_Clear{
-				Instrument: value.Pair,
+				Instrument: value.SystemName,
+			},
+			&stream2.FullMarketData_Instrument_InstrumentStatus{
+				Instrument: value.SystemName,
+				Status:     "Connection opened",
 			},
 		)
 	}
+	self.FmdService.MultiSend(messagesToFmdService...)
 	return nil
 }
 
 func (self *Reactor) doNext(_ bool, i interface{}) {
-	_, _ = self.messageRouter.Route(i)
+	self.messageRouter.Route(i)
 }
 
 func (self *Reactor) handleSystemStatus(data krakenWsStream.ISystemStatus) {
@@ -277,23 +291,35 @@ func (self Reactor) handleHeartbeat(_ interface{}) {
 }
 
 func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptionStatus) {
-	if data, ok := self.outstandingSubscriptions[inData.GetReqid()]; ok {
-		if inData.GetStatus() == "error" {
-			err := fmt.Errorf(inData.GetErrorMessage())
-			self.Logger.Error("subscription failed", zap.Error(err))
-			self.CancelFunc()
-			return
+	if inData.GetStatus() == "error" {
+		for key, value := range self.registeredSubscriptionMap {
+			if key.pair == inData.GetPair() {
+				value.status = inData.GetStatus()
+				self.registeredSubscriptionMap[key] = value
+				_ = self.FmdService.Send(
+					&stream2.FullMarketData_Instrument_InstrumentStatus{
+						Instrument: value.SystemName,
+						Status:     inData.GetStatus(),
+					},
+				)
+				break
+			}
 		}
-		delete(self.outstandingSubscriptions, uint32(data.ReqId))
-
-		self.registeredSubscriptions[inData.GetChannelID()] = &registeredSubscription{
-			channelName: inData.GetChannelName(),
-			channelId:   inData.GetChannelID(),
-			ReqId:       inData.GetReqid(),
-			Pair:        inData.GetPair(),
-			Name:        inData.GetSubscription().Name,
-			depth:       data.Depth,
-		}
+		return
+	}
+	key := subscriptionKey{
+		pair: inData.GetPair(),
+		name: inData.GetChannelName(),
+	}
+	if v, ok := self.registeredSubscriptionMap[key]; ok {
+		v.status = inData.GetStatus()
+		self.registeredSubscriptionMap[key] = v
+		_ = self.FmdService.Send(
+			&stream2.FullMarketData_Instrument_InstrumentStatus{
+				Instrument: v.SystemName,
+				Status:     inData.GetStatus(),
+			},
+		)
 	}
 }
 
@@ -343,7 +369,7 @@ func (self *Reactor) handleTicker(channelData *registeredSubscription, data map[
 		Low:    lowPrice,
 		Bid:    bid,
 		Ask:    ask,
-		Pair:   channelData.Pair,
+		Pair:   channelData.SystemName,
 	}
 	if priceData != nil {
 
@@ -396,17 +422,18 @@ func (self *Reactor) SendTextOpMessage(
 }
 
 func (self *Reactor) wsProcessOrderBookPartial(
-	instrumentData *registeredSubscription,
+	instrumentData registeredSubscription,
 	askData, bidData []interface{},
 	snapShot bool,
 ) {
 	if snapShot {
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
-				Instrument: instrumentData.Pair,
+				Instrument: instrumentData.SystemName,
 			},
 		)
 	}
+	askMessages := make([]interface{}, len(askData)*2)
 	for i := range askData {
 		asks := askData[i].([]interface{})
 		priceAsString := asks[0].(string)
@@ -419,10 +446,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		if err != nil {
 			return
 		}
-
-		_ = self.FmdService.Send(
+		askMessages = append(
+			askMessages,
 			&stream2.FullMarketData_DeleteOrderInstruction{
-				Instrument: instrumentData.Pair,
+				Instrument: instrumentData.SystemName,
 				Id:         priceAsString,
 			},
 		)
@@ -431,9 +458,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 			buffer := bytes.Buffer{}
 			self.preCrc(&buffer, priceAsString)
 			self.preCrc(&buffer, volumeAsString)
-			_ = self.FmdService.Send(
+			askMessages = append(
+				askMessages,
 				&stream2.FullMarketData_AddOrderInstruction{
-					Instrument: instrumentData.Pair,
+					Instrument: instrumentData.SystemName,
 					Order: &stream2.FullMarketData_AddOrder{
 						Side:      stream2.OrderSide_AskOrder,
 						Id:        priceAsString,
@@ -445,7 +473,9 @@ func (self *Reactor) wsProcessOrderBookPartial(
 			)
 		}
 	}
+	self.FmdService.MultiSend(askMessages...)
 
+	bidMessages := make([]interface{}, len(bidData)*2)
 	for i := range bidData {
 		bids := bidData[i].([]interface{})
 		priceAsString := bids[0].(string)
@@ -459,9 +489,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 			return
 		}
 
-		_ = self.FmdService.Send(
+		bidMessages = append(
+			bidMessages,
 			&stream2.FullMarketData_DeleteOrderInstruction{
-				Instrument: instrumentData.Pair,
+				Instrument: instrumentData.SystemName,
 				Id:         priceAsString,
 			},
 		)
@@ -470,9 +501,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 			buffer := bytes.Buffer{}
 			self.preCrc(&buffer, priceAsString)
 			self.preCrc(&buffer, volumeAsString)
-			_ = self.FmdService.Send(
+			bidMessages = append(
+				bidMessages,
 				&stream2.FullMarketData_AddOrderInstruction{
-					Instrument: instrumentData.Pair,
+					Instrument: instrumentData.SystemName,
 					Order: &stream2.FullMarketData_AddOrder{
 						Side:      stream2.OrderSide_BidOrder,
 						Id:        priceAsString,
@@ -484,6 +516,8 @@ func (self *Reactor) wsProcessOrderBookPartial(
 			)
 		}
 	}
+	self.FmdService.MultiSend(bidMessages...)
+
 }
 
 func (self *Reactor) preCrc(writer *bytes.Buffer, s string) {
@@ -507,7 +541,7 @@ func (self *Reactor) preCrc(writer *bytes.Buffer, s string) {
 }
 
 func (self *Reactor) HandleBook(
-	instrumentData *registeredSubscription,
+	instrumentData registeredSubscription,
 	data map[string]interface{},
 ) {
 	askSnapshot, askSnapshotExists := data["as"].([]interface{})
@@ -524,17 +558,16 @@ func (self *Reactor) HandleBook(
 
 	_ = self.FmdService.Send(
 		fullMarketDataManagerService.NewCallbackMessage(
-			instrumentData.Pair,
+			instrumentData.SystemName,
 			func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) {
-				if v, ok := data.(*registeredSubscription); ok {
-					for fullMarketOrderBook.BidOrderSide().Size() > int(v.depth) {
-						fullMarketOrderBook.BidOrderSide().Remove(fullMarketOrderBook.BidOrderSide().Left().Key)
-					}
-
-					for fullMarketOrderBook.AskOrderSide().Size() > int(v.depth) {
-						fullMarketOrderBook.AskOrderSide().Remove(fullMarketOrderBook.AskOrderSide().Right().Key)
-					}
+				for fullMarketOrderBook.BidOrderSide().Size() > self.otherData.Depth {
+					fullMarketOrderBook.BidOrderSide().Remove(fullMarketOrderBook.BidOrderSide().Left().Key)
 				}
+
+				for fullMarketOrderBook.AskOrderSide().Size() > self.otherData.Depth {
+					fullMarketOrderBook.AskOrderSide().Remove(fullMarketOrderBook.AskOrderSide().Right().Key)
+				}
+
 			},
 			instrumentData,
 		),
@@ -544,7 +577,7 @@ func (self *Reactor) HandleBook(
 		if atoi, err := strconv.Atoi(checkSumData); err == nil {
 			_ = self.FmdService.Send(
 				fullMarketDataManagerService.NewCallbackMessage(
-					instrumentData.Pair,
+					instrumentData.SystemName,
 					func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) {
 						if v, ok := data.(int); ok {
 							crc := crc32.NewIEEE()
@@ -599,14 +632,13 @@ func NewReactor(
 			PubSub,
 			goFunctionCounter,
 		),
-		messageRouter:            messageRouter.NewMessageRouter(),
-		connectionID:             0,
-		status:                   "",
-		version:                  "",
-		outstandingSubscriptions: make(map[uint32]outstandingSubscription),
-		registeredSubscriptions:  make(map[uint32]*registeredSubscription),
-		FmdService:               FmdService,
-		otherData:                otherData,
+		messageRouter:             messageRouter.NewMessageRouter(),
+		connectionID:              0,
+		status:                    "",
+		version:                   "",
+		FmdService:                FmdService,
+		registeredSubscriptionMap: make(map[subscriptionKey]registeredSubscription),
+		otherData:                 otherData,
 	}
 	_ = result.messageRouter.Add(result.handleWebSocketMessage)
 	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
