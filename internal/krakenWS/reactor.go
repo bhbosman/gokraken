@@ -425,7 +425,7 @@ func (self *Reactor) wsProcessOrderBookPartial(
 	instrumentData registeredSubscription,
 	askData, bidData []interface{},
 	snapShot bool,
-) {
+) []interface{} {
 	if snapShot {
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
@@ -437,16 +437,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 	for i := range askData {
 		asks := askData[i].([]interface{})
 		priceAsString := asks[0].(string)
-		price, err := strconv.ParseFloat(priceAsString, 64)
-		if err != nil {
-			return
-		}
+		price, _ := strconv.ParseFloat(priceAsString, 64)
 		priceAsString = fmt.Sprintf("%.12f", price)
 		volumeAsString := asks[1].(string)
-		volume, err := strconv.ParseFloat(volumeAsString, 64)
-		if err != nil {
-			return
-		}
+		volume, _ := strconv.ParseFloat(volumeAsString, 64)
 		askMessages = append(
 			askMessages,
 			&stream2.FullMarketData_DeleteOrderInstruction{
@@ -480,16 +474,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 	for i := range bidData {
 		bids := bidData[i].([]interface{})
 		priceAsString := bids[0].(string)
-		price, err := strconv.ParseFloat(priceAsString, 64)
-		if err != nil {
-			return
-		}
+		price, _ := strconv.ParseFloat(priceAsString, 64)
 		priceAsString = fmt.Sprintf("%.12f", price)
 		volumeAsString := bids[1].(string)
-		volume, err := strconv.ParseFloat(volumeAsString, 64)
-		if err != nil {
-			return
-		}
+		volume, _ := strconv.ParseFloat(volumeAsString, 64)
 
 		bidMessages = append(
 			bidMessages,
@@ -519,7 +507,7 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		}
 	}
 	self.FmdService.MultiSend(bidMessages...)
-
+	return nil
 }
 
 func (self *Reactor) preCrc(writer *bytes.Buffer, s string) {
@@ -552,10 +540,17 @@ func (self *Reactor) HandleBook(
 	bidData, bidsExist := data["b"].([]interface{})
 	checkSumData, checkSumExist := data["c"].(string)
 
+	var messagesToFmd [][]interface{}
 	if askSnapshotExists || bidSnapshotExists {
-		self.wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true)
+		messagesToFmd = append(
+			messagesToFmd,
+			self.wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true),
+		)
 	} else if asksExist || bidsExist {
-		self.wsProcessOrderBookPartial(instrumentData, askData, bidData, false)
+		messagesToFmd = append(
+			messagesToFmd,
+			self.wsProcessOrderBookPartial(instrumentData, askData, bidData, false),
+		)
 	}
 
 	_ = self.FmdService.Send(
