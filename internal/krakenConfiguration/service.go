@@ -14,7 +14,6 @@ import (
 )
 
 type service struct {
-	parentContext     context.Context
 	ctx               context.Context
 	cancelFunc        context.CancelFunc
 	cmdChannel        chan interface{}
@@ -167,7 +166,6 @@ func newService(
 ) (IKrakenConfigurationService, error) {
 	localCtx, localCancelFunc := context.WithCancel(parentContext)
 	return &service{
-		parentContext:     parentContext,
 		ctx:               localCtx,
 		cancelFunc:        localCancelFunc,
 		cmdChannel:        make(chan interface{}, 32),
