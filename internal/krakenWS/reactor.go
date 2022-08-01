@@ -421,19 +421,20 @@ func (self *Reactor) SendTextOpMessage(
 	return nil
 }
 
-func (self *Reactor) wsProcessOrderBookPartial(
+func wsProcessOrderBookPartial(
 	instrumentData registeredSubscription,
 	askData, bidData []interface{},
 	snapShot bool,
 ) []interface{} {
+	result := make([]interface{}, len(askData)*2+len(bidData)*2)
 	if snapShot {
-		_ = self.FmdService.Send(
+		result = append(
+			result,
 			&stream2.FullMarketData_Clear{
 				Instrument: instrumentData.SystemName,
 			},
 		)
 	}
-	askMessages := make([]interface{}, len(askData)*2)
 	for i := range askData {
 		asks := askData[i].([]interface{})
 		priceAsString := asks[0].(string)
@@ -441,8 +442,8 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		priceAsString = fmt.Sprintf("%.12f", price)
 		volumeAsString := asks[1].(string)
 		volume, _ := strconv.ParseFloat(volumeAsString, 64)
-		askMessages = append(
-			askMessages,
+		result = append(
+			result,
 			&stream2.FullMarketData_DeleteOrderInstruction{
 				Instrument: instrumentData.SystemName,
 				Id:         priceAsString,
@@ -451,10 +452,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 
 		if volume != 0 {
 			buffer := bytes.Buffer{}
-			self.preCrc(&buffer, priceAsString)
-			self.preCrc(&buffer, volumeAsString)
-			askMessages = append(
-				askMessages,
+			preCrc(&buffer, priceAsString)
+			preCrc(&buffer, volumeAsString)
+			result = append(
+				result,
 				&stream2.FullMarketData_AddOrderInstruction{
 					Instrument: instrumentData.SystemName,
 					Order: &stream2.FullMarketData_AddOrder{
@@ -468,9 +469,7 @@ func (self *Reactor) wsProcessOrderBookPartial(
 			)
 		}
 	}
-	self.FmdService.MultiSend(askMessages...)
 
-	bidMessages := make([]interface{}, len(bidData)*2)
 	for i := range bidData {
 		bids := bidData[i].([]interface{})
 		priceAsString := bids[0].(string)
@@ -479,8 +478,8 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		volumeAsString := bids[1].(string)
 		volume, _ := strconv.ParseFloat(volumeAsString, 64)
 
-		bidMessages = append(
-			bidMessages,
+		result = append(
+			result,
 			&stream2.FullMarketData_DeleteOrderInstruction{
 				Instrument: instrumentData.SystemName,
 				Id:         priceAsString,
@@ -489,10 +488,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 
 		if volume != 0 {
 			buffer := bytes.Buffer{}
-			self.preCrc(&buffer, priceAsString)
-			self.preCrc(&buffer, volumeAsString)
-			bidMessages = append(
-				bidMessages,
+			preCrc(&buffer, priceAsString)
+			preCrc(&buffer, volumeAsString)
+			result = append(
+				result,
 				&stream2.FullMarketData_AddOrderInstruction{
 					Instrument: instrumentData.SystemName,
 					Order: &stream2.FullMarketData_AddOrder{
@@ -506,11 +505,10 @@ func (self *Reactor) wsProcessOrderBookPartial(
 			)
 		}
 	}
-	self.FmdService.MultiSend(bidMessages...)
-	return nil
+	return result
 }
 
-func (self *Reactor) preCrc(writer *bytes.Buffer, s string) {
+func preCrc(writer *bytes.Buffer, s string) {
 	addValue := false
 	cb := func(r rune) bool {
 		switch r {
@@ -540,20 +538,21 @@ func (self *Reactor) HandleBook(
 	bidData, bidsExist := data["b"].([]interface{})
 	checkSumData, checkSumExist := data["c"].(string)
 
-	var messagesToFmd [][]interface{}
+	var messagesToFmd []interface{}
 	if askSnapshotExists || bidSnapshotExists {
 		messagesToFmd = append(
 			messagesToFmd,
-			self.wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true),
+			wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true)...,
 		)
 	} else if asksExist || bidsExist {
 		messagesToFmd = append(
 			messagesToFmd,
-			self.wsProcessOrderBookPartial(instrumentData, askData, bidData, false),
+			wsProcessOrderBookPartial(instrumentData, askData, bidData, false)...,
 		)
 	}
 
-	_ = self.FmdService.Send(
+	messagesToFmd = append(
+		messagesToFmd,
 		fullMarketDataManagerService.NewCallbackMessage(
 			instrumentData.SystemName,
 			func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
@@ -595,7 +594,8 @@ func (self *Reactor) HandleBook(
 
 	if checkSumExist {
 		if atoi, err := strconv.Atoi(checkSumData); err == nil {
-			_ = self.FmdService.Send(
+			messagesToFmd = append(
+				messagesToFmd,
 				fullMarketDataManagerService.NewCallbackMessage(
 					instrumentData.SystemName,
 					func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
@@ -630,6 +630,7 @@ func (self *Reactor) HandleBook(
 			)
 		}
 	}
+	self.FmdService.MultiSend(messagesToFmd...)
 }
 
 func NewReactor(
