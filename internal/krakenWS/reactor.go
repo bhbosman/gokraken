@@ -441,6 +441,7 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		if err != nil {
 			return
 		}
+		priceAsString = fmt.Sprintf("%.12f", price)
 		volumeAsString := asks[1].(string)
 		volume, err := strconv.ParseFloat(volumeAsString, 64)
 		if err != nil {
@@ -483,6 +484,7 @@ func (self *Reactor) wsProcessOrderBookPartial(
 		if err != nil {
 			return
 		}
+		priceAsString = fmt.Sprintf("%.12f", price)
 		volumeAsString := bids[1].(string)
 		volume, err := strconv.ParseFloat(volumeAsString, 64)
 		if err != nil {
@@ -559,15 +561,38 @@ func (self *Reactor) HandleBook(
 	_ = self.FmdService.Send(
 		fullMarketDataManagerService.NewCallbackMessage(
 			instrumentData.SystemName,
-			func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) {
+			func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
+				var result []interface{}
 				for fullMarketOrderBook.BidOrderSide().Size() > self.otherData.Depth {
-					fullMarketOrderBook.BidOrderSide().Remove(fullMarketOrderBook.BidOrderSide().Left().Key)
+					key := fullMarketOrderBook.BidOrderSide().Left().Key
+					fullMarketOrderBook.BidOrderSide().Remove(key)
+
+					keyAsFloat := key.(float64)
+					priceAsString := fmt.Sprintf("%.12f", keyAsFloat)
+
+					result = append(result,
+						&stream2.FullMarketData_DeleteOrderInstruction{
+							Instrument: instrumentData.SystemName,
+							Id:         priceAsString,
+						},
+					)
 				}
 
 				for fullMarketOrderBook.AskOrderSide().Size() > self.otherData.Depth {
-					fullMarketOrderBook.AskOrderSide().Remove(fullMarketOrderBook.AskOrderSide().Right().Key)
-				}
+					key := fullMarketOrderBook.AskOrderSide().Right().Key
+					fullMarketOrderBook.AskOrderSide().Remove(key)
 
+					keyAsFloat := key.(float64)
+					priceAsString := fmt.Sprintf("%.12f", keyAsFloat)
+
+					result = append(result,
+						&stream2.FullMarketData_DeleteOrderInstruction{
+							Instrument: instrumentData.SystemName,
+							Id:         priceAsString,
+						},
+					)
+				}
+				return result
 			},
 			instrumentData,
 		),
@@ -578,7 +603,7 @@ func (self *Reactor) HandleBook(
 			_ = self.FmdService.Send(
 				fullMarketDataManagerService.NewCallbackMessage(
 					instrumentData.SystemName,
-					func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) {
+					func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
 						if v, ok := data.(int); ok {
 							crc := crc32.NewIEEE()
 							var count uint32 = 0
@@ -603,6 +628,7 @@ func (self *Reactor) HandleBook(
 								self.CancelFunc()
 							}
 						}
+						return nil
 					},
 					&atoi,
 				),
