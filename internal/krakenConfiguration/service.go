@@ -22,7 +22,7 @@ type service struct {
 	state             IFxService.State
 	pubSub            *pubsub.PubSub
 	goFunctionCounter GoFunctionCounter.IService
-	subscribeChannel  *pubsub.ChannelSubscription
+	subscribeChannel  *pubsub.NextFuncSubscription
 }
 
 func (self *service) GetAll() []*krakenWS.KrakenConnection {
@@ -88,7 +88,7 @@ func (self *service) goStart(instanceData IKrakenConfigurationData) {
 		}
 	}(self.cmdChannel)
 
-	self.subscribeChannel = pubsub.NewChannelSubscription(32)
+	self.subscribeChannel = pubsub.NewNextFuncSubscription(goCommsDefinitions.CreateNextFunc(self.cmdChannel))
 
 	self.pubSub.AddSub(self.subscribeChannel, self.ServiceName())
 
@@ -130,14 +130,6 @@ loop:
 			}
 			break loop
 		case event, ok := <-self.cmdChannel:
-			if !ok {
-				return
-			}
-			breakLoop, err := channelHandlerCallback(event)
-			if err != nil || breakLoop {
-				break loop
-			}
-		case event, ok := <-self.subscribeChannel.Data:
 			if !ok {
 				return
 			}
