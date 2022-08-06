@@ -31,7 +31,6 @@ func CreateFxApp() *goFxApp.TerminalAppUsingFxApp {
 		instrumentReference.Provide(),
 		goCommsMultiDialer.Provide(),
 		krakenConfiguration.Provide(),
-		//krakenWS.ProvideKrakenDialer(),
 		listener.CompressedListener(1024, settings.compressedListenerUrl),
 	)
 }

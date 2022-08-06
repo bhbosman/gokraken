@@ -10,7 +10,7 @@ import (
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goCommsStacks/webSocketMessages/wsmsg"
-	krakenStream "github.com/bhbosman/goMessages/kraken/stream"
+	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/messageRouter"
@@ -21,6 +21,7 @@ import (
 	krakenWsStream "github.com/bhbosman/gokraken/internal/krakenWS/internal/stream"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/cskr/pubsub"
+	"github.com/emirpasic/gods/trees/avltree"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	"github.com/reactivex/rxgo/v2"
@@ -29,20 +30,7 @@ import (
 	"strconv"
 )
 
-type Subscribe struct {
-}
-
-type registeredSubscription struct {
-	instrumentReference.KrakenFeed
-	status string
-}
-
-type subscriptionKey struct {
-	pair string
-	name string
-}
-
-type Reactor struct {
+type reactor struct {
 	common.BaseConnectionReactor
 	messageRouter             *messageRouter.MessageRouter
 	connectionID              uint64
@@ -51,9 +39,10 @@ type Reactor struct {
 	registeredSubscriptionMap map[subscriptionKey]registeredSubscription
 	FmdService                fullMarketDataManagerService.IFmdManagerService
 	otherData                 instrumentReference.KrakenReferenceData
+	FileDumpService           fileDumpService.IFileDumpService
 }
 
-func (self *Reactor) handleKrakenStreamSubscribe(_ *Subscribe) error {
+func (self *reactor) handleKrakenStreamSubscribe(_ *Subscribe) error {
 	var ss []string
 	messagesToFmdService := make([]interface{}, len(self.otherData.Feeds))
 	for _, feed := range self.otherData.Feeds {
@@ -96,7 +85,7 @@ func (self *Reactor) handleKrakenStreamSubscribe(_ *Subscribe) error {
 	return self.SendTextOpMessage(msg)
 }
 
-func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.KrakenWsMessageIncoming) {
+func (self *reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.KrakenWsMessageIncoming) {
 	switch inData.Event {
 	case "heartbeat":
 		self.handleHeartbeat(inData)
@@ -113,8 +102,10 @@ func (self *Reactor) handleKrakenWsMessageIncoming(inData *krakenWsStream.Kraken
 	}
 }
 
-func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) {
-	if len(inData) == 4 {
+func (self *reactor) handleWebsocketDataResponse(inData websocketDataResponse) {
+
+	switch {
+	case len(inData) == 4:
 		if pair, ok := inData[3].(string); ok {
 			if name, ok := inData[2].(string); ok {
 				key := subscriptionKey{
@@ -129,52 +120,28 @@ func (self *Reactor) handleWebsocketDataResponse(inData websocketDataResponse) {
 				}
 			}
 		}
+	case len(inData) == 5:
+		if pair, ok := inData[4].(string); ok {
+			if name, ok := inData[3].(string); ok {
+				key := subscriptionKey{
+					pair: pair,
+					name: name,
+				}
+				if v, ok := self.registeredSubscriptionMap[key]; ok {
+					switch self.otherData.Type {
+					case "book":
+						self.HandleBook(v, inData[1].(map[string]interface{}))
+						self.HandleBook(v, inData[2].(map[string]interface{}))
+					}
+				}
+			}
+		}
 	}
-	//if channelId, ok := inData[0].(float64); ok {
-	//	if data, ok := self.registeredSubscriptions[uint32(channelId)]; ok {
-	//		switch data.Name {
-	//		case "ticker":
-	//			self.handleTicker(data, inData[1].(map[string]interface{}))
-	//		//case "ohlc":
-	//		//	return self.handleOhlc(data, inData[1].([]interface{}))
-	//		//case "trade":
-	//		//	return self.handleTrade(data, inData[1].([]interface{}))
-	//		//case "spread":
-	//		//	return self.handleSpread(data, inData[1].([]interface{}))
-	//		case "book":
-	//			self.HandleBook(data, inData[1].(map[string]interface{}))
-	//		}
-	//
-	//		//switch data.Name {
-	//		//case krakenWsTicker:
-	//		//	return k.wsProcessTickers(&channelData, response[1].(map[string]interface{}))
-	//		//case krakenWsOHLC:
-	//		//	return k.wsProcessCandles(&channelData, response[1].([]interface{}))
-	//		//case krakenWsOrderbook:
-	//		//	return k.wsProcessOrderBook(&channelData, response[1].(map[string]interface{}))
-	//		//case krakenWsSpread:
-	//		//	k.wsProcessSpread(&channelData, response[1].([]interface{}))
-	//		//case krakenWsTrade:
-	//		//	k.wsProcessTrades(&channelData, response[1].([]interface{}))
-	//		//default:
-	//		//	return fmt.Errorf("%s Unidentified websocket data received: %+v",
-	//		//		k.Name,
-	//		//		response)
-	//		//}
-	//
-	//	}
-	//
-	//} else if _, ok := inData[1].(string); ok {
-	//	//err = k.wsHandleAuthDataResponse(dataResponse)
-	//	//if err != nil {
-	//	//	return err
-	//	//}
-	//}
 }
 
 type websocketDataResponse []interface{}
 
-func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
+func (self *reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
 	switch inData.OpCode {
 	case wsmsg.WebSocketMessage_OpText:
 		if len(inData.Message) > 0 && inData.Message[0] == '[' { //type WebsocketDataResponse []interface{}
@@ -189,11 +156,11 @@ func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
 
 		} else {
 			krakenMessage := &krakenWsStream.KrakenWsMessageIncoming{}
-			unMarshaler := jsonpb.Unmarshaler{
+			Unmarshall := jsonpb.Unmarshaler{
 				AllowUnknownFields: true,
 				AnyResolver:        nil,
 			}
-			err := unMarshaler.Unmarshal(bytes.NewBuffer(inData.Message), krakenMessage)
+			err := Unmarshall.Unmarshal(bytes.NewBuffer(inData.Message), krakenMessage)
 			if err != nil {
 				return
 			}
@@ -204,7 +171,7 @@ func (self *Reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
 	}
 }
 
-func (self *Reactor) Init(
+func (self *reactor) Init(
 	onSendToReactor rxgo.NextFunc,
 	onSendToConnection rxgo.NextFunc,
 ) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
@@ -217,10 +184,10 @@ func (self *Reactor) Init(
 	}
 
 	return func(i interface{}) {
-			self.doNext(false, i)
+			self.messageRouter.Route(i)
 		},
 		func(err error) {
-			self.doNext(false, err)
+			self.messageRouter.Route(err)
 		},
 		func() {
 
@@ -228,7 +195,7 @@ func (self *Reactor) Init(
 		nil
 }
 
-func (self *Reactor) Close() error {
+func (self *reactor) Close() error {
 	for _, value := range self.otherData.Feeds {
 		_ = self.FmdService.Send(
 			&stream2.FullMarketData_Clear{
@@ -243,7 +210,7 @@ func (self *Reactor) Close() error {
 	}
 	return self.BaseConnectionReactor.Close()
 }
-func (self *Reactor) Open() error {
+func (self *reactor) Open() error {
 	err := self.BaseConnectionReactor.Open()
 	if err != nil {
 		return err
@@ -267,17 +234,13 @@ func (self *Reactor) Open() error {
 	return nil
 }
 
-func (self *Reactor) doNext(_ bool, i interface{}) {
-	self.messageRouter.Route(i)
-}
-
-func (self *Reactor) handleSystemStatus(data krakenWsStream.ISystemStatus) {
+func (self *reactor) handleSystemStatus(data krakenWsStream.ISystemStatus) {
 	self.status = data.GetStatus()
 	self.connectionID = data.GetConnectionID()
 	self.version = data.GetVersion()
 }
 
-func (self Reactor) handlePing(data krakenWsStream.IPing) {
+func (self *reactor) handlePing(data krakenWsStream.IPing) {
 	_ = self.SendTextOpMessage(
 		&krakenWsStream.KrakenWsMessageOutgoing{
 			Event: "pong",
@@ -286,11 +249,11 @@ func (self Reactor) handlePing(data krakenWsStream.IPing) {
 	)
 }
 
-func (self Reactor) handleHeartbeat(_ interface{}) {
+func (self *reactor) handleHeartbeat(_ interface{}) {
 	return
 }
 
-func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptionStatus) {
+func (self *reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptionStatus) {
 	if inData.GetStatus() == "error" {
 		for key, value := range self.registeredSubscriptionMap {
 			if key.pair == inData.GetPair() {
@@ -323,69 +286,16 @@ func (self *Reactor) handleSubscriptionStatus(inData krakenWsStream.ISubscriptio
 	}
 }
 
-func (self *Reactor) handleTicker(channelData *registeredSubscription, data map[string]interface{}) {
-	closePrice, err := strconv.ParseFloat(data["c"].([]interface{})[0].(string), 64)
-	if err != nil {
-		self.Logger.Error("Error in ClosePrice convert", zap.Error(err))
-		return
-	}
-	openPrice, err := strconv.ParseFloat(data["o"].([]interface{})[0].(string), 64)
-	if err != nil {
-		self.Logger.Error("Error in openPrice convert", zap.Error(err))
-		return
-	}
-	highPrice, err := strconv.ParseFloat(data["h"].([]interface{})[0].(string), 64)
-	if err != nil {
-		self.Logger.Error("Error in highPrice convert", zap.Error(err))
-		return
-	}
-	lowPrice, err := strconv.ParseFloat(data["l"].([]interface{})[0].(string), 64)
-	if err != nil {
-		self.Logger.Error("Error in lowPrice convert", zap.Error(err))
-		return
-	}
-	quantity, err := strconv.ParseFloat(data["v"].([]interface{})[0].(string), 64)
-	if err != nil {
-		self.Logger.Error("Error in quantity convert", zap.Error(err))
-		return
-	}
-	ask, err := strconv.ParseFloat(data["a"].([]interface{})[0].(string), 64)
-	if err != nil {
-		self.Logger.Error("Error in ask convert", zap.Error(err))
-		return
-	}
-	bid, err := strconv.ParseFloat(data["b"].([]interface{})[0].(string), 64)
-	if err != nil {
-		self.Logger.Error("Error in bid convert", zap.Error(err))
-		return
-	}
+func (self *reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCounters) {}
 
-	priceData := &krakenStream.Price{
-
-		Open:   openPrice,
-		Close:  closePrice,
-		Volume: quantity,
-		High:   highPrice,
-		Low:    lowPrice,
-		Bid:    bid,
-		Ask:    ask,
-		Pair:   channelData.SystemName,
-	}
-	if priceData != nil {
-
-	}
+func (self *reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
 }
 
-func (self *Reactor) HandlePublishRxHandlerCounters(_ *model.PublishRxHandlerCounters) {}
-
-func (self *Reactor) HandleEmptyQueue(_ *messages.EmptyQueue) {
-}
-
-func (self *Reactor) Unknown(_ interface{}) {
+func (self *reactor) Unknown(_ interface{}) {
 
 }
 
-func (self *Reactor) SendTextOpMessage(
+func (self *reactor) SendTextOpMessage(
 	message proto.Message,
 ) error {
 	rws := gomessageblock.NewReaderWriter()
@@ -421,12 +331,12 @@ func (self *Reactor) SendTextOpMessage(
 	return nil
 }
 
-func wsProcessOrderBookPartial(
+func (self *reactor) wsProcessOrderBookPartial(
 	instrumentData registeredSubscription,
 	askData, bidData []interface{},
 	snapShot bool,
 ) []interface{} {
-	result := make([]interface{}, len(askData)*2+len(bidData)*2)
+	result := make([]interface{}, 0, len(askData)*2+len(bidData)*2+1)
 	if snapShot {
 		result = append(
 			result,
@@ -435,76 +345,254 @@ func wsProcessOrderBookPartial(
 			},
 		)
 	}
-	for i := range askData {
-		asks := askData[i].([]interface{})
-		priceAsString := asks[0].(string)
-		price, _ := strconv.ParseFloat(priceAsString, 64)
-		priceAsString = fmt.Sprintf("%.12f", price)
-		volumeAsString := asks[1].(string)
-		volume, _ := strconv.ParseFloat(volumeAsString, 64)
+	result = append(result, self.iterateOrderData(instrumentData, "ASK", askData, stream2.OrderSide_AskOrder)...)
+	result = append(result, self.iterateOrderData(instrumentData, "BID", bidData, stream2.OrderSide_BidOrder)...)
+
+	return result
+}
+
+func (self *reactor) iterateOrderData(
+	instrumentData registeredSubscription,
+	orderIdPrefix string, data []interface{}, orderSide stream2.OrderSide) []interface{} {
+	result := make([]interface{}, 0, len(data)*2)
+	for i := range data {
+		lineData := data[i].([]interface{})
+		priceStr, _ := lineData[0].(string)
+		volumeStr, _ := lineData[1].(string)
+		priceAsFloat, err := strconv.ParseFloat(priceStr, 64)
+		if err != nil {
+			self.CancelFunc()
+			self.Logger.Error("could not read price as float", zap.Error(err))
+			return nil
+		}
+		volumeAsFloat, err := strconv.ParseFloat(volumeStr, 64)
+		if err != nil {
+			self.CancelFunc()
+			self.Logger.Error("could not read volume as float", zap.Error(err))
+			return nil
+		}
+
+		orderId := fmt.Sprintf("%v_%v", orderIdPrefix, priceStr)
 		result = append(
 			result,
 			&stream2.FullMarketData_DeleteOrderInstruction{
 				Instrument: instrumentData.SystemName,
-				Id:         priceAsString,
+				Id:         orderId,
 			},
 		)
-
-		if volume != 0 {
+		if volumeStr != "0.00000000" {
 			buffer := bytes.Buffer{}
-			preCrc(&buffer, priceAsString)
-			preCrc(&buffer, volumeAsString)
+			preCrc(&buffer, priceStr)
+			preCrc(&buffer, volumeStr)
 			result = append(
 				result,
 				&stream2.FullMarketData_AddOrderInstruction{
 					Instrument: instrumentData.SystemName,
 					Order: &stream2.FullMarketData_AddOrder{
-						Side:      stream2.OrderSide_AskOrder,
-						Id:        priceAsString,
-						Price:     price,
-						Volume:    volume,
+						Side:      orderSide,
+						Id:        orderId,
+						Price:     priceAsFloat,
+						Volume:    volumeAsFloat,
 						ExtraData: buffer.Bytes(),
 					},
 				},
 			)
 		}
 	}
+	return result
+}
 
-	for i := range bidData {
-		bids := bidData[i].([]interface{})
-		priceAsString := bids[0].(string)
-		price, _ := strconv.ParseFloat(priceAsString, 64)
-		priceAsString = fmt.Sprintf("%.12f", price)
-		volumeAsString := bids[1].(string)
-		volume, _ := strconv.ParseFloat(volumeAsString, 64)
+func (self *reactor) HandleBook(
+	instrumentData registeredSubscription,
+	data map[string]interface{},
+) {
+	askSnapshot, askSnapshotExists := data["as"].([]interface{})
+	bidSnapshot, bidSnapshotExists := data["bs"].([]interface{})
+	askData, asksExist := data["a"].([]interface{})
+	bidData, bidsExist := data["b"].([]interface{})
+	checkSumData, checkSumExist := data["c"].(string)
 
-		result = append(
-			result,
-			&stream2.FullMarketData_DeleteOrderInstruction{
-				Instrument: instrumentData.SystemName,
-				Id:         priceAsString,
-			},
+	var messagesToFmd []interface{}
+	if askSnapshotExists || bidSnapshotExists {
+		messagesToFmd = append(
+			messagesToFmd,
+			self.wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true)...,
 		)
-
-		if volume != 0 {
-			buffer := bytes.Buffer{}
-			preCrc(&buffer, priceAsString)
-			preCrc(&buffer, volumeAsString)
-			result = append(
-				result,
-				&stream2.FullMarketData_AddOrderInstruction{
-					Instrument: instrumentData.SystemName,
-					Order: &stream2.FullMarketData_AddOrder{
-						Side:      stream2.OrderSide_BidOrder,
-						Id:        priceAsString,
-						Price:     price,
-						Volume:    volume,
-						ExtraData: buffer.Bytes(),
+	} else if asksExist || bidsExist {
+		messagesToFmd = append(
+			messagesToFmd,
+			self.wsProcessOrderBookPartial(instrumentData, askData, bidData, false)...,
+		)
+	}
+	messagesToFmd = append(
+		messagesToFmd,
+		fullMarketDataManagerService.NewCallbackMessage(
+			instrumentData.SystemName,
+			self.doManageOrderBookSize,
+			instrumentData,
+		),
+	)
+	if checkSumExist {
+		if checkSumAsInt, err := strconv.Atoi(checkSumData); err == nil {
+			messagesToFmd = append(
+				messagesToFmd,
+				fullMarketDataManagerService.NewCallbackMessage(
+					instrumentData.SystemName,
+					self.doCrcCheck,
+					&callbackData{
+						inputCrc:   uint32(checkSumAsInt),
+						data:       data,
+						SystemName: instrumentData.SystemName,
 					},
-				},
+				),
 			)
 		}
 	}
+	self.FmdService.MultiSend(messagesToFmd...)
+}
+
+func (self *reactor) doManageOrderBookSize(cbData interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
+	if instrumentData, ok := cbData.(registeredSubscription); ok {
+		var result []interface{}
+		walkTree := func(tree *avltree.Tree, firstNode func(tree *avltree.Tree) *avltree.Node, nextNode func(node *avltree.Node) *avltree.Node) {
+			for tree.Size() > self.otherData.Depth {
+				key := firstNode(tree).Key
+				keyAsFloat := key.(float64)
+				if unk01, ok := tree.Get(keyAsFloat); ok {
+					pp := unk01.(*fullMarketData.PricePoint)
+					if unk02, ok := pp.List.Get(0); ok {
+						order := unk02.(*fullMarketData.FullMarketOrder)
+						result = append(result,
+							&stream2.FullMarketData_DeleteOrderInstruction{
+								Instrument: instrumentData.SystemName,
+								Id:         order.Id,
+							},
+						)
+					} else {
+						self.Logger.Error("could not find order at index 0", zap.Float64("key", keyAsFloat))
+						self.CancelFunc()
+					}
+				} else {
+					self.Logger.Error("could not find order to delete", zap.Float64("key", keyAsFloat))
+					self.CancelFunc()
+				}
+				tree.Remove(key)
+			}
+		}
+		walkTree(
+			fullMarketOrderBook.BidOrderSide(),
+			func(tree *avltree.Tree) *avltree.Node {
+				return tree.Left()
+			},
+			func(node *avltree.Node) *avltree.Node {
+				return node.Next()
+			},
+		)
+		walkTree(
+			fullMarketOrderBook.AskOrderSide(),
+			func(tree *avltree.Tree) *avltree.Node {
+				return tree.Right()
+			},
+			func(node *avltree.Node) *avltree.Node {
+				return node.Prev()
+			},
+		)
+
+		return result
+	}
+	return nil
+}
+
+func (self *reactor) doCrcCheck(cbData interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
+	if v, ok := cbData.(*callbackData); ok {
+		crc := crc32.NewIEEE()
+		walkTree := func(
+			tree *avltree.Tree,
+			firstNode func(tree *avltree.Tree) *avltree.Node,
+			nextNode func(node *avltree.Node) *avltree.Node,
+		) {
+			var count uint32 = 0
+			for node := firstNode(tree); node != nil && count < 10; node = nextNode(node) {
+				pp := node.Value.(*fullMarketData.PricePoint)
+				unk, _ := pp.List.Get(0)
+				ss := unk.(*fullMarketData.FullMarketOrder)
+				_, _ = crc.Write(ss.ExtraData)
+				count++
+			}
+		}
+		walkTree(
+			fullMarketOrderBook.AskOrderSide(),
+			func(tree *avltree.Tree) *avltree.Node {
+				return tree.Left()
+			},
+			func(node *avltree.Node) *avltree.Node {
+				return node.Next()
+			},
+		)
+		walkTree(
+			fullMarketOrderBook.BidOrderSide(),
+			func(tree *avltree.Tree) *avltree.Node {
+				return tree.Right()
+			},
+			func(node *avltree.Node) *avltree.Node {
+				return node.Prev()
+			},
+		)
+		calculatedCrc := crc.Sum32()
+		if calculatedCrc != v.inputCrc {
+			self.Logger.Error("Closing connection due to CRC error")
+			self.CancelFunc()
+		}
+	}
+	return nil
+}
+
+type callbackData struct {
+	inputCrc   uint32
+	data       map[string]interface{}
+	SystemName string
+}
+
+func newReactor(
+	logger *zap.Logger,
+	cancelCtx context.Context,
+	cancelFunc context.CancelFunc,
+	connectionCancelFunc model.ConnectionCancelFunc,
+	PubSub *pubsub.PubSub,
+	goFunctionCounter GoFunctionCounter.IService,
+	UniqueReferenceService interfaces.IUniqueReferenceService,
+	FmdService fullMarketDataManagerService.IFmdManagerService,
+	otherData instrumentReference.KrakenReferenceData,
+	FileDumpService fileDumpService.IFileDumpService,
+) *reactor {
+	result := &reactor{
+		BaseConnectionReactor: common.NewBaseConnectionReactor(
+			logger,
+			cancelCtx,
+			cancelFunc,
+			connectionCancelFunc,
+			UniqueReferenceService.Next("ConnectionReactor"),
+			PubSub,
+			goFunctionCounter,
+		),
+		messageRouter:             messageRouter.NewMessageRouter(),
+		connectionID:              0,
+		status:                    "",
+		version:                   "",
+		FmdService:                FmdService,
+		registeredSubscriptionMap: make(map[subscriptionKey]registeredSubscription),
+		otherData:                 otherData,
+		FileDumpService:           FileDumpService,
+	}
+	_ = result.messageRouter.Add(result.handleWebSocketMessage)
+	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
+	_ = result.messageRouter.Add(result.handleKrakenWsMessageIncoming)
+	_ = result.messageRouter.Add(result.handleWebsocketDataResponse)
+	_ = result.messageRouter.Add(result.HandleEmptyQueue)
+	_ = result.messageRouter.Add(result.HandlePublishRxHandlerCounters)
+
+	result.messageRouter.RegisterUnknown(result.Unknown)
+
 	return result
 }
 
@@ -526,150 +614,4 @@ func preCrc(writer *bytes.Buffer, s string) {
 			writer.WriteRune(r)
 		}
 	}
-}
-
-func (self *Reactor) HandleBook(
-	instrumentData registeredSubscription,
-	data map[string]interface{},
-) {
-	askSnapshot, askSnapshotExists := data["as"].([]interface{})
-	bidSnapshot, bidSnapshotExists := data["bs"].([]interface{})
-	askData, asksExist := data["a"].([]interface{})
-	bidData, bidsExist := data["b"].([]interface{})
-	checkSumData, checkSumExist := data["c"].(string)
-
-	var messagesToFmd []interface{}
-	if askSnapshotExists || bidSnapshotExists {
-		messagesToFmd = append(
-			messagesToFmd,
-			wsProcessOrderBookPartial(instrumentData, askSnapshot, bidSnapshot, true)...,
-		)
-	} else if asksExist || bidsExist {
-		messagesToFmd = append(
-			messagesToFmd,
-			wsProcessOrderBookPartial(instrumentData, askData, bidData, false)...,
-		)
-	}
-
-	messagesToFmd = append(
-		messagesToFmd,
-		fullMarketDataManagerService.NewCallbackMessage(
-			instrumentData.SystemName,
-			func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
-				var result []interface{}
-				for fullMarketOrderBook.BidOrderSide().Size() > self.otherData.Depth {
-					key := fullMarketOrderBook.BidOrderSide().Left().Key
-					fullMarketOrderBook.BidOrderSide().Remove(key)
-
-					keyAsFloat := key.(float64)
-					priceAsString := fmt.Sprintf("%.12f", keyAsFloat)
-
-					result = append(result,
-						&stream2.FullMarketData_DeleteOrderInstruction{
-							Instrument: instrumentData.SystemName,
-							Id:         priceAsString,
-						},
-					)
-				}
-
-				for fullMarketOrderBook.AskOrderSide().Size() > self.otherData.Depth {
-					key := fullMarketOrderBook.AskOrderSide().Right().Key
-					fullMarketOrderBook.AskOrderSide().Remove(key)
-
-					keyAsFloat := key.(float64)
-					priceAsString := fmt.Sprintf("%.12f", keyAsFloat)
-
-					result = append(result,
-						&stream2.FullMarketData_DeleteOrderInstruction{
-							Instrument: instrumentData.SystemName,
-							Id:         priceAsString,
-						},
-					)
-				}
-				return result
-			},
-			instrumentData,
-		),
-	)
-
-	if checkSumExist {
-		if atoi, err := strconv.Atoi(checkSumData); err == nil {
-			messagesToFmd = append(
-				messagesToFmd,
-				fullMarketDataManagerService.NewCallbackMessage(
-					instrumentData.SystemName,
-					func(data interface{}, fullMarketOrderBook fullMarketData.IFullMarketOrderBook) []interface{} {
-						if v, ok := data.(int); ok {
-							crc := crc32.NewIEEE()
-							var count uint32 = 0
-							for node := fullMarketOrderBook.AskOrderSide().Left(); node != nil && count < 10; node = node.Next() {
-								pp := node.Value.(*fullMarketData.PricePoint)
-								unk, _ := pp.List.Get(0)
-								ss := unk.(*fullMarketData.FullMarketOrder)
-								_, _ = crc.Write(ss.ExtraData)
-								count++
-							}
-							count = 0
-							for node := fullMarketOrderBook.BidOrderSide().Right(); node != nil && count < 10; node = node.Prev() {
-								pp := node.Value.(*fullMarketData.PricePoint)
-								unk, _ := pp.List.Get(0)
-								ss := unk.(*fullMarketData.FullMarketOrder)
-								_, _ = crc.Write(ss.ExtraData)
-								count++
-							}
-							ddd := crc.Sum32()
-							if int(ddd) == v {
-							} else {
-								self.CancelFunc()
-							}
-						}
-						return nil
-					},
-					&atoi,
-				),
-			)
-		}
-	}
-	self.FmdService.MultiSend(messagesToFmd...)
-}
-
-func NewReactor(
-	logger *zap.Logger,
-	cancelCtx context.Context,
-	cancelFunc context.CancelFunc,
-	connectionCancelFunc model.ConnectionCancelFunc,
-	PubSub *pubsub.PubSub,
-	goFunctionCounter GoFunctionCounter.IService,
-	UniqueReferenceService interfaces.IUniqueReferenceService,
-	FmdService fullMarketDataManagerService.IFmdManagerService,
-	otherData instrumentReference.KrakenReferenceData,
-) *Reactor {
-	result := &Reactor{
-		BaseConnectionReactor: common.NewBaseConnectionReactor(
-			logger,
-			cancelCtx,
-			cancelFunc,
-			connectionCancelFunc,
-			UniqueReferenceService.Next("ConnectionReactor"),
-			PubSub,
-			goFunctionCounter,
-		),
-		messageRouter:             messageRouter.NewMessageRouter(),
-		connectionID:              0,
-		status:                    "",
-		version:                   "",
-		FmdService:                FmdService,
-		registeredSubscriptionMap: make(map[subscriptionKey]registeredSubscription),
-		otherData:                 otherData,
-	}
-	_ = result.messageRouter.Add(result.handleWebSocketMessage)
-	_ = result.messageRouter.Add(result.handleKrakenStreamSubscribe)
-	_ = result.messageRouter.Add(result.handleKrakenWsMessageIncoming)
-	_ = result.messageRouter.Add(result.handleWebsocketDataResponse)
-	_ = result.messageRouter.Add(result.HandleEmptyQueue)
-	_ = result.messageRouter.Add(result.HandlePublishRxHandlerCounters)
-
-	result.messageRouter.RegisterUnknown(result.Unknown)
-
-	return result
 }

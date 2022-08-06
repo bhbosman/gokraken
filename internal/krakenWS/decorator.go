@@ -10,6 +10,7 @@ import (
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/topStack"
 	"github.com/bhbosman/goCommsStacks/websocket"
+	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/cskr/pubsub"
@@ -31,6 +32,7 @@ type decorator struct {
 	Logger               *zap.Logger
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper
 	FmdService           fullMarketDataManagerService.IFmdManagerService
+	FileDumpService      fileDumpService.IFileDumpService
 }
 
 func NewDecorator(
@@ -40,6 +42,7 @@ func NewDecorator(
 	pubSub *pubsub.PubSub,
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper,
 	FmdService fullMarketDataManagerService.IFmdManagerService,
+	FileDumpService fileDumpService.IFileDumpService,
 ) *decorator {
 	return &decorator{
 		NetMultiDialer:       NetMultiDialer,
@@ -48,6 +51,7 @@ func NewDecorator(
 		FullMarketDataHelper: FullMarketDataHelper,
 		FmdService:           FmdService,
 		otherData:            otherData,
+		FileDumpService:      FileDumpService,
 	}
 }
 
@@ -105,9 +109,11 @@ func (self *decorator) internalStart(ctx context.Context) error {
 				Target: func() (
 					fullMarketDataHelper.IFullMarketDataHelper,
 					fullMarketDataManagerService.IFmdManagerService,
+					fileDumpService.IFileDumpService,
 				) {
 					return self.FullMarketDataHelper,
-						self.FmdService
+						self.FmdService,
+						self.FileDumpService
 				},
 			},
 		),

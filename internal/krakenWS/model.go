@@ -1,5 +1,10 @@
 package krakenWS
 
+import (
+	"fmt"
+	"github.com/bhbosman/goCommonMarketData/instrumentReference"
+)
+
 type FeedRegistration struct {
 	Pair string
 	Name string
@@ -22,4 +27,21 @@ func NewKrakenConnection(name string, instance ...FeedRegistration) *KrakenConne
 		Name:     name,
 		Instance: instance,
 	}
+}
+
+type Subscribe struct {
+}
+
+type registeredSubscription struct {
+	instrumentReference.KrakenFeed
+	status string
+}
+
+type subscriptionKey struct {
+	pair string
+	name string
+}
+
+func (self *subscriptionKey) String() string {
+	return fmt.Sprintf("%v-%v", self.pair, self.name)
 }

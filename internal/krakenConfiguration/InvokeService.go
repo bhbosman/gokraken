@@ -6,6 +6,7 @@ import (
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goCommsMultiDialer"
+	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	fxAppManager "github.com/bhbosman/goFxAppManager/service"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gokraken/internal/krakenWS"
@@ -29,6 +30,7 @@ func InvokeService() fx.Option {
 				FullMarketDataHelper       fullMarketDataHelper.IFullMarketDataHelper
 				FmdService                 fullMarketDataManagerService.IFmdManagerService
 				InstrumentReferenceService instrumentReference.IInstrumentReferenceService
+				FileDumpService            fileDumpService.IFileDumpService
 			},
 		) error {
 			params.Lifecycle.Append(
@@ -50,6 +52,7 @@ func InvokeService() fx.Option {
 									params.PubSub,
 									params.FullMarketDataHelper,
 									params.FmdService,
+									params.FileDumpService,
 								)
 								return dec, dec.Cancel, nil
 							}

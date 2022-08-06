@@ -55,10 +55,12 @@ require (
 )
 
 require (
-	github.com/bhbosman/goCommonMarketData v0.0.0-20220721194348-4c0f095abe4c
+	github.com/bhbosman/goCommonMarketData v0.0.0-20220803212212-1f9b7985c2a4
 	github.com/bhbosman/goCommsMultiDialer v0.0.0-20220725200742-03776d188cb8
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
 )
+
+require github.com/shopspring/decimal v1.3.1 // indirect
 
 replace (
 	github.com/bhbosman/gocommon => ../gocommon
