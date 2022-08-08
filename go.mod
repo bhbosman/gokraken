@@ -9,14 +9,13 @@ require (
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
 	github.com/bhbosman/goFxAppManager v0.0.0-20220730103022-02c299931769
-	github.com/bhbosman/goMessages v0.0.0-20220719163819-d38fc7e6d38c
 	github.com/bhbosman/gocommon v0.0.0-20220802132121-5e81013de07d
 	github.com/bhbosman/gocomms v0.0.0-20220802123532-201eb833272c
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62
 	github.com/bhbosman/goprotoextra v0.0.2-0.20210817141206-117becbef7c7
 	github.com/cskr/pubsub v1.0.2
-	github.com/emirpasic/gods v1.18.1 // indirect
+	github.com/emirpasic/gods v1.18.1
 	github.com/golang/protobuf v1.5.0
 	github.com/stretchr/testify v1.7.0 // indirect
 	go.uber.org/fx v1.17.1
@@ -60,7 +59,7 @@ require (
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
 )
 
-require github.com/shopspring/decimal v1.3.1 // indirect
+require github.com/bhbosman/goMessages v0.0.0-20220719163819-d38fc7e6d38c // indirect
 
 replace (
 	github.com/bhbosman/gocommon => ../gocommon

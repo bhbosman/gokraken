@@ -89,11 +89,13 @@ func (self *decorator) Err() error {
 func (self *decorator) internalStart(ctx context.Context) error {
 	krakenUrl, _ := url.Parse("wss://ws.kraken.com:443")
 	var err error
-	self.dialApp, self.dialAppCancelFunc, err = self.NetMultiDialer.Dial(
+	var connectionId string
+	self.dialApp, self.dialAppCancelFunc, connectionId, err = self.NetMultiDialer.Dial(
 		false,
 		nil,
 		krakenUrl,
 		self.reconnect,
+		self.dialAppCancelFunc,
 		fmt.Sprintf("Kraken.%v", self.otherData.ConnectionName),
 		fmt.Sprintf("Kraken.%v", self.otherData.ConnectionName),
 		ProvideConnectionReactor(),
@@ -127,6 +129,7 @@ func (self *decorator) internalStart(ctx context.Context) error {
 	}
 
 	err = self.dialAppCancelFunc.Add(
+		connectionId,
 		func() func() {
 			b := false
 			return func() {
@@ -138,6 +141,7 @@ func (self *decorator) internalStart(ctx context.Context) error {
 							"Stopping error. not really a problem. informational",
 							zap.Error(stopErr))
 					}
+					_ = self.dialAppCancelFunc.Remove(connectionId)
 				}
 			}
 		}(),

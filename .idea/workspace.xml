@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="24f05c98-0269-448e-aeee-e103b771a4c4" name="Changes" comment="    eeee">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/krakenWS/dddd_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/krakenWS/reactor.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/krakenWS/reactor.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,7 +15,7 @@
   </component>
   <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../Program Files/Go" />
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../goCommonMarketData" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -134,11 +133,6 @@
           <url>file://$PROJECT_DIR$/internal/krakenWS/reactor.go</url>
           <line>502</line>
           <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/krakenWS/reactor.go</url>
-          <line>463</line>
-          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
