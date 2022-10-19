@@ -9,7 +9,7 @@ require (
 	github.com/bhbosman/goCommsStacks v0.0.0-20220628053835-8e5ac6a0c20b
 	github.com/bhbosman/goFxApp v0.0.0-20220623192832-ed39b89a9b44
 	github.com/bhbosman/goFxAppManager v0.0.0-20220730103022-02c299931769
-	github.com/bhbosman/gocommon v0.0.0-20220802132121-5e81013de07d
+	github.com/bhbosman/gocommon v0.0.0-20220804192905-2e73403531d0
 	github.com/bhbosman/gocomms v0.0.0-20220802123532-201eb833272c
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62
@@ -17,8 +17,8 @@ require (
 	github.com/cskr/pubsub v1.0.2
 	github.com/emirpasic/gods v1.18.1
 	github.com/golang/protobuf v1.5.0
-	github.com/stretchr/testify v1.7.0 // indirect
-	go.uber.org/fx v1.17.1
+	github.com/stretchr/testify v1.7.1 // indirect
+	go.uber.org/fx v1.18.2
 	go.uber.org/zap v1.21.0
 	google.golang.org/protobuf v1.28.0
 )
@@ -44,13 +44,13 @@ require (
 	github.com/stretchr/objx v0.1.0 // indirect
 	github.com/teivah/onecontext v0.0.0-20200513185103-40f981bfd775 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/dig v1.14.0 // indirect
+	go.uber.org/dig v1.15.0 // indirect
 	go.uber.org/multierr v1.6.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
