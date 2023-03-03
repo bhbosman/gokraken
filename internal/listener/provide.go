@@ -53,11 +53,11 @@ func CompressedListener(
 						common.MaxConnectionsSetting(maxConnections),
 						common.NewConnectionInstanceOptions(
 							goCommsDefinitions.ProvideTransportFactoryForCompressedName(
-								topStack.ProvideTopStack(),
-								pingPong.ProvidePingPongStacks(),
-								protoBuf.ProvideStack(),
+								topStack.Provide(),
+								pingPong.Provide(),
+								protoBuf.Provide(),
 								messageCompressor.Provide(),
-								messageNumber.ProvideMessageNumberStack(),
+								messageNumber.Provide(),
 								bvisMessageBreaker.Provide(),
 								bottom.Provide(),
 							),

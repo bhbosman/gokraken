@@ -100,8 +100,8 @@ func (self *decorator) internalStart(ctx context.Context) error {
 		fmt.Sprintf("Kraken.%v", self.otherData.ConnectionName),
 		ProvideConnectionReactor(),
 		goCommsDefinitions.ProvideTransportFactoryForWebSocketName(
-			topStack.ProvideTopStack(),
-			websocket.ProvideWebsocketStacks(),
+			topStack.Provide(),
+			websocket.Provide(),
 			bottom.Provide(),
 		),
 		PubSub.ProvidePubSubInstance("Application", self.pubSub),
