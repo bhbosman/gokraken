@@ -10,7 +10,7 @@ require (
 	github.com/bhbosman/goCommsStacks v0.0.0-20230302185506-f2c4d856b6d3
 	github.com/bhbosman/goFxApp v0.0.0-20230302094801-5074560d188e
 	github.com/bhbosman/goFxAppManager v0.0.0-20230302065223-2fa699f7166f
-	github.com/bhbosman/gocommon v0.0.0-20230302071906-9b559c4a3731
+	github.com/bhbosman/gocommon v0.0.0-20230303055326-d59d6b655a59
 	github.com/bhbosman/gocomms v0.0.0-20230302071906-7baff1531571
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20220617132215-32f430d7de62
