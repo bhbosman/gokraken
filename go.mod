@@ -31,7 +31,7 @@ require (
 	github.com/bhbosman/goConnectionManager v0.0.0-20230302065222-d613f6fe8f80 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20230302063433-258339efe599 // indirect
 	github.com/bhbosman/goUi v0.0.0-20230302065227-24c3cb06165e // indirect
-	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
+	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.5.1 // indirect
@@ -95,3 +95,5 @@ replace github.com/cskr/pubsub => ../pubsub
 replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
 
 replace github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
+
+replace github.com/reactivex/rxgo/v2 => ../goRx
