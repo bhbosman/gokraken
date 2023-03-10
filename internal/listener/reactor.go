@@ -10,6 +10,7 @@ import (
 	"github.com/bhbosman/gocommon/messageRouter"
 	common3 "github.com/bhbosman/gocommon/model"
 	common2 "github.com/bhbosman/gocomms/common"
+	"github.com/bhbosman/gocomms/intf"
 	"github.com/bhbosman/goprotoextra"
 	"github.com/cskr/pubsub"
 	"github.com/reactivex/rxgo/v2"
@@ -27,14 +28,8 @@ type reactor struct {
 	FmdService             fullMarketDataManagerService.IFmdManagerService
 }
 
-func (self *reactor) Init(
-	onSendToReactor rxgo.NextFunc,
-	onSendToConnection rxgo.NextFunc,
-) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
-	_, _, _, err := self.BaseConnectionReactor.Init(
-		onSendToReactor,
-		onSendToConnection,
-	)
+func (self *reactor) Init(params intf.IInitParams) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
+	_, _, _, err := self.BaseConnectionReactor.Init(params)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -108,7 +103,7 @@ func NewConnectionReactor(
 	UniqueReferenceService interfaces.IUniqueReferenceService,
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper,
 	FmdService fullMarketDataManagerService.IFmdManagerService,
-) (*reactor, error) {
+) (intf.IConnectionReactor, error) {
 	result := &reactor{
 		BaseConnectionReactor: common2.NewBaseConnectionReactor(
 			logger,

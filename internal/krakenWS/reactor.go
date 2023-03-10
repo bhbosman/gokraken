@@ -18,6 +18,7 @@ import (
 	"github.com/bhbosman/gocommon/model"
 	"github.com/bhbosman/gocommon/stream"
 	"github.com/bhbosman/gocomms/common"
+	"github.com/bhbosman/gocomms/intf"
 	krakenWsStream "github.com/bhbosman/gokraken/internal/krakenWS/internal/stream"
 	"github.com/bhbosman/gomessageblock"
 	"github.com/cskr/pubsub"
@@ -171,14 +172,8 @@ func (self *reactor) handleWebSocketMessage(inData *wsmsg.WebSocketMessage) {
 	}
 }
 
-func (self *reactor) Init(
-	onSendToReactor rxgo.NextFunc,
-	onSendToConnection rxgo.NextFunc,
-) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
-	_, _, _, err := self.BaseConnectionReactor.Init(
-		onSendToReactor,
-		onSendToConnection,
-	)
+func (self *reactor) Init(params intf.IInitParams) (rxgo.NextFunc, rxgo.ErrFunc, rxgo.CompletedFunc, error) {
+	_, _, _, err := self.BaseConnectionReactor.Init(params)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -564,7 +559,7 @@ func newReactor(
 	FmdService fullMarketDataManagerService.IFmdManagerService,
 	otherData instrumentReference.KrakenReferenceData,
 	FileDumpService fileDumpService.IFileDumpService,
-) *reactor {
+) intf.IConnectionReactor {
 	result := &reactor{
 		BaseConnectionReactor: common.NewBaseConnectionReactor(
 			logger,
