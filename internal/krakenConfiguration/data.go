@@ -9,7 +9,7 @@ import (
 type data struct {
 	m             map[string]*krakenWS.KrakenConnection
 	isDirty       map[string]bool
-	MessageRouter *messageRouter.MessageRouter
+	MessageRouter messageRouter.IMessageRouter
 }
 
 func (self *data) GetAll() []*krakenWS.KrakenConnection {
@@ -32,7 +32,7 @@ func (self *data) ShutDown() error {
 	return nil
 }
 
-func (self *data) handleEmptyQueue(msg *messages.EmptyQueue) {
+func (self *data) handleEmptyQueue(*messages.EmptyQueue) {
 	self.isDirty = make(map[string]bool)
 }
 
@@ -49,7 +49,7 @@ func newData() (IKrakenConfigurationData, error) {
 		m:             make(map[string]*krakenWS.KrakenConnection),
 		isDirty:       make(map[string]bool),
 	}
-	result.MessageRouter.Add(result.handleEmptyQueue)
-	result.MessageRouter.Add(result.handleLunoConfiguration)
+	_ = result.MessageRouter.Add(result.handleEmptyQueue)
+	_ = result.MessageRouter.Add(result.handleLunoConfiguration)
 	return result, nil
 }

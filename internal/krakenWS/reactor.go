@@ -33,7 +33,7 @@ import (
 
 type reactor struct {
 	common.BaseConnectionReactor
-	messageRouter             *messageRouter.MessageRouter
+	messageRouter             messageRouter.IMessageRouter
 	connectionID              uint64
 	status                    string
 	version                   string

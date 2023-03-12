@@ -21,7 +21,7 @@ import (
 type serializeData func(m proto.Message) (goprotoextra.IReadWriterSize, error)
 type reactor struct {
 	common2.BaseConnectionReactor
-	messageRouter          *messageRouter.MessageRouter
+	messageRouter          messageRouter.IMessageRouter
 	SerializeData          serializeData
 	UniqueReferenceService interfaces.IUniqueReferenceService
 	FullMarketDataHelper   fullMarketDataHelper.IFullMarketDataHelper
@@ -79,7 +79,7 @@ func (self *reactor) handleFullMarketData_Instrument_UnregisterWrapper(message *
 }
 
 //goland:noinspection GoSnakeCaseUsage
-func (self *reactor) handleFullMarketData_InstrumentList_SubscribeWrapper(message *stream2.FullMarketData_InstrumentList_SubscribeWrapper) {
+func (self *reactor) handleFullMarketData_InstrumentList_SubscribeWrapper(*stream2.FullMarketData_InstrumentList_SubscribeWrapper) {
 	self.PubSub.AddSub(
 		self.OnSendToConnectionPubSubBag,
 		self.FullMarketDataHelper.InstrumentListChannelName(),
@@ -120,11 +120,11 @@ func NewConnectionReactor(
 		FmdService:             FmdService,
 		FullMarketDataHelper:   FullMarketDataHelper,
 	}
-	result.messageRouter.Add(result.handleFullMarketData_InstrumentList_SubscribeWrapper)
-	result.messageRouter.Add(result.handleFullMarketData_InstrumentList_RequestWrapper)
+	_ = result.messageRouter.Add(result.handleFullMarketData_InstrumentList_SubscribeWrapper)
+	_ = result.messageRouter.Add(result.handleFullMarketData_InstrumentList_RequestWrapper)
 	//
-	result.messageRouter.Add(result.handleFullMarketData_Instrument_RegisterWrapper)
-	result.messageRouter.Add(result.handleFullMarketData_Instrument_UnregisterWrapper)
+	_ = result.messageRouter.Add(result.handleFullMarketData_Instrument_RegisterWrapper)
+	_ = result.messageRouter.Add(result.handleFullMarketData_Instrument_UnregisterWrapper)
 
 	return result, nil
 }
