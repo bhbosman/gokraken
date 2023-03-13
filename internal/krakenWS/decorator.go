@@ -13,6 +13,7 @@ import (
 	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
+	"github.com/bhbosman/gocomms/common"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -28,7 +29,7 @@ type decorator struct {
 
 	pubSub               *pubsub.PubSub
 	dialApp              messages.IApp
-	dialAppCancelFunc    goCommsDefinitions.ICancellationContext
+	dialAppCancelFunc    common.ICancellationContext
 	Logger               *zap.Logger
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper
 	FmdService           fullMarketDataManagerService.IFmdManagerService
@@ -130,9 +131,9 @@ func (self *decorator) internalStart(ctx context.Context) error {
 
 	_, err = self.dialAppCancelFunc.Add(
 		connectionId,
-		func(dialApp messages.IApp) func(goCommsDefinitions.ICancellationContext) {
+		func(dialApp messages.IApp) func(common.ICancellationContext) {
 			b := false
-			return func(cancellationContext goCommsDefinitions.ICancellationContext) {
+			return func(cancellationContext common.ICancellationContext) {
 				if !b {
 					b = true
 					stopErr := dialApp.Stop(context.Background())
