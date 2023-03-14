@@ -16,10 +16,12 @@ import (
 	"github.com/bhbosman/gocomms/common"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"golang.org/x/net/context"
 	"io"
 	"net/url"
+	"sync"
 )
 
 type decorator struct {
@@ -87,7 +89,7 @@ func (self *decorator) Err() error {
 	return nil
 }
 
-func (self *decorator) internalStart(ctx context.Context) error {
+func (self *decorator) internalStart(context.Context) error {
 	krakenUrl, _ := url.Parse("wss://ws.kraken.com:443")
 	var err error
 	var connectionId string
@@ -128,25 +130,8 @@ func (self *decorator) internalStart(ctx context.Context) error {
 	if err != nil {
 		self.Logger.Error("Error in start", zap.Error(err))
 	}
+	_ = self.registerConnectionShutdown(connectionId, self.dialApp, self.Logger, self.dialAppCancelFunc)
 
-	_, err = self.dialAppCancelFunc.Add(
-		connectionId,
-		func(dialApp messages.IApp) func(common.ICancellationContext) {
-			b := false
-			return func(cancellationContext common.ICancellationContext) {
-				if !b {
-					b = true
-					stopErr := dialApp.Stop(context.Background())
-					if stopErr != nil {
-						self.Logger.Error(
-							"Stopping error. not really a problem. informational",
-							zap.Error(stopErr))
-					}
-					_ = cancellationContext.Remove(connectionId)
-				}
-			}
-		}(self.dialApp),
-	)
 	return nil
 }
 
@@ -170,4 +155,41 @@ func (self *decorator) reconnect() {
 			}
 		}
 	}()
+}
+
+func (self *decorator) registerConnectionShutdown(
+	connectionId string,
+	connectionApp messages.IApp,
+	logger *zap.Logger,
+	cancellationContext ...common.ICancellationContext,
+) error {
+	mutex := sync.Mutex{}
+	cancelCalled := false
+	cb := func() {
+		mutex.Lock()
+		b := cancelCalled
+		cancelCalled = true
+		mutex.Unlock()
+		if !b {
+			errInGoRoutine := connectionApp.Stop(context.Background())
+			if errInGoRoutine != nil {
+				logger.Error(
+					"Stopping error. not really a problem. informational",
+					zap.Error(errInGoRoutine))
+			}
+			for _, instance := range cancellationContext {
+				_ = instance.Remove(connectionId)
+			}
+		}
+	}
+	var result error
+	for _, ctx := range cancellationContext {
+		b, err := ctx.Add(connectionId, cb)
+		result = multierr.Append(result, err)
+		if !b {
+			cb()
+			return result
+		}
+	}
+	return result
 }
