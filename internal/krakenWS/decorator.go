@@ -1,6 +1,7 @@
 package krakenWS
 
 import (
+	"context"
 	"fmt"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataHelper"
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
@@ -18,7 +19,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
-	"golang.org/x/net/context"
 	"io"
 	"net/url"
 	"sync"
