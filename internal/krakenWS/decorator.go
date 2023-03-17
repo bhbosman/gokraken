@@ -11,10 +11,10 @@ import (
 	"github.com/bhbosman/goCommsStacks/bottom"
 	"github.com/bhbosman/goCommsStacks/topStack"
 	"github.com/bhbosman/goCommsStacks/websocket"
+	"github.com/bhbosman/goConn"
 	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
-	"github.com/bhbosman/gocomms/common"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
@@ -31,7 +31,7 @@ type decorator struct {
 
 	pubSub               *pubsub.PubSub
 	dialApp              messages.IApp
-	dialAppCancelFunc    common.ICancellationContext
+	dialAppCancelFunc    goConn.ICancellationContext
 	Logger               *zap.Logger
 	FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper
 	FmdService           fullMarketDataManagerService.IFmdManagerService
@@ -60,7 +60,7 @@ func NewDecorator(
 
 func (self *decorator) Cancel() {
 	if self.dialAppCancelFunc != nil {
-		self.dialAppCancelFunc.Cancel()
+		self.dialAppCancelFunc.Cancel("dddd")
 	}
 }
 
@@ -137,7 +137,7 @@ func (self *decorator) internalStart(context.Context) error {
 
 func (self *decorator) internalStop(ctx context.Context) error {
 	if self.dialAppCancelFunc != nil {
-		self.dialAppCancelFunc.Cancel()
+		self.dialAppCancelFunc.Cancel("dasdasdas")
 	}
 	return nil
 }
@@ -161,7 +161,7 @@ func (self *decorator) registerConnectionShutdown(
 	connectionId string,
 	connectionApp messages.IApp,
 	logger *zap.Logger,
-	cancellationContext ...common.ICancellationContext,
+	cancellationContext ...goConn.ICancellationContext,
 ) error {
 	mutex := sync.Mutex{}
 	cancelCalled := false
