@@ -20,7 +20,7 @@ require (
 	github.com/golang/protobuf v1.5.0
 	github.com/reactivex/rxgo/v2 v2.5.0
 	go.uber.org/fx v1.19.2
-	go.uber.org/multierr v1.6.0
+	go.uber.org/multierr v1.10.0
 	go.uber.org/zap v1.23.0
 	golang.org/x/net v0.7.0
 	google.golang.org/protobuf v1.28.0
@@ -28,6 +28,7 @@ require (
 
 require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20230302062228-c88685956b15 // indirect
+	github.com/bhbosman/goConn v0.0.0-20230317052122-2eec27fd9bc8 // indirect
 	github.com/bhbosman/goConnectionManager v0.0.0-20230312204225-183859f3cef5 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20230302063433-258339efe599 // indirect
 	github.com/bhbosman/goUi v0.0.0-20230302065227-24c3cb06165e // indirect
@@ -97,3 +98,5 @@ replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
 replace github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
 
 replace github.com/reactivex/rxgo/v2 => ../goRx
+
+replace github.com/bhbosman/goConn => ../goConn
