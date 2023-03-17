@@ -8,6 +8,7 @@ require (
 	github.com/bhbosman/goCommsMultiDialer v0.0.0-20230302092320-748285ee2b26
 	github.com/bhbosman/goCommsNetListener v0.0.0-20230302062227-0285e8a8cd6f
 	github.com/bhbosman/goCommsStacks v0.0.0-20230302185506-f2c4d856b6d3
+	github.com/bhbosman/goConn v0.0.0-20230317052122-2eec27fd9bc8
 	github.com/bhbosman/goFxApp v0.0.0-20230302094801-5074560d188e
 	github.com/bhbosman/goFxAppManager v0.0.0-20230302065223-2fa699f7166f
 	github.com/bhbosman/gocommon v0.0.0-20230312205650-25cf8341f1c9
@@ -21,14 +22,13 @@ require (
 	github.com/reactivex/rxgo/v2 v2.5.0
 	go.uber.org/fx v1.19.2
 	go.uber.org/multierr v1.10.0
-	go.uber.org/zap v1.23.0
+	go.uber.org/zap v1.24.0
 	golang.org/x/net v0.7.0
 	google.golang.org/protobuf v1.28.0
 )
 
 require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20230302062228-c88685956b15 // indirect
-	github.com/bhbosman/goConn v0.0.0-20230317052122-2eec27fd9bc8 // indirect
 	github.com/bhbosman/goConnectionManager v0.0.0-20230312204225-183859f3cef5 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20230302063433-258339efe599 // indirect
 	github.com/bhbosman/goUi v0.0.0-20230302065227-24c3cb06165e // indirect
