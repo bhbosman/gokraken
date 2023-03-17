@@ -15,13 +15,12 @@ import (
 	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	"github.com/bhbosman/gocommon/fx/PubSub"
 	"github.com/bhbosman/gocommon/messages"
+	"github.com/bhbosman/gocomms/netBase"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"io"
 	"net/url"
-	"sync"
 )
 
 type decorator struct {
@@ -130,9 +129,23 @@ func (self *decorator) internalStart(context.Context) error {
 	if err != nil {
 		self.Logger.Error("Error in start", zap.Error(err))
 	}
-	_ = self.registerConnectionShutdown(connectionId, self.dialApp, self.Logger, self.dialAppCancelFunc)
+	return netBase.RegisterConnectionShutdown(
+		connectionId,
+		func(connectionApp messages.IApp,
+			logger *zap.Logger,
+		) func() {
+			return func() {
+				errInGoRoutine := connectionApp.Stop(context.Background())
+				if errInGoRoutine != nil {
+					logger.Error(
+						"Stopping error. not really a problem. informational",
+						zap.Error(errInGoRoutine))
+				}
+			}
+		}(self.dialApp, self.Logger),
+		self.dialAppCancelFunc,
+	)
 
-	return nil
 }
 
 func (self *decorator) internalStop(ctx context.Context) error {
@@ -155,41 +168,4 @@ func (self *decorator) reconnect() {
 			}
 		}
 	}()
-}
-
-func (self *decorator) registerConnectionShutdown(
-	connectionId string,
-	connectionApp messages.IApp,
-	logger *zap.Logger,
-	cancellationContext ...goConn.ICancellationContext,
-) error {
-	mutex := sync.Mutex{}
-	cancelCalled := false
-	cb := func() {
-		mutex.Lock()
-		b := cancelCalled
-		cancelCalled = true
-		mutex.Unlock()
-		if !b {
-			errInGoRoutine := connectionApp.Stop(context.Background())
-			if errInGoRoutine != nil {
-				logger.Error(
-					"Stopping error. not really a problem. informational",
-					zap.Error(errInGoRoutine))
-			}
-			for _, instance := range cancellationContext {
-				_ = instance.Remove(connectionId)
-			}
-		}
-	}
-	var result error
-	for _, ctx := range cancellationContext {
-		b, err := ctx.Add(connectionId, cb)
-		result = multierr.Append(result, err)
-		if !b {
-			cb()
-			return result
-		}
-	}
-	return result
 }
