@@ -50,8 +50,10 @@ func InvokeService() fx.Option {
 
 								namedLogger := params.Logger.Named(name)
 								ctx, cancelFunc := context.WithCancel(params.ApplicationContext)
-								cancellationContext := goConn.NewCancellationContext(name, cancelFunc, ctx, namedLogger, nil)
-
+								cancellationContext, err := goConn.NewCancellationContextNoCloser(name, cancelFunc, ctx, namedLogger)
+								if err != nil {
+									return nil, nil, err
+								}
 								dec, err := krakenWS.NewDecorator(
 									namedLogger,
 									params.NetMultiDialer,
