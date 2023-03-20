@@ -6,6 +6,7 @@ import (
 	"github.com/bhbosman/goCommonMarketData/fullMarketDataManagerService"
 	"github.com/bhbosman/goCommonMarketData/instrumentReference"
 	"github.com/bhbosman/goCommsMultiDialer"
+	"github.com/bhbosman/goConn"
 	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	fxAppManager "github.com/bhbosman/goFxAppManager/service"
 	"github.com/bhbosman/gocommon/messages"
@@ -31,6 +32,7 @@ func InvokeService() fx.Option {
 				FmdService                 fullMarketDataManagerService.IFmdManagerService
 				InstrumentReferenceService instrumentReference.IInstrumentReferenceService
 				FileDumpService            fileDumpService.IFileDumpService
+				ApplicationContext         context.Context `name:"Application"`
 			},
 		) error {
 			params.Lifecycle.Append(
@@ -40,21 +42,30 @@ func InvokeService() fx.Option {
 						if err != nil {
 							return err
 						}
-						//allLunoConfiguration := params.KrakenConfigurationService.GetAll()
 						f := func(
+							name string,
 							otherData instrumentReference.KrakenReferenceData,
-						) func() (messages.IApp, context.CancelFunc, error) {
-							return func() (messages.IApp, context.CancelFunc, error) {
-								dec := krakenWS.NewDecorator(
-									params.Logger,
+						) func() (messages.IApp, goConn.ICancellationContext, error) {
+							return func() (messages.IApp, goConn.ICancellationContext, error) {
+
+								namedLogger := params.Logger.Named(name)
+								ctx, cancelFunc := context.WithCancel(params.ApplicationContext)
+								cancellationContext := goConn.NewCancellationContext(name, cancelFunc, ctx, namedLogger, nil)
+
+								dec, err := krakenWS.NewDecorator(
+									namedLogger,
 									params.NetMultiDialer,
 									otherData,
 									params.PubSub,
 									params.FullMarketDataHelper,
 									params.FmdService,
 									params.FileDumpService,
+									cancellationContext,
 								)
-								return dec, dec.Cancel, nil
+								if err != nil {
+									return nil, nil, err
+								}
+								return dec, cancellationContext, nil
 							}
 						}
 
@@ -64,7 +75,7 @@ func InvokeService() fx.Option {
 								err,
 								params.FxManagerService.Add(
 									localConfiguration.ConnectionName,
-									f(localConfiguration),
+									f(configuration.ConnectionName, localConfiguration),
 								),
 							)
 						}
