@@ -1,8 +1,8 @@
 package krakenConfiguration
 
 import (
-	"github.com/bhbosman/gocommon/Services/IDataShutDown"
-	"github.com/bhbosman/gocommon/Services/IFxService"
+	"github.com/bhbosman/gocommon/services/IDataShutDown"
+	"github.com/bhbosman/gocommon/services/IFxService"
 	"github.com/bhbosman/gocommon/services/ISendMessage"
 )
 
