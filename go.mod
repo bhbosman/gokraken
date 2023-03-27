@@ -4,14 +4,14 @@ go 1.18
 
 require (
 	github.com/bhbosman/goCommonMarketData v0.0.0-20230302071905-68b90c2dabe4
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20230313180751-41613a6b3173
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c
 	github.com/bhbosman/goCommsMultiDialer v0.0.0-20230302092320-748285ee2b26
 	github.com/bhbosman/goCommsNetListener v0.0.0-20230302062227-0285e8a8cd6f
 	github.com/bhbosman/goCommsStacks v0.0.0-20230302185506-f2c4d856b6d3
-	github.com/bhbosman/goConn v0.0.0-20230317052122-2eec27fd9bc8
+	github.com/bhbosman/goConn v0.0.0-20230320102125-d7416dd8d6dc
 	github.com/bhbosman/goFxApp v0.0.0-20230302094801-5074560d188e
-	github.com/bhbosman/goFxAppManager v0.0.0-20230302065223-2fa699f7166f
-	github.com/bhbosman/gocommon v0.0.0-20230312205650-25cf8341f1c9
+	github.com/bhbosman/goFxAppManager v0.0.0-20230320053418-125763bdf8d5
+	github.com/bhbosman/gocommon v0.0.0-20230320083256-4088c43f62a7
 	github.com/bhbosman/gocomms v0.0.0-20230307212550-0918a992672c
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20230308173223-e8144f25444c
@@ -31,7 +31,7 @@ require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20230302062228-c88685956b15 // indirect
 	github.com/bhbosman/goConnectionManager v0.0.0-20230312204225-183859f3cef5 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20230302063433-258339efe599 // indirect
-	github.com/bhbosman/goUi v0.0.0-20230302065227-24c3cb06165e // indirect
+	github.com/bhbosman/goUi v0.0.0-20230312204226-c4c7ec5f0899 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
