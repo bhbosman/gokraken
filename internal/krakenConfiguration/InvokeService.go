@@ -47,7 +47,6 @@ func InvokeService() fx.Option {
 							otherData instrumentReference.KrakenReferenceData,
 						) func() (messages.IApp, goConn.ICancellationContext, error) {
 							return func() (messages.IApp, goConn.ICancellationContext, error) {
-
 								namedLogger := params.Logger.Named(name)
 								ctx, cancelFunc := context.WithCancel(params.ApplicationContext)
 								cancellationContext, err := goConn.NewCancellationContextNoCloser(name, cancelFunc, ctx, namedLogger)
