@@ -8,10 +8,14 @@ github.com/bhbosman/goCommsDefinitions v0.0.0-20220801175552-c5aa68065af3/go.mod
 github.com/bhbosman/goCommsDefinitions v0.0.0-20230308211643-24fe88b2378e/go.mod h1:tkd0ohtBBlomjgZrSj1K7YHT6zb0td0X6v6Tv/kn/wA=
 github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c h1:Ky8YIMW9ns/H0JnE/V1Xflib/texmWIoCSYNMSsf25Q=
 github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c/go.mod h1:vbCOElN9jFdYC0z8KZXGvrVWDRmcPZYwhDLoMfkvD9A=
+github.com/bhbosman/goCommsMultiDialer v0.0.0-20230328152946-29be13f4e053 h1:MzEdUbaVobEIVWD9gVk5ETFUC7yetaxfSWxg+TuCmTM=
+github.com/bhbosman/goCommsMultiDialer v0.0.0-20230328152946-29be13f4e053/go.mod h1:xoZ6wlXn9YPJTZtZbrSO3zqWW0jq5dxhWOpPWjsu4aQ=
 github.com/bhbosman/goCommsStacks v0.0.0-20230328152947-93095a31b055 h1:8c4Y3oOOsZWC3EdEgb7fghTBElKWPPV5dRkqyaotaFw=
 github.com/bhbosman/goCommsStacks v0.0.0-20230328152947-93095a31b055/go.mod h1:ZuBkO2dWSFowpooBzyULSI3iomczfPZOfAzxlzkRM4o=
 github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275 h1:mb8udNg6G36PPdwH7R2XM1cdIo+cy7l59wMURJPXrSQ=
 github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275/go.mod h1:IqnusjHk+667VfU4wKbfTTf0RDInttgjpkuN02P0C4U=
+github.com/bhbosman/goConnectionManager v0.0.0-20230328152946-8854ec40e34b h1:Us3sl2zR6LbUuM6HM5ZyY7SFitgFJ04FRhKzb7cceHo=
+github.com/bhbosman/goConnectionManager v0.0.0-20230328152946-8854ec40e34b/go.mod h1:cJohvxREq/SWojBi6xm/MD93SNY6997md9HOhM/PmYo=
 github.com/bhbosman/goMessages v0.0.0-20230328145403-abd9357e258c h1:Kc8lZkwpaCYrGpplcSwMiMgk1RwK2DhTgLAgHZsaYaM=
 github.com/bhbosman/goMessages v0.0.0-20230328145403-abd9357e258c/go.mod h1:etttJeznDvzaPnjLKKkPGhxCyhqfVdasA28mnT1+LWY=
 github.com/bhbosman/goUi v0.0.0-20230328181044-49e31970d158 h1:nH4Y851/j+rn22xv9+hA+ic7gROFbUsUE7ezXksjHvA=
