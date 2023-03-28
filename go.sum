@@ -10,6 +10,8 @@ github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c h1:Ky8
 github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c/go.mod h1:vbCOElN9jFdYC0z8KZXGvrVWDRmcPZYwhDLoMfkvD9A=
 github.com/bhbosman/goCommsMultiDialer v0.0.0-20230328152946-29be13f4e053 h1:MzEdUbaVobEIVWD9gVk5ETFUC7yetaxfSWxg+TuCmTM=
 github.com/bhbosman/goCommsMultiDialer v0.0.0-20230328152946-29be13f4e053/go.mod h1:xoZ6wlXn9YPJTZtZbrSO3zqWW0jq5dxhWOpPWjsu4aQ=
+github.com/bhbosman/goCommsNetListener v0.0.0-20230328152946-bae51c4dfa4c h1:p1K3KS0QIywVb3sP/q+3d5Gr/AsziZSbMnads3zrw24=
+github.com/bhbosman/goCommsNetListener v0.0.0-20230328152946-bae51c4dfa4c/go.mod h1:xo7jkxk86Dgzy/tk162XdgdN/08PaU7m7c4Ypj/G+VM=
 github.com/bhbosman/goCommsStacks v0.0.0-20230328152947-93095a31b055 h1:8c4Y3oOOsZWC3EdEgb7fghTBElKWPPV5dRkqyaotaFw=
 github.com/bhbosman/goCommsStacks v0.0.0-20230328152947-93095a31b055/go.mod h1:ZuBkO2dWSFowpooBzyULSI3iomczfPZOfAzxlzkRM4o=
 github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275 h1:mb8udNg6G36PPdwH7R2XM1cdIo+cy7l59wMURJPXrSQ=
