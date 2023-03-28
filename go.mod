@@ -81,7 +81,7 @@ replace github.com/bhbosman/goFxApp => ../goFxApp
 
 //replace github.com/bhbosman/goUi => ../goUi
 
-replace github.com/bhbosman/goerrors => ../goerrors
+//replace github.com/bhbosman/goerrors => ../goerrors
 
 replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
 
