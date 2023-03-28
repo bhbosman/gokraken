@@ -98,7 +98,6 @@ replace github.com/bhbosman/goprotoextra => ../goprotoextra
 
 replace github.com/bhbosman/goMessages => ../goMessages
 
-replace github.com/cskr/pubsub => ../pubsub
 
 replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
 
