@@ -70,4 +70,4 @@ replace github.com/rivo/tview => github.com/bhbosman/tview v0.0.0-20230310100135
 
 replace github.com/bhbosman/goFxApp => ../goFxApp
 
-replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
+//replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
