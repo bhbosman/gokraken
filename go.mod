@@ -3,16 +3,16 @@ module github.com/bhbosman/gokraken
 go 1.18
 
 require (
-	github.com/bhbosman/goCommonMarketData v0.0.0-20230302071905-68b90c2dabe4
+	github.com/bhbosman/goCommonMarketData v0.0.0-20230328152946-4eadc8adbe7f
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c
-	github.com/bhbosman/goCommsMultiDialer v0.0.0-20230302092320-748285ee2b26
-	github.com/bhbosman/goCommsNetListener v0.0.0-20230302062227-0285e8a8cd6f
-	github.com/bhbosman/goCommsStacks v0.0.0-20230302185506-f2c4d856b6d3
-	github.com/bhbosman/goConn v0.0.0-20230327111455-7a39299fb0aa
-	github.com/bhbosman/goFxApp v0.0.0-20230302094801-5074560d188e
-	github.com/bhbosman/goFxAppManager v0.0.0-20230320053418-125763bdf8d5
+	github.com/bhbosman/goCommsMultiDialer v0.0.0-20230328152946-29be13f4e053
+	github.com/bhbosman/goCommsNetListener v0.0.0-20230328152946-bae51c4dfa4c
+	github.com/bhbosman/goCommsStacks v0.0.0-20230328152947-93095a31b055
+	github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275
+	github.com/bhbosman/goFxApp v0.0.0-20230328152947-5d22532f49ce
+	github.com/bhbosman/goFxAppManager v0.0.0-20230328152128-7497014a964a
 	github.com/bhbosman/gocommon v0.0.0-20230328150634-566a0f916878
-	github.com/bhbosman/gocomms v0.0.0-20230307212550-0918a992672c
+	github.com/bhbosman/gocomms v0.0.0-20230328145403-30d1cbb347ef
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
 	github.com/bhbosman/gomessageblock v0.0.0-20230308173223-e8144f25444c
 	github.com/bhbosman/goprotoextra v0.0.2
