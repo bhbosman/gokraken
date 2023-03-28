@@ -74,6 +74,3 @@ replace github.com/bhbosman/goFxApp => ../goFxApp
 
 replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
 
-//replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
-
-//replace github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
