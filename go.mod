@@ -27,6 +27,9 @@ require (
 	google.golang.org/protobuf v1.28.0
 )
 
+
+
+
 require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20230302062228-c88685956b15 // indirect
 	github.com/bhbosman/goConnectionManager v0.0.0-20230312204225-183859f3cef5 // indirect
@@ -58,14 +61,19 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
+replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b
+
+replace github.com/golang/mock => github.com/bhbosman/gomock v1.6.1-0.20230302060806-d02c40b7514e
+
+replace github.com/cskr/pubsub => github.com/bhbosman/pubsub v1.0.3-0.20220802200819-029949e8a8af
+
+replace github.com/rivo/tview => github.com/bhbosman/tview v0.0.0-20230310100135-f8b257a85d36
+
 replace (
 	//github.com/bhbosman/gocommon => ../gocommon
 	github.com/bhbosman/gocomms => ../gocomms
 )
 
-replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b
-
-replace github.com/golang/mock => github.com/bhbosman/gomock v1.6.1-0.20230302060806-d02c40b7514e
 
 replace github.com/bhbosman/goCommsStacks => ../goCommsStacks
 
