@@ -1,6 +1,8 @@
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT8A=
 github.com/benbjohnson/clock v1.3.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
+github.com/bhbosman/goCommonMarketData v0.0.0-20230328152946-4eadc8adbe7f h1:RiR5n5eQFnQXvX2ExOdta/qKaGFGOELQLYAHLdjaAmc=
+github.com/bhbosman/goCommonMarketData v0.0.0-20230328152946-4eadc8adbe7f/go.mod h1:BRL6nBamgcOtesg5qAXivg8ErMICPzMonVVTTgIifeA=
 github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275 h1:mb8udNg6G36PPdwH7R2XM1cdIo+cy7l59wMURJPXrSQ=
 github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275/go.mod h1:IqnusjHk+667VfU4wKbfTTf0RDInttgjpkuN02P0C4U=
 github.com/bhbosman/goMessages v0.0.0-20230328145403-abd9357e258c h1:Kc8lZkwpaCYrGpplcSwMiMgk1RwK2DhTgLAgHZsaYaM=

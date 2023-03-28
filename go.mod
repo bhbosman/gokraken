@@ -91,7 +91,7 @@ replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
 //replace github.com/bhbosman/goMessages => ../goMessages
 
-replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
+//replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
 
 replace github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
 
