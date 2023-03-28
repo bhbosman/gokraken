@@ -30,7 +30,7 @@ require (
 require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20230302062228-c88685956b15 // indirect
 	github.com/bhbosman/goConnectionManager v0.0.0-20230328152946-8854ec40e34b // indirect
-	github.com/bhbosman/goMessages v0.0.0-20230302063433-258339efe599 // indirect
+	github.com/bhbosman/goMessages v0.0.0-20230328145403-abd9357e258c // indirect
 	github.com/bhbosman/goUi v0.0.0-20230328181044-49e31970d158 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
