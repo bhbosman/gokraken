@@ -10,6 +10,8 @@ github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c h1:Ky8
 github.com/bhbosman/goCommsDefinitions v0.0.0-20230320101758-971a50fdbf8c/go.mod h1:vbCOElN9jFdYC0z8KZXGvrVWDRmcPZYwhDLoMfkvD9A=
 github.com/bhbosman/goCommsMultiDialer v0.0.0-20230328152946-29be13f4e053 h1:MzEdUbaVobEIVWD9gVk5ETFUC7yetaxfSWxg+TuCmTM=
 github.com/bhbosman/goCommsMultiDialer v0.0.0-20230328152946-29be13f4e053/go.mod h1:xoZ6wlXn9YPJTZtZbrSO3zqWW0jq5dxhWOpPWjsu4aQ=
+github.com/bhbosman/goCommsNetDialer v0.0.0-20230328220049-7f7cf044d89e h1:GNDumHoRfP05MIMvFFzauE1LiCZ+qUiJZvwMMFPtqAs=
+github.com/bhbosman/goCommsNetDialer v0.0.0-20230328220049-7f7cf044d89e/go.mod h1:m4s+bWOoJq/w+obepoAfgf33w6iuLs+UPhcMeQYvIAA=
 github.com/bhbosman/goCommsNetListener v0.0.0-20230328152946-bae51c4dfa4c h1:p1K3KS0QIywVb3sP/q+3d5Gr/AsziZSbMnads3zrw24=
 github.com/bhbosman/goCommsNetListener v0.0.0-20230328152946-bae51c4dfa4c/go.mod h1:xo7jkxk86Dgzy/tk162XdgdN/08PaU7m7c4Ypj/G+VM=
 github.com/bhbosman/goCommsStacks v0.0.0-20230328152947-93095a31b055 h1:8c4Y3oOOsZWC3EdEgb7fghTBElKWPPV5dRkqyaotaFw=
@@ -22,8 +24,8 @@ github.com/bhbosman/goMessages v0.0.0-20230328145403-abd9357e258c h1:Kc8lZkwpaCY
 github.com/bhbosman/goMessages v0.0.0-20230328145403-abd9357e258c/go.mod h1:etttJeznDvzaPnjLKKkPGhxCyhqfVdasA28mnT1+LWY=
 github.com/bhbosman/goUi v0.0.0-20230328181044-49e31970d158 h1:nH4Y851/j+rn22xv9+hA+ic7gROFbUsUE7ezXksjHvA=
 github.com/bhbosman/goUi v0.0.0-20230328181044-49e31970d158/go.mod h1:jHHxNpm/AMnG1Ibz1+rprRKkcqzY3oA7txLRIujvfEw=
-github.com/bhbosman/gocommon v0.0.0-20230328205958-d21444a729d1 h1:fjlVZ/4JlSWXb5GGs9FdxivZ51sHx5WG4nqkHXg6jp4=
-github.com/bhbosman/gocommon v0.0.0-20230328205958-d21444a729d1/go.mod h1:JnxKvQovmCui35l+8gWf/N3GKbYWti5g3EMmqbXoCWA=
+github.com/bhbosman/gocommon v0.0.0-20230328220050-dafaab862dd2 h1:hbrkHNVqMuV3QVNX2K8nSa+Fo7cnwxEkr/F5XCsNMvc=
+github.com/bhbosman/gocommon v0.0.0-20230328220050-dafaab862dd2/go.mod h1:9Ry2YCYcx5uCfWmzDNKtzWb4Tobz0jDrTSqnRd1XqWA=
 github.com/bhbosman/gocomms v0.0.0-20230328145403-30d1cbb347ef h1:/bpUMzHg6lO/onuRo1meCThqdnG4C9VFxdsHBsQ1dlU=
 github.com/bhbosman/gocomms v0.0.0-20230328145403-30d1cbb347ef/go.mod h1:aw3AjLMxGXrmwKaye8Qo0w9viFG9vTHaKpF5TDJbFts=
 github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf h1:uI7bP2Ue0pjjB8j2zWY+nRbjQgeTfmOW6VR7WvVGK1I=
