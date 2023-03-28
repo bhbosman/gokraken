@@ -10,7 +10,7 @@ require (
 	github.com/bhbosman/goCommsStacks v0.0.0-20230328152947-93095a31b055
 	github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275
 	github.com/bhbosman/goFxApp v0.0.0-20230328152947-5d22532f49ce
-	github.com/bhbosman/goFxAppManager v0.0.0-20230328205958-0dcafa6bef73
+	github.com/bhbosman/goFxAppManager v0.0.0-20230328220050-a5b50e43977e
 	github.com/bhbosman/gocommon v0.0.0-20230328220050-dafaab862dd2
 	github.com/bhbosman/gocomms v0.0.0-20230328145403-30d1cbb347ef
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf
@@ -29,9 +29,9 @@ require (
 
 require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20230328220049-7f7cf044d89e // indirect
-	github.com/bhbosman/goConnectionManager v0.0.0-20230328152946-8854ec40e34b // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20230328221032-2e48eb2721d0 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20230328145403-abd9357e258c // indirect
-	github.com/bhbosman/goUi v0.0.0-20230328181044-49e31970d158 // indirect
+	github.com/bhbosman/goUi v0.0.0-20230328220052-834528d68f6d // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
@@ -66,6 +66,4 @@ replace github.com/cskr/pubsub => github.com/bhbosman/pubsub v1.0.3-0.2022080220
 
 replace github.com/rivo/tview => github.com/bhbosman/tview v0.0.0-20230310100135-f8b257a85d36
 
-
 replace github.com/bhbosman/goFxApp => ../goFxApp
-
