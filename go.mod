@@ -79,22 +79,10 @@ replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
 
 replace github.com/bhbosman/goFxApp => ../goFxApp
 
-//replace github.com/bhbosman/goUi => ../goUi
-
-//replace github.com/bhbosman/goerrors => ../goerrors
-
 replace github.com/bhbosman/goFxAppManager => ../goFxAppManager
 
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
-//replace github.com/bhbosman/goprotoextra => ../goprotoextra
-
-//replace github.com/bhbosman/goMessages => ../goMessages
-
-//replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
 
 replace github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
 
-//replace github.com/reactivex/rxgo/v2 => ../goRx
-
-//replace github.com/bhbosman/goConn => ../goConn
