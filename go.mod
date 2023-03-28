@@ -95,6 +95,6 @@ replace github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
 
 replace github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
 
-replace github.com/reactivex/rxgo/v2 => ../goRx
+//replace github.com/reactivex/rxgo/v2 => ../goRx
 
-replace github.com/bhbosman/goConn => ../goConn
+//replace github.com/bhbosman/goConn => ../goConn
