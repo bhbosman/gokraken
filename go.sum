@@ -5,6 +5,8 @@ github.com/bhbosman/gomessageblock v0.0.0-20230308173223-e8144f25444c h1:UQCbM3r
 github.com/bhbosman/gomessageblock v0.0.0-20230308173223-e8144f25444c/go.mod h1:TZ2IkIqXD6cRPBNJYUlLC4V11cwB6KoO984OAcL9blI=
 github.com/bhbosman/gomock v1.6.1-0.20230302060806-d02c40b7514e h1:9ZZLTcBpRq0gCtFml4/M9EQ3E5sQoHIBRk0yLpuVFVQ=
 github.com/bhbosman/gomock v1.6.1-0.20230302060806-d02c40b7514e/go.mod h1:YKHw244p9LQrfV48xfFMiAVbFE2qjBuU1OHTNjXwboE=
+github.com/bhbosman/goprotoextra v0.0.0-20230309055846-4d9940f8b875 h1:nrzKkjlpMiSxJcuv9C/Yju5LdNZ9zJ3HvAjx5/LFS6o=
+github.com/bhbosman/goprotoextra v0.0.0-20230309055846-4d9940f8b875/go.mod h1:D2tgv3GCgQjX9hGTyx0n55Dk6rcnreYcwoo0FH1y1As=
 github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b h1:mfhKWKkAnnEpjWYcFHR5B3G7VqYSaOJJ5SENyky5nOw=
 github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b/go.mod h1:wSkrPaXoiIWZqW/g7Px4xc79di6FTcpB8tvaKJ6uGBo=
 github.com/cenkalti/backoff/v4 v4.0.0/go.mod h1:eEew/i+1Q6OrCDZh3WiXYv3+nJwBASZ8Bog/87DQnVg=
