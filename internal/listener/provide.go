@@ -12,9 +12,9 @@ import (
 	"github.com/bhbosman/goCommsStacks/pingPong"
 	"github.com/bhbosman/goCommsStacks/protoBuf"
 	"github.com/bhbosman/goCommsStacks/topStack"
+	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/fx/PubSub"
-	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocomms/common"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
@@ -39,10 +39,10 @@ func CompressedListener(
 						FullMarketDataHelper fullMarketDataHelper.IFullMarketDataHelper
 						FmdService           fullMarketDataManagerService.IFmdManagerService
 					},
-				) (messages.CreateAppCallback, error) {
+				) (gocommon.CreateAppCallback, error) {
 					compressedUrl, err := url.Parse(urlAsText)
 					if err != nil {
-						return messages.CreateAppCallback{}, err
+						return gocommon.CreateAppCallback{}, err
 					}
 					f := goCommsNetListener.NewNetListenApp(
 						CompressedListenerConnection,
