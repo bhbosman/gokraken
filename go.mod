@@ -20,19 +20,19 @@ require (
 	github.com/emirpasic/gods v1.18.1
 	github.com/golang/protobuf v1.5.2
 	github.com/reactivex/rxgo/v2 v2.5.0
-	go.uber.org/fx v1.19.2
-	go.uber.org/multierr v1.10.0
-	go.uber.org/zap v1.24.0
+	go.uber.org/fx v1.20.1
+	go.uber.org/multierr v1.11.0
+	go.uber.org/zap v1.27.0
 	golang.org/x/net v0.7.0
 	google.golang.org/protobuf v1.28.0
 )
 
 require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20230329104213-5493957faab0 // indirect
-	github.com/bhbosman/goConnectionManager v0.0.0-20230328221032-2e48eb2721d0 // indirect
-	github.com/bhbosman/goMessages v0.0.0-20230328221033-d00082868706 // indirect
-	github.com/bhbosman/goUi v0.0.0-20230328220052-834528d68f6d // indirect
-	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20230329104211-b2d06385b410 // indirect
+	github.com/bhbosman/goMessages v0.0.0-20230329104216-4906969c1e61 // indirect
+	github.com/bhbosman/goUi v0.0.0-20230329104221-220650220e7d // indirect
+	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.5.1 // indirect
@@ -41,24 +41,24 @@ require (
 	github.com/gobwas/ws v1.1.0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
-	github.com/icza/gox v0.0.0-20220321141217-e2d488ab2fbc // indirect
+	github.com/icza/gox v0.0.0-20230330130131-23e1aaac139e // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rivo/tview v0.0.0-20220709181631-73bf2902b59a // indirect
+	github.com/rivo/tview v0.0.0-20230621164836-6cc0565babaf // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
-	github.com/stretchr/objx v0.4.0 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
-	github.com/teivah/onecontext v0.0.0-20200513185103-40f981bfd775 // indirect
-	go.uber.org/atomic v1.9.0 // indirect
-	go.uber.org/dig v1.16.1 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/stretchr/testify v1.8.4 // indirect
+	github.com/teivah/onecontext v1.3.0 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
+	go.uber.org/dig v1.17.1 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/text v0.11.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
