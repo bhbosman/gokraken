@@ -9,7 +9,7 @@ import (
 	"github.com/bhbosman/goConn"
 	"github.com/bhbosman/goFxApp/Services/fileDumpService"
 	fxAppManager "github.com/bhbosman/goFxAppManager/service"
-	"github.com/bhbosman/gocommon/messages"
+	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gokraken/internal/krakenWS"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
@@ -45,8 +45,8 @@ func InvokeService() fx.Option {
 						f := func(
 							name string,
 							otherData instrumentReference.KrakenReferenceData,
-						) func() (messages.IApp, goConn.ICancellationContext, error) {
-							return func() (messages.IApp, goConn.ICancellationContext, error) {
+						) func() (gocommon.IApp, gocommon.ICancellationContext, error) {
+							return func() (gocommon.IApp, gocommon.ICancellationContext, error) {
 								namedLogger := params.Logger.Named(name)
 								ctx, cancelFunc := context.WithCancel(params.ApplicationContext)
 								cancellationContext, err := goConn.NewCancellationContextNoCloser(name, cancelFunc, ctx, namedLogger)

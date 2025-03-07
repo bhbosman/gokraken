@@ -13,8 +13,8 @@ import (
 	"github.com/bhbosman/goCommsStacks/websocket"
 	"github.com/bhbosman/goConn"
 	"github.com/bhbosman/goFxApp/Services/fileDumpService"
+	"github.com/bhbosman/gocommon"
 	"github.com/bhbosman/gocommon/fx/PubSub"
-	"github.com/bhbosman/gocommon/messages"
 	"github.com/cskr/pubsub"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -96,7 +96,7 @@ func (self *decorator) internalStart() error {
 	return goConn.RegisterConnectionShutdown(
 		connectionId,
 		func(
-			connectionApp messages.IApp,
+			connectionApp gocommon.IApp,
 			logger *zap.Logger,
 			connectionCancellationContext goConn.ICancellationContext,
 		) func() {
@@ -146,7 +146,7 @@ func NewDecorator(
 	FmdService fullMarketDataManagerService.IFmdManagerService,
 	FileDumpService fileDumpService.IFileDumpService,
 	decoratorCancellationContext goConn.ICancellationContext,
-) (messages.IApp, error) {
+) (gocommon.IApp, error) {
 	return &decorator{
 		NetMultiDialer:               NetMultiDialer,
 		pubSub:                       pubSub,
