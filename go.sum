@@ -2,6 +2,7 @@ github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZx
 github.com/benbjohnson/clock v1.3.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/bhbosman/goConn v0.0.0-20250307232512-5c59bbebe521 h1:G7w8u2uiIN5Dk3Mcp5qXrIacZHYdll/guDNv10AYRrc=
 github.com/bhbosman/goConn v0.0.0-20250307232512-5c59bbebe521/go.mod h1:IqnusjHk+667VfU4wKbfTTf0RDInttgjpkuN02P0C4U=
+github.com/bhbosman/goConn v0.0.0-20250307235008-177f4ffe3521/go.mod h1:xBF7hqL4jXOQuC9Kjip9YLeHAu703p5jCCnTkV1yWDA=
 github.com/bhbosman/goConnectionManager v0.0.0-20250307224538-a79ceb218fd0 h1:OjR/f0uvTnscaExqGxL0uqPWoOAYJetEVofEvvEEOFQ=
 github.com/bhbosman/goConnectionManager v0.0.0-20250307224538-a79ceb218fd0/go.mod h1:dMKhszqDuA7ziup+oBPXkiIHnNU8JPAt5vEvyNkXXxk=
 github.com/bhbosman/goUi v0.0.0-20250307150712-d06325af4877 h1:ggdUfW6j/BcE8NSielxBeGpOeVKq5tosSxKfbe40Rlc=
