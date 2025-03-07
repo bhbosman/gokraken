@@ -1,9 +1,9 @@
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/benbjohnson/clock v1.3.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
-github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275 h1:mb8udNg6G36PPdwH7R2XM1cdIo+cy7l59wMURJPXrSQ=
-github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275/go.mod h1:IqnusjHk+667VfU4wKbfTTf0RDInttgjpkuN02P0C4U=
-github.com/bhbosman/goConnectionManager v0.0.0-20250307195323-c97481f7bf87 h1:wee/Zm2yNUX9fzF9/miPVrxkiXWocJmevm8XPYmzhAA=
-github.com/bhbosman/goConnectionManager v0.0.0-20250307195323-c97481f7bf87/go.mod h1:f7qXJZBFMnLKbhfKnKzNrPK6J/0L0gOoD4WfxSuCEFw=
+github.com/bhbosman/goConn v0.0.0-20250307232512-5c59bbebe521 h1:G7w8u2uiIN5Dk3Mcp5qXrIacZHYdll/guDNv10AYRrc=
+github.com/bhbosman/goConn v0.0.0-20250307232512-5c59bbebe521/go.mod h1:IqnusjHk+667VfU4wKbfTTf0RDInttgjpkuN02P0C4U=
+github.com/bhbosman/goConnectionManager v0.0.0-20250307224538-a79ceb218fd0 h1:OjR/f0uvTnscaExqGxL0uqPWoOAYJetEVofEvvEEOFQ=
+github.com/bhbosman/goConnectionManager v0.0.0-20250307224538-a79ceb218fd0/go.mod h1:dMKhszqDuA7ziup+oBPXkiIHnNU8JPAt5vEvyNkXXxk=
 github.com/bhbosman/goUi v0.0.0-20250307150712-d06325af4877 h1:ggdUfW6j/BcE8NSielxBeGpOeVKq5tosSxKfbe40Rlc=
 github.com/bhbosman/goUi v0.0.0-20250307150712-d06325af4877/go.mod h1:DdwkPEkzvKp7S61lzxjViCYGCQg7Rts0UWoMIaKvxj4=
 github.com/bhbosman/goerrors v0.0.0-20250307194237-312d070c8e38 h1:3jX77BrDYvQ4xiAQkat+N47OZoKECB9t27fQQfpqGRk=

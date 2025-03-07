@@ -10,7 +10,7 @@ require (
 	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250307144406-ae5dea5deb4a
 	github.com/bhbosman/goCommsNetListener v0.0.0-20250307153216-6206fd2748ea
 	github.com/bhbosman/goCommsStacks v0.0.0-20250307144406-cf8fac452083
-	github.com/bhbosman/goConn v0.0.0-20230328145648-e6bab0984275
+	github.com/bhbosman/goConn v0.0.0-20250307232512-5c59bbebe521
 	github.com/bhbosman/goFxApp v0.0.0-20250307153150-937959817ddb
 	github.com/bhbosman/goFxAppManager v0.0.0-20250307145515-bda0fa4d9959
 	github.com/bhbosman/gocommon v0.0.0-20250307145810-dee67af89371
@@ -31,8 +31,8 @@ require (
 
 require (
 	github.com/bhbosman/goCommsNetDialer v0.0.0-20250307150712-206b023d3816 // indirect
-	github.com/bhbosman/goConnectionManager v0.0.0-20250307195323-c97481f7bf87 // indirect
-	github.com/bhbosman/goMessages v0.0.0-20250307144554-564a4eae84dd // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20250307224538-a79ceb218fd0 // indirect
+	github.com/bhbosman/goMessages v0.0.0-20250307224348-83ddb4c19467 // indirect
 	github.com/bhbosman/goUi v0.0.0-20250307150712-d06325af4877 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
