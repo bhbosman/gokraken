@@ -71,17 +71,17 @@ replace (
 	github.com/rivo/tview => github.com/bhbosman/tview v0.0.0-20230310100135-f8b257a85d36
 )
 
-replace (
-	github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
-	github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
-	github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
-	github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
-	github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
-	github.com/bhbosman/goCommsStacks => ../goCommsStacks
-	github.com/bhbosman/goFxApp => ../goFxApp
-	github.com/bhbosman/goFxAppManager => ../goFxAppManager
-	github.com/bhbosman/goMessages => ../goMessages
-	github.com/bhbosman/gocommon => ../gocommon
-	github.com/bhbosman/gocomms => ../gocomms
-	github.com/bhbosman/gomessageblock => ../gomessageblock
-)
+//replace (
+//	github.com/bhbosman/goCommonMarketData => ../goCommonMarketData
+//	github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
+//	github.com/bhbosman/goCommsMultiDialer => ../goCommsMultiDialer
+//	github.com/bhbosman/goCommsNetDialer => ../goCommsNetDialer
+//	github.com/bhbosman/goCommsNetListener => ../goCommsNetListener
+//	github.com/bhbosman/goCommsStacks => ../goCommsStacks
+//	github.com/bhbosman/goFxApp => ../goFxApp
+//	github.com/bhbosman/goFxAppManager => ../goFxAppManager
+//	github.com/bhbosman/goMessages => ../goMessages
+//	github.com/bhbosman/gocommon => ../gocommon
+//	github.com/bhbosman/gocomms => ../gocomms
+//	github.com/bhbosman/gomessageblock => ../gomessageblock
+//)
