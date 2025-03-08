@@ -3,16 +3,16 @@ module github.com/bhbosman/gokraken
 go 1.24.0
 
 require (
-	github.com/bhbosman/goCommonMarketData v0.0.0-20250308143707-c57da53e39fb
+	github.com/bhbosman/goCommonMarketData v0.0.0-20250308150621-c96b40851a48
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20250308144130-64993b60920c
 	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308145530-f9feda5f9bba
 	github.com/bhbosman/goCommsNetListener v0.0.0-20250308122653-28d9e53d4343
 	github.com/bhbosman/goCommsStacks v0.0.0-20250308150310-d89697671b2a
 	github.com/bhbosman/goConn v0.0.0-20250308073057-2a0933b3cb38
-	github.com/bhbosman/goFxApp v0.0.0-20250308140120-240d765e819d
+	github.com/bhbosman/goFxApp v0.0.0-20250308145557-3cf179139aee
 	github.com/bhbosman/goFxAppManager v0.0.0-20250308140124-9230c32fe2ee
 	github.com/bhbosman/gocommon v0.0.0-20250308150148-56b7e6e14bff
-	github.com/bhbosman/gocomms v0.0.0-20250308133812-cb1afb4044ed
+	github.com/bhbosman/gocomms v0.0.0-20250308150300-a1d5009c77b1
 	github.com/bhbosman/goerrors v0.0.0-20250307194237-312d070c8e38
 	github.com/bhbosman/gomessageblock v0.0.0-20250308073733-0b3daca12e3a
 	github.com/bhbosman/goprotoextra v0.0.2
@@ -28,10 +28,10 @@ require (
 )
 
 require (
-	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308144130-d5d7af07e829 // indirect
-	github.com/bhbosman/goConnectionManager v0.0.0-20250308145438-ea83361668a5 // indirect
+	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308150315-3655e928859c // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20250308150558-5d463bc5c9e3 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20250308134004-88a683243000 // indirect
-	github.com/bhbosman/goUi v0.0.0-20250308145459-134c11444111 // indirect
+	github.com/bhbosman/goUi v0.0.0-20250308151444-1fc0528a2178 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
