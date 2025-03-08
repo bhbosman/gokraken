@@ -3,15 +3,15 @@ module github.com/bhbosman/gokraken
 go 1.24.0
 
 require (
-	github.com/bhbosman/goCommonMarketData v0.0.0-20250308140011-3837d75d871c
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20250308074916-3e7c0d32b971
-	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308142322-0c3f634e3635
+	github.com/bhbosman/goCommonMarketData v0.0.0-20250308143707-c57da53e39fb
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20250308144130-64993b60920c
+	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308145530-f9feda5f9bba
 	github.com/bhbosman/goCommsNetListener v0.0.0-20250308122653-28d9e53d4343
-	github.com/bhbosman/goCommsStacks v0.0.0-20250308140058-bc4682f34818
+	github.com/bhbosman/goCommsStacks v0.0.0-20250308150310-d89697671b2a
 	github.com/bhbosman/goConn v0.0.0-20250308073057-2a0933b3cb38
 	github.com/bhbosman/goFxApp v0.0.0-20250308140120-240d765e819d
 	github.com/bhbosman/goFxAppManager v0.0.0-20250308140124-9230c32fe2ee
-	github.com/bhbosman/gocommon v0.0.0-20250308131803-28622f55deb1
+	github.com/bhbosman/gocommon v0.0.0-20250308150148-56b7e6e14bff
 	github.com/bhbosman/gocomms v0.0.0-20250308133812-cb1afb4044ed
 	github.com/bhbosman/goerrors v0.0.0-20250307194237-312d070c8e38
 	github.com/bhbosman/gomessageblock v0.0.0-20250308073733-0b3daca12e3a
@@ -28,10 +28,10 @@ require (
 )
 
 require (
-	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308133838-fcd6077403df // indirect
-	github.com/bhbosman/goConnectionManager v0.0.0-20250308133907-06eddcd798f6 // indirect
+	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308144130-d5d7af07e829 // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20250308145438-ea83361668a5 // indirect
 	github.com/bhbosman/goMessages v0.0.0-20250308134004-88a683243000 // indirect
-	github.com/bhbosman/goUi v0.0.0-20250308132651-2a5e82ef72b0 // indirect
+	github.com/bhbosman/goUi v0.0.0-20250308145459-134c11444111 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
