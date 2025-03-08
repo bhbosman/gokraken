@@ -53,6 +53,8 @@ github.com/bhbosman/goCommsStacks v0.0.0-20250308073453-2a34f22d9bb1 h1:4FQytGmS
 github.com/bhbosman/goCommsStacks v0.0.0-20250308073453-2a34f22d9bb1/go.mod h1:T/rbVuCWy0DJyeMb7j+WmiW2V4/f0UN/o42yJOHE5MQ=
 github.com/bhbosman/goCommsStacks v0.0.0-20250308122653-67040ed90c18 h1:fCsaTjUjrExk/PrAggcIe+A3/yaY/p9ViNglvupgxoQ=
 github.com/bhbosman/goCommsStacks v0.0.0-20250308122653-67040ed90c18/go.mod h1:8CYkY8G+BZASAdGkNzSUev3FAV62Tol7dOK7LccGRrE=
+github.com/bhbosman/goCommsStacks v0.0.0-20250308140058-bc4682f34818 h1:i35NxIJj+3/trmv4Qyj2TSWCWYp+LvX+zgxMgU61sXo=
+github.com/bhbosman/goCommsStacks v0.0.0-20250308140058-bc4682f34818/go.mod h1:uqoiVPJ5iW1OG0tVDNEzXRZFm3TzlqUq+l9lLlFJcoU=
 github.com/bhbosman/goConn v0.0.0-20250307235008-177f4ffe3521 h1:joFHqter5QnlEe0ojcqlItn8dmxx79u1qSuVLXwCWg4=
 github.com/bhbosman/goConn v0.0.0-20250307235008-177f4ffe3521/go.mod h1:xBF7hqL4jXOQuC9Kjip9YLeHAu703p5jCCnTkV1yWDA=
 github.com/bhbosman/goConn v0.0.0-20250308073057-2a0933b3cb38 h1:CsLy9FAHb9HrkGzo3BcRmqH7FJtauAuiG/oLMVc6n60=
@@ -116,6 +118,8 @@ github.com/bhbosman/gocomms v0.0.0-20250308073453-53d6befb6d1a h1:G624DLsYNSEz7t
 github.com/bhbosman/gocomms v0.0.0-20250308073453-53d6befb6d1a/go.mod h1:jkDgfw9i8Jt/Ym5pxnPSxiGFifB6/LlVrAB9nMi6rXA=
 github.com/bhbosman/gocomms v0.0.0-20250308122654-329e339db0e0 h1:umKod1Go+wqmTyPQvgq8tKqazoveIH8bjvp+6niTXWc=
 github.com/bhbosman/gocomms v0.0.0-20250308122654-329e339db0e0/go.mod h1:F6u+tEfFctybgOv6ojaCQoZ9Gioa4f3bGnq0T8HvPZc=
+github.com/bhbosman/gocomms v0.0.0-20250308133812-cb1afb4044ed h1:gDQw7lpqqyoI3z1CYbBTGVsv21Kqfhs1rchWjh2UmEY=
+github.com/bhbosman/gocomms v0.0.0-20250308133812-cb1afb4044ed/go.mod h1:mIM4L6gYvV3dyX5SlSmfKsrPslR4dYfy9guhUjBTGTE=
 github.com/bhbosman/goerrors v0.0.0-20250307194237-312d070c8e38 h1:3jX77BrDYvQ4xiAQkat+N47OZoKECB9t27fQQfpqGRk=
 github.com/bhbosman/goerrors v0.0.0-20250307194237-312d070c8e38/go.mod h1:2aeMPIIYjD7+5AmN1yaV/oAqCaExRDcl7SN+/zFLpew=
 github.com/bhbosman/gomessageblock v0.0.0-20250307141417-ab783e8e2eba h1:BcXupDmD6uRluJ1whSXNXMLaDV1HtBlFrwa8OsZgT8E=
