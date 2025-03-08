@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/bhbosman/goCommonMarketData v0.0.0-20250308133807-dfa6df88bdb4
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20250308074916-3e7c0d32b971
-	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308131912-3e5bf2685d36
+	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308133821-ae4b28fea9be
 	github.com/bhbosman/goCommsNetListener v0.0.0-20250308122653-28d9e53d4343
 	github.com/bhbosman/goCommsStacks v0.0.0-20250308122653-67040ed90c18
 	github.com/bhbosman/goConn v0.0.0-20250308073057-2a0933b3cb38
@@ -28,10 +28,10 @@ require (
 )
 
 require (
-	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308072116-e542f85eddcc // indirect
+	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308133838-fcd6077403df // indirect
 	github.com/bhbosman/goConnectionManager v0.0.0-20250308122653-53a96fe357f2 // indirect
-	github.com/bhbosman/goMessages v0.0.0-20250308122654-32a88d6d1169 // indirect
-	github.com/bhbosman/goUi v0.0.0-20250308124821-836921ea8a1e // indirect
+	github.com/bhbosman/goMessages v0.0.0-20250308134004-88a683243000 // indirect
+	github.com/bhbosman/goUi v0.0.0-20250308132651-2a5e82ef72b0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect

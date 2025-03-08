@@ -27,12 +27,16 @@ github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308072116-24c1e60ae346 h1:Rxu
 github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308072116-24c1e60ae346/go.mod h1:Yk9g6N41kmzuIlZXfoLttNBWs+YnFxIyHtoF3S4pmkg=
 github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308131912-3e5bf2685d36 h1:H0cjQcogYCd4uXXKPNVzQjfQEvbJSHcUH+EN5OCbP/o=
 github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308131912-3e5bf2685d36/go.mod h1:q0GFLzioCghn1m4cg4PgOjRc73BpBO3rRvQPSnEQUP8=
+github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308133821-ae4b28fea9be h1:FFcEMkJUMbFawYAWaQINdz0zfIWXOBLXDozlbuCi+Pk=
+github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308133821-ae4b28fea9be/go.mod h1:3Evt7/vdWx/5GggPWiUMX9/j6LhnTnI1bmb8Xh2wbQg=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20250307233555-6c2dfa80f01b h1:IfkgsVtnRphOnePDgQFXmgU8E3WPxI1vPimC/ayX2Cg=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20250307233555-6c2dfa80f01b/go.mod h1:bu9/1LZ95ln8cWN9OtT/lj3j7lHs7P6ZSPWtKsdW6Gc=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20250308053613-a763632f1b3d h1:/WRx9pUgpEFAKUb0BfbLIVEW9r5TkEEHWaEPkgawNc4=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20250308053613-a763632f1b3d/go.mod h1:eSxu4LFVjMNofXp2AgCS9bO0M5Su6OIY2hDADSqbVyY=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20250308072116-e542f85eddcc h1:1EaGhUkQ3uXdOIIc3smaZOM+o1jLgmUh4eQQzG9DT5Y=
 github.com/bhbosman/goCommsNetDialer v0.0.0-20250308072116-e542f85eddcc/go.mod h1:izCaBxAUKQjijpSPRjyS8jmeiYIMw8T3HVHhiWv0W1A=
+github.com/bhbosman/goCommsNetDialer v0.0.0-20250308133838-fcd6077403df h1:dlJGajQZqzwgecnykOwsahhRNNME7ny25nFg3U1NAwo=
+github.com/bhbosman/goCommsNetDialer v0.0.0-20250308133838-fcd6077403df/go.mod h1:+68afJR5b+axbAl3ezCgLnwZK8A3TqmGMcuurukqslg=
 github.com/bhbosman/goCommsNetListener v0.0.0-20250307153216-6206fd2748ea h1:oGGC2vXN4USsNdB6BRfLdMJJBI5/pIsLyRE6GVASZ4o=
 github.com/bhbosman/goCommsNetListener v0.0.0-20250307153216-6206fd2748ea/go.mod h1:e3Nchg52tdHmB25uGEORMfUuhCAiu+/3L23d1MPTdLg=
 github.com/bhbosman/goCommsNetListener v0.0.0-20250308054504-9e394f3cd581 h1:a++W6if2QSiYLz7bnr2UVq5xmxgDTx9xeFNItvuF1KM=
@@ -83,6 +87,8 @@ github.com/bhbosman/goMessages v0.0.0-20250308073939-6ddcbe007f00 h1:atF5Fi1k1DL
 github.com/bhbosman/goMessages v0.0.0-20250308073939-6ddcbe007f00/go.mod h1:nnA/nGfLfAgOa2dg59slhWLFJhDBJMBl5/UzxT7agk8=
 github.com/bhbosman/goMessages v0.0.0-20250308122654-32a88d6d1169 h1:sL7gvyo2egE1FI+8WRCh5g4Wo6pmsooHBTg7Uq/btkg=
 github.com/bhbosman/goMessages v0.0.0-20250308122654-32a88d6d1169/go.mod h1:PhVe9v+WIuyuyxE9HIfMRA3LkrJtrrETnlLToz1VGWI=
+github.com/bhbosman/goMessages v0.0.0-20250308134004-88a683243000 h1:u6Z9R5Yx1KMsoiyknh2srDfIJu2r1V5VlhILgfoFuvM=
+github.com/bhbosman/goMessages v0.0.0-20250308134004-88a683243000/go.mod h1:iiKYP6sCWaGji62TJ6mZzXzXO+WPq3Yym3OR+PSxIL4=
 github.com/bhbosman/goUi v0.0.0-20250307150712-d06325af4877 h1:ggdUfW6j/BcE8NSielxBeGpOeVKq5tosSxKfbe40Rlc=
 github.com/bhbosman/goUi v0.0.0-20250307150712-d06325af4877/go.mod h1:DdwkPEkzvKp7S61lzxjViCYGCQg7Rts0UWoMIaKvxj4=
 github.com/bhbosman/goUi v0.0.0-20250308064519-26f29e163722 h1:dZCnL1PLX8x2WBzGirFUPhzSPi3ndOxHggfuXwbKOWk=
@@ -91,6 +97,8 @@ github.com/bhbosman/goUi v0.0.0-20250308073057-c42a9b24bf52 h1:HNmzV57nbrgzDMPEy
 github.com/bhbosman/goUi v0.0.0-20250308073057-c42a9b24bf52/go.mod h1:l8l8U6QbtjsZzp8q5/o/WLDcYcdvZDUW5T/tX2lhNvk=
 github.com/bhbosman/goUi v0.0.0-20250308124821-836921ea8a1e h1:QVfBl4jjU1X/DtmHNETtXQZOfFlnVBc4RFdWLE4X2QI=
 github.com/bhbosman/goUi v0.0.0-20250308124821-836921ea8a1e/go.mod h1:l6UDCyN+is/QLuGMx3hjrQhOFXyH4q30vhPXWFRDX2A=
+github.com/bhbosman/goUi v0.0.0-20250308132651-2a5e82ef72b0 h1:3ordy/bAGZcIlTsoYX91wdC9ToTKIyC+Bexyn7l1/Co=
+github.com/bhbosman/goUi v0.0.0-20250308132651-2a5e82ef72b0/go.mod h1:7oMy2ehnSEUqADTLjWJa+q1Coolp3MEL3yquKabG1Qg=
 github.com/bhbosman/gocommon v0.0.0-20250307145810-dee67af89371 h1:DkTJ/pCTwbo8QNcbtSGWGUXHkJdzmlH+5fZpqpHVuVY=
 github.com/bhbosman/gocommon v0.0.0-20250307145810-dee67af89371/go.mod h1:X6bUBPwKCEtnVwuB68xiw1qflH2Pzv2I5kebzie4D10=
 github.com/bhbosman/gocommon v0.0.0-20250307235859-f370cb0a3bac/go.mod h1:EPYuWdqTCX8B9u0Q7w4u4FOalx2wbXm+KFQQbS1VHOo=
