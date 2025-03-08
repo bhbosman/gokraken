@@ -46,6 +46,7 @@ github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b h1:mfhKWKkAnnE
 github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b/go.mod h1:wSkrPaXoiIWZqW/g7Px4xc79di6FTcpB8tvaKJ6uGBo=
 github.com/bhbosman/tview v0.0.0-20230310100135-f8b257a85d36 h1:tw+monSFvp/lRPe/ROz0KK6l2C2bunK7i6XVv5oFlFs=
 github.com/bhbosman/tview v0.0.0-20230310100135-f8b257a85d36/go.mod h1:WIfMkQNY+oq/mWwtsjOYHIZBuwthioY2srOmljJkTnk=
+github.com/bhbosman/tview v0.0.0-20250308051327-a656c1bc9cfa/go.mod h1:lTkwUML3D0rvhpurD5ZM2gWsbaDvArcz5Bs+/Lublms=
 github.com/cenkalti/backoff/v4 v4.0.0/go.mod h1:eEew/i+1Q6OrCDZh3WiXYv3+nJwBASZ8Bog/87DQnVg=
 github.com/cenkalti/backoff/v4 v4.3.0 h1:MyRJ/UdXutAwSAT+s3wNd7MfTIcy71VQueUuFK343L8=
 github.com/cenkalti/backoff/v4 v4.3.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
