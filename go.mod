@@ -3,16 +3,16 @@ module github.com/bhbosman/gokraken
 go 1.24.0
 
 require (
-	github.com/bhbosman/goCommonMarketData v0.0.0-20250308152747-fa38484bf385
+	github.com/bhbosman/goCommonMarketData v0.0.0-20250308192059-0d9dd67dc2fb
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20250308144130-64993b60920c
-	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308152821-8fdf300bbe43
-	github.com/bhbosman/goCommsNetListener v0.0.0-20250308154802-78cc2d086d08
-	github.com/bhbosman/goCommsStacks v0.0.0-20250308150310-d89697671b2a
+	github.com/bhbosman/goCommsMultiDialer v0.0.0-20250308162156-9033e2a7cbfa
+	github.com/bhbosman/goCommsNetListener v0.0.0-20250308162159-3110c7d726b2
+	github.com/bhbosman/goCommsStacks v0.0.0-20250308162142-6d1805d62606
 	github.com/bhbosman/goConn v0.0.0-20250308073057-2a0933b3cb38
-	github.com/bhbosman/goFxApp v0.0.0-20250308154822-0732d20055c3
-	github.com/bhbosman/goFxAppManager v0.0.0-20250308154830-a52fe01a02cc
+	github.com/bhbosman/goFxApp v0.0.0-20250308162224-38e18cab1c9b
+	github.com/bhbosman/goFxAppManager v0.0.0-20250308162229-1292fdd07fc0
 	github.com/bhbosman/gocommon v0.0.0-20250308155359-4baa9bec452e
-	github.com/bhbosman/gocomms v0.0.0-20250308152759-52892cbe374f
+	github.com/bhbosman/gocomms v0.0.0-20250308162131-934dbda8372b
 	github.com/bhbosman/goerrors v0.0.0-20250307194237-312d070c8e38
 	github.com/bhbosman/gomessageblock v0.0.0-20250308073733-0b3daca12e3a
 	github.com/bhbosman/goprotoextra v0.0.2
@@ -28,10 +28,10 @@ require (
 )
 
 require (
-	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308154752-cd2a1ad6c44e // indirect
-	github.com/bhbosman/goConnectionManager v0.0.0-20250308150558-5d463bc5c9e3 // indirect
-	github.com/bhbosman/goMessages v0.0.0-20250308134004-88a683243000 // indirect
-	github.com/bhbosman/goUi v0.0.0-20250308152754-9da2082d1fbd // indirect
+	github.com/bhbosman/goCommsNetDialer v0.0.0-20250308162151-924d8e82e3d4 // indirect
+	github.com/bhbosman/goConnectionManager v0.0.0-20250308162041-c3d88e4a7878 // indirect
+	github.com/bhbosman/goMessages v0.0.0-20250308162234-471970cb97be // indirect
+	github.com/bhbosman/goUi v0.0.0-20250308162123-529b89b32854 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
