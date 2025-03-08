@@ -13,7 +13,7 @@ require (
 	github.com/bhbosman/goConn v0.0.0-20250307235008-177f4ffe3521
 	github.com/bhbosman/goFxApp v0.0.0-20250307153150-937959817ddb
 	github.com/bhbosman/goFxAppManager v0.0.0-20250307145515-bda0fa4d9959
-	github.com/bhbosman/gocommon v0.0.0-20250307145810-dee67af89371
+	github.com/bhbosman/gocommon v0.0.0-20250307235859-f370cb0a3bac
 	github.com/bhbosman/gocomms v0.0.0-20250307194459-78d729fdb027
 	github.com/bhbosman/goerrors v0.0.0-20250307194237-312d070c8e38
 	github.com/bhbosman/gomessageblock v0.0.0-20250307141417-ab783e8e2eba
